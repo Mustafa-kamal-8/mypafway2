@@ -12,7 +12,7 @@ export default function TermsPage() {
         <Navbar />
       </div>
       {/* Hero Section with Wave */}
-      <section className="relative bg-gray-700 text-white mt-32">
+      <section className="relative bg-gray-700 text-white mt-52 lg:mt-32">
         <div className="container mx-auto px-4 py-16 md:py-24">
           <h1 className="text-4xl md:text-6xl font-bold mb-4">
             Terms & Conditions
@@ -635,7 +635,7 @@ export default function TermsPage() {
                   {/* Button inside image */}
                   <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2">
                     <Link href="/about">
-                      <button className="bg-yellow-400 text-gray-800 font-semibold px-16 py-3 rounded-full shadow-md hover:bg-yellow-300 transition">
+                      <button className="w-[300px] lg:w-[360px] bg-yellow-400 text-gray-800 font-semibold py-3 rounded-full shadow-md hover:bg-yellow-300 transition">
                         Learn More
                       </button>
                     </Link>
@@ -658,7 +658,7 @@ export default function TermsPage() {
                 {/* Button or content on top */}
                 <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2">
                   <Link href="/register">
-                    <button className="bg-yellow-400 text-gray-800 font-semibold px-6 py-3 rounded-full shadow-md hover:bg-yellow-300 transition">
+                    <button className="w-[300px] lg:w-[360px] bg-yellow-400 text-gray-800 font-semibold px-6 py-3 rounded-full shadow-md hover:bg-yellow-300 transition">
                       Register Now
                     </button>
                   </Link>

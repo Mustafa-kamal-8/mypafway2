@@ -17,6 +17,21 @@ import Footer from "@/src/components/footer";
 import { useParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { useCartStore } from "@/src/store/cartStore";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/src/components/ui/dialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/src/components/ui/table";
 
 // Sample data for dropdowns
 const years = Array.from({ length: 30 }, (_, i) =>
@@ -82,27 +97,261 @@ const brands = [
 ];
 
 // Sample products (empty for no results scenario)
-const products = [
+const products: Product[] = [
   {
     id: 1,
-    name: "Product A",
-    category: "electronics",
-    subcategory: "mobile",
-    image: "https://via.placeholder.com/150",
+    name: "Brake Pads",
+    category: 1,
+    subcategory: 101,
+    price: 49.99,
+    image: "/brake.jpg",
+    description:
+      "High-performance ceramic brake pads for improved stopping power and reduced brake dust.",
+    specifications: {
+      Material: "Ceramic",
+      Position: "Front",
+      Warranty: "Lifetime",
+      "Noise Level": "Low",
+      "Dust Level": "Low",
+    },
   },
   {
     id: 2,
-    name: "Product B",
-    category: "electronics",
-    subcategory: "laptop",
-    image: "https://via.placeholder.com/150",
+    name: "Engine Oil",
+    category: 1,
+    subcategory: 101,
+    price: 79.99,
+    image: "/engine-oil.jpg",
+    description:
+      "Synthetic blend engine oil for superior engine protection and performance.",
+    specifications: {
+      Type: "Synthetic Blend",
+      Viscosity: "5W-30",
+      Capacity: "5 Quarts",
+      "For Engine Type": "Gasoline",
+      "Change Interval": "5,000 miles",
+    },
   },
   {
     id: 3,
-    name: "Product C",
-    category: "fashion",
-    subcategory: "shoes",
-    image: "https://via.placeholder.com/150",
+    name: "Air Filter",
+    category: 1,
+    subcategory: 101,
+    price: 29.99,
+    image: "/filter.jpg",
+    description:
+      "High-flow air filter for improved engine breathing and performance.",
+    specifications: {
+      Type: "Panel",
+      Material: "Cotton Gauze",
+      Reusable: "Yes",
+      Filtration: "High",
+      Lifespan: "50,000 miles",
+    },
+  },
+  {
+    id: 4,
+    name: "Car Battery",
+    category: 1,
+    subcategory: 101,
+    price: 129.99,
+    image: "/battery.jpg",
+    description:
+      "Maintenance-free battery with high cold cranking amps for reliable starting power.",
+    specifications: {
+      Voltage: "12V",
+      CCA: "700",
+      "Group Size": "24F",
+      "Reserve Capacity": "120 min",
+      Warranty: "3 Years",
+    },
+  },
+  {
+    id: 5,
+    name: "Spark Plug",
+    category: 1,
+    subcategory: 101,
+    price: 14.99,
+    image: "/spark-plug.png",
+    description:
+      "Iridium spark plugs for better fuel efficiency and longer service life.",
+    specifications: {
+      Material: "Iridium",
+      Gap: '0.044"',
+      "Thread Size": "14mm",
+      "Heat Range": "5",
+      Lifespan: "100,000 miles",
+    },
+  },
+  {
+    id: 6,
+    name: "Windshield Wipers",
+    category: 1,
+    subcategory: 101,
+    price: 24.99,
+    image: "/wipers.jpg",
+    description:
+      "Beam-style wiper blades for streak-free visibility in all weather conditions.",
+    specifications: {
+      Type: "Beam",
+      Length: '22"',
+      Material: "Silicone",
+      "All-Weather": "Yes",
+      Installation: "Easy Clip-On",
+    },
+  },
+  {
+    id: 7,
+    name: "Brake Pads",
+    category: 2,
+    subcategory: 201,
+    price: 49.99,
+    image: "/brake.jpg",
+    description:
+      "High-performance ceramic brake pads for improved stopping power and reduced brake dust.",
+    specifications: {
+      Material: "Ceramic",
+      Position: "Front",
+      Warranty: "Lifetime",
+      "Noise Level": "Low",
+      "Dust Level": "Low",
+    },
+  },
+  {
+    id: 8,
+    name: "Engine Oil",
+    category: 2,
+    subcategory: 201,
+    price: 79.99,
+    image: "/engine-oil.jpg",
+    description:
+      "Synthetic blend engine oil for superior engine protection and performance.",
+    specifications: {
+      Type: "Synthetic Blend",
+      Viscosity: "5W-30",
+      Capacity: "5 Quarts",
+      "For Engine Type": "Gasoline",
+      "Change Interval": "5,000 miles",
+    },
+  },
+  {
+    id: 9,
+    name: "Air Filter",
+    category: 2,
+    subcategory: 201,
+    price: 29.99,
+    image: "/filter.jpg",
+    description:
+      "High-flow air filter for improved engine breathing and performance.",
+    specifications: {
+      Type: "Panel",
+      Material: "Cotton Gauze",
+      Reusable: "Yes",
+      Filtration: "High",
+      Lifespan: "50,000 miles",
+    },
+  },
+  {
+    id: 10,
+    name: "Car Battery",
+    category: 2,
+    subcategory: 201,
+    price: 129.99,
+    image: "/battery.jpg",
+    description:
+      "Maintenance-free battery with high cold cranking amps for reliable starting power.",
+    specifications: {
+      Voltage: "12V",
+      CCA: "700",
+      "Group Size": "24F",
+      "Reserve Capacity": "120 min",
+      Warranty: "3 Years",
+    },
+  },
+  {
+    id: 11,
+    name: "Spark Plug",
+    category: 2,
+    subcategory: 201,
+    price: 14.99,
+    image: "/spark-plug.png",
+    description:
+      "Iridium spark plugs for better fuel efficiency and longer service life.",
+    specifications: {
+      Material: "Iridium",
+      Gap: '0.044"',
+      "Thread Size": "14mm",
+      "Heat Range": "5",
+      Lifespan: "100,000 miles",
+    },
+  },
+  {
+    id: 12,
+    name: "Windshield Wipers",
+    category: 2,
+    subcategory: 201,
+    price: 24.99,
+    image: "/wipers.jpg",
+    description:
+      "Beam-style wiper blades for streak-free visibility in all weather conditions.",
+    specifications: {
+      Type: "Beam",
+      Length: '22"',
+      Material: "Silicone",
+      "All-Weather": "Yes",
+      Installation: "Easy Clip-On",
+    },
+  },
+  {
+    id: 13,
+    name: "Front Bumper Lip Spoiler",
+    category: 3,
+    subcategory: 301,
+    price: 199.99,
+    image: "/bumper-lip.jpg",
+    description:
+      "Aggressive front bumper lip spoiler for enhanced aerodynamics and a sporty look.",
+    specifications: {
+      Material: "ABS Plastic",
+      Finish: "Gloss Black",
+      Fitment: "Universal",
+      Installation: "Bolt-On",
+      Durability: "High Impact Resistant",
+    },
+  },
+  {
+    id: 14,
+    name: "Side Skirts",
+    category: 3,
+    subcategory: 301,
+    price: 249.99,
+    image: "/side-skirts.jpg",
+    description:
+      "Premium side skirts for a lowered appearance and improved airflow along the vehicle.",
+    specifications: {
+      Material: "Polyurethane",
+      Style: "Sport",
+      Finish: "Unpainted",
+      Length: "78 inches",
+      Installation: "Drill & Screw",
+    },
+  },
+  {
+    id: 15,
+    name: "Rear Diffuser Kit",
+    category: 3,
+    subcategory: 301,
+    price: 179.99,
+    image: "/rear-diffuser.jpg",
+    description:
+      "Sleek rear diffuser kit to enhance downforce and give your car a race-inspired appearance.",
+    specifications: {
+      Material: "Carbon Fiber Look ABS",
+      Color: "Matte Black",
+      Compatibility: "Sedans & Coupes",
+      Downforce: "Improved",
+      Installation: "Adhesive & Bolts",
+    },
   },
 ];
 
@@ -113,6 +362,10 @@ interface Product {
   subcategory: number;
   price: number;
   image: string;
+  description?: string;
+  specifications?: {
+    [key: string]: string;
+  };
 }
 
 export default function SearchPage() {
@@ -125,6 +378,7 @@ export default function SearchPage() {
   const [priceRange, setPriceRange] = useState([0, 1000]);
   const [compareItems, setCompareItems] = useState<number[]>([]);
   const [isMobile, setIsMobile] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   const { category, subcategory } = useParams();
 
@@ -137,57 +391,6 @@ export default function SearchPage() {
     };
     addToCart(productWithQuantity);
   };
-
-  const products: Product[] = [
-    {
-      id: 1,
-      name: "Brake Pads",
-      category: 1,
-      subcategory: 101,
-      price: 49.99,
-      image: "/brake.jpg",
-    },
-    {
-      id: 2,
-      name: "Engine Oil",
-      category: 1,
-      subcategory: 101,
-      price: 79.99,
-      image: "/images/engine-oil.jpg",
-    },
-    {
-      id: 3,
-      name: "Air Filter",
-      category: 1,
-      subcategory: 101,
-      price: 29.99,
-      image: "/images/air-filter.jpg",
-    },
-    {
-      id: 4,
-      name: "Car Battery",
-      category: 1,
-      subcategory: 101,
-      price: 129.99,
-      image: "/battery.jpg",
-    },
-    {
-      id: 5,
-      name: "Spark Plug",
-      category: 1,
-      subcategory: 101,
-      price: 14.99,
-      image: "/images/spark-plug.jpg",
-    },
-    {
-      id: 6,
-      name: "Windshield Wipers",
-      category: 1,
-      subcategory: 101,
-      price: 24.99,
-      image: "/images/windshield-wipers.jpg",
-    },
-  ];
 
   console.log("Category:", category);
   console.log("Subcategory:", subcategory);
@@ -488,16 +691,155 @@ export default function SearchPage() {
                     <h3 className="text-2xl font-bold text-yellow-500">
                       Compare
                     </h3>
-                    <span className="text-gray-600">Up to 4 items</span>
+                    <span className="text-gray-600">
+                      {compareItems.length}/4 items
+                    </span>
                   </div>
 
-                  <p className="text-gray-600 mb-4">
-                    Add items to start comparing.
-                  </p>
+                  {compareItems.length === 0 ? (
+                    <p className="text-gray-600 mb-4">
+                      Add items to start comparing.
+                    </p>
+                  ) : (
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                      {compareItems.map((itemId) => {
+                        const product = products.find((p) => p.id === itemId);
+                        return product ? (
+                          <div key={itemId} className="relative">
+                            <img
+                              src={product.image || "/placeholder.svg"}
+                              alt={product.name}
+                              className="w-full h-20 object-cover rounded"
+                            />
+                            <button
+                              onClick={() => toggleCompareItem(itemId)}
+                              className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                            <p className="text-sm mt-1 truncate">
+                              {product.name}
+                            </p>
+                          </div>
+                        ) : null;
+                      })}
+                    </div>
+                  )}
 
-                  <Button className="w-full bg-yellow-400 hover:bg-yellow-500 text-black">
-                    Compare Now
-                  </Button>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button
+                        className="w-full bg-yellow-400 hover:bg-yellow-500 text-black"
+                        disabled={compareItems.length < 2}
+                      >
+                        Compare Now
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-4xl">
+                      <DialogHeader>
+                        <DialogTitle>Product Comparison</DialogTitle>
+                      </DialogHeader>
+                      <div className="max-h-[70vh] overflow-auto">
+                        <Table>
+                          <TableHeader>
+                            <TableRow>
+                              <TableHead className="w-[200px]">
+                                Feature
+                              </TableHead>
+                              {compareItems.map((itemId) => {
+                                const product = products.find(
+                                  (p) => p.id === itemId
+                                );
+                                return product ? (
+                                  <TableHead key={itemId}>
+                                    {product.name}
+                                  </TableHead>
+                                ) : null;
+                              })}
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            <TableRow>
+                              <TableCell className="font-medium">
+                                Image
+                              </TableCell>
+                              {compareItems.map((itemId) => {
+                                const product = products.find(
+                                  (p) => p.id === itemId
+                                );
+                                return product ? (
+                                  <TableCell key={itemId}>
+                                    <img
+                                      src={product.image || "/placeholder.svg"}
+                                      alt={product.name}
+                                      className="w-24 h-24 object-cover rounded"
+                                    />
+                                  </TableCell>
+                                ) : null;
+                              })}
+                            </TableRow>
+                            <TableRow>
+                              <TableCell className="font-medium">
+                                Price
+                              </TableCell>
+                              {compareItems.map((itemId) => {
+                                const product = products.find(
+                                  (p) => p.id === itemId
+                                );
+                                return product ? (
+                                  <TableCell key={itemId}>
+                                    ${product.price.toFixed(2)}
+                                  </TableCell>
+                                ) : null;
+                              })}
+                            </TableRow>
+                            <TableRow>
+                              <TableCell className="font-medium">
+                                Description
+                              </TableCell>
+                              {compareItems.map((itemId) => {
+                                const product = products.find(
+                                  (p) => p.id === itemId
+                                );
+                                return product ? (
+                                  <TableCell key={itemId}>
+                                    {product.description}
+                                  </TableCell>
+                                ) : null;
+                              })}
+                            </TableRow>
+                            {/* Dynamically generate rows for specifications */}
+                            {compareItems.length > 0 &&
+                            products.find((p) => p.id === compareItems[0])
+                              ?.specifications
+                              ? Object.keys(
+                                  products.find(
+                                    (p) => p.id === compareItems[0]
+                                  )!.specifications!
+                                ).map((spec) => (
+                                  <TableRow key={spec}>
+                                    <TableCell className="font-medium">
+                                      {spec}
+                                    </TableCell>
+                                    {compareItems.map((itemId) => {
+                                      const product = products.find(
+                                        (p) => p.id === itemId
+                                      );
+                                      return product ? (
+                                        <TableCell key={itemId}>
+                                          {product.specifications?.[spec] ||
+                                            "N/A"}
+                                        </TableCell>
+                                      ) : null;
+                                    })}
+                                  </TableRow>
+                                ))
+                              : null}
+                          </TableBody>
+                        </Table>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
                 </div>
                 <div className="max-w-7xl mx-auto p-6">
                   <h2 className="text-2xl font-bold text-gray-800 mb-6">
@@ -511,11 +853,38 @@ export default function SearchPage() {
                           key={product.id}
                           className="bg-white shadow-lg rounded-lg overflow-hidden transition-transform transform hover:scale-105"
                         >
-                          <img
-                            src={product.image}
-                            alt={product.name}
-                            className="w-full h-40 object-cover"
-                          />
+                          <div className="relative">
+                            <img
+                              src={product.image || "/placeholder.svg"}
+                              alt={product.name}
+                              className="w-full h-40 object-cover"
+                            />
+                            <div className="absolute top-2 right-2">
+                              <Checkbox
+                                id={`compare-${product.id}`}
+                                checked={compareItems.includes(product.id)}
+                                onCheckedChange={() => {
+                                  if (
+                                    compareItems.includes(product.id) ||
+                                    compareItems.length < 4
+                                  ) {
+                                    toggleCompareItem(product.id);
+                                  }
+                                }}
+                                disabled={
+                                  !compareItems.includes(product.id) &&
+                                  compareItems.length >= 4
+                                }
+                                className="bg-white"
+                              />
+                              <label
+                                htmlFor={`compare-${product.id}`}
+                                className="sr-only"
+                              >
+                                Add to compare
+                              </label>
+                            </div>
+                          </div>
                           <div className="p-4">
                             <h3 className="text-lg font-semibold text-gray-900">
                               {product.name}
@@ -523,12 +892,85 @@ export default function SearchPage() {
                             <p className="text-gray-600 mt-1">
                               ${product.price.toFixed(2)}
                             </p>
-                            <button
-                              onClick={() => handleAddToCart(product)} // Add product to cart on click using Zustand's store
-                              className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg"
-                            >
-                              Add to Cart
-                            </button>
+                            <div className="mt-4 ">
+                              <button
+                                onClick={() => handleAddToCart(product)}
+                                className=" bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg"
+                              >
+                                Add to Cart
+                              </button>
+
+                              <Dialog>
+                                <DialogTrigger asChild>
+                                  <button
+                                    onClick={() => setSelectedProduct(product)}
+                                    className="bg-gray-200 mt-2 hover:bg-gray-300 text-gray-800 font-bold py-2 px-8 rounded-lg"
+                                  >
+                                    Details
+                                  </button>
+                                </DialogTrigger>
+                                <DialogContent>
+                                  <DialogHeader>
+                                    <DialogTitle>
+                                      {selectedProduct?.name}
+                                    </DialogTitle>
+                                  </DialogHeader>
+                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                      <img
+                                        src={
+                                          selectedProduct?.image ||
+                                          "/placeholder.svg"
+                                        }
+                                        alt={selectedProduct?.name}
+                                        className="w-full h-auto object-cover rounded-lg"
+                                      />
+                                    </div>
+                                    <div>
+                                      <h3 className="text-2xl font-bold mb-2">
+                                        ${selectedProduct?.price.toFixed(2)}
+                                      </h3>
+                                      <p className="text-gray-700 mb-4">
+                                        {selectedProduct?.description}
+                                      </p>
+
+                                      <h4 className="font-bold text-lg mb-2">
+                                        Specifications
+                                      </h4>
+                                      <div className="space-y-2">
+                                        {selectedProduct?.specifications &&
+                                          Object.entries(
+                                            selectedProduct.specifications
+                                          ).map(([key, value]) => (
+                                            <div key={key} className="flex">
+                                              <span className="font-medium w-1/3">
+                                                {key}:
+                                              </span>
+                                              <span className="w-2/3">
+                                                {value}
+                                              </span>
+                                            </div>
+                                          ))}
+                                      </div>
+
+                                      <Button
+                                        className="w-full mt-6 bg-blue-600 hover:bg-blue-700"
+                                        onClick={() => {
+                                          handleAddToCart(selectedProduct!);
+                                          document
+                                            .querySelector(
+                                              '[role="dialog"] button[data-state="open"]'
+                                            )
+                                            ?.click();
+                                        }}
+                                      >
+                                        Add to Cart
+                                      </Button>
+                                    </div>
+                                  </div>
+                                </DialogContent>
+                              </Dialog>
+                            </div>
                           </div>
                         </div>
                       ))}
