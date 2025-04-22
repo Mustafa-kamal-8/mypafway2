@@ -20,6 +20,29 @@ import {
 import { Input } from "@/src/components/ui/input";
 import { Label } from "@/src/components/ui/label";
 import { Textarea } from "@/src/components/ui/textarea";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/src/components/ui/form";
+import { uploadCategories } from "../api/categories";
+import toast from "react-hot-toast";
+
+const categorySchema = z.object({
+  name: z.string().min(2, { message: "Name must be at least 2 characters" }),
+  description: z
+    .string()
+    .min(10, { message: "Description must be at least 10 characters" }),
+  imageUrl: z.string().optional(),
+});
+
+type CategoryFormValues = z.infer<typeof categorySchema>;
 
 export function AddCategoryButton() {
   const [open, setOpen] = useState(false);
@@ -40,6 +63,15 @@ export function AddCategoryButton() {
 
   const [isUploading, setIsUploading] = useState(false);
   const [folderName, setFolderName] = useState("categories");
+
+  const form = useForm<CategoryFormValues>({
+    resolver: zodResolver(categorySchema),
+    defaultValues: {
+      name: "",
+      description: "",
+      imageUrl: "",
+    },
+  });
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -137,10 +169,25 @@ export function AddCategoryButton() {
     setCroppedImageUrl(null);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Handle form submission
-    setOpen(false);
+  const onSubmit = async (data: CategoryFormValues) => {
+    console.log("Form data:", data);
+
+    const payload = {
+      name: data.name,
+      image: croppedImageUrl || data.imageUrl, // Use cropped image if available
+      description: data.description,
+    };
+
+    try {
+      console.log("Sending payload to backend:", payload);
+      await uploadCategories(payload);
+      toast.success("Categories submitted successfully!");
+    } catch (error) {
+      console.error("Upload failed:", error);
+      toast.error("Failed to submit category. Please try again.");
+    } finally {
+      setOpen(false); // Close the dialog
+    }
   };
 
   const compressImage = async (file: File): Promise<File> => {
@@ -167,13 +214,6 @@ export function AddCategoryButton() {
     setCroppedImageUrl(null);
   };
 
-  // Add toast object for error handling
-  const toast = {
-    error: (message: string) => {
-      console.error(message);
-    },
-  };
-
   const handleUpload = async () => {
     if (imageFile) {
       setIsUploading(true);
@@ -183,6 +223,7 @@ export function AddCategoryButton() {
         const url = await uploadImage(compressedFile, folderName);
 
         if (url) {
+          form.setValue("imageUrl", url);
           onUpload(url);
           resetState();
         }
@@ -202,7 +243,7 @@ export function AddCategoryButton() {
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px] max-h-[90vh] bg-zinc-900 border-zinc-800 text-zinc-100 overflow-y-auto">
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
           <DialogHeader>
             <DialogTitle className="text-zinc-100">
               Add New Category
@@ -212,39 +253,56 @@ export function AddCategoryButton() {
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="name" className="text-zinc-200">
-                Name
-              </Label>
-              <Input
-                id="name"
-                placeholder="Category name"
-                className="bg-zinc-800 border-zinc-700 text-zinc-200 placeholder:text-zinc-500 focus-visible:ring-yellow-400"
+            <Form {...form}>
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem className="grid gap-2">
+                    <FormLabel className="text-zinc-200">Name</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        placeholder="Category name"
+                        className="bg-zinc-800 border-zinc-700 text-zinc-200 placeholder:text-zinc-500 focus-visible:ring-yellow-400"
+                      />
+                    </FormControl>
+                    <FormMessage className="text-red-400" />
+                  </FormItem>
+                )}
               />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="description" className="text-zinc-200">
-                Description
-              </Label>
-              <Textarea
-                id="description"
-                placeholder="Category description"
-                className="bg-zinc-800 border-zinc-700 text-zinc-200 placeholder:text-zinc-500 focus-visible:ring-yellow-400"
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem className="grid gap-2">
+                    <FormLabel className="text-zinc-200">Description</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        {...field}
+                        placeholder="Category description"
+                        className="bg-zinc-800 border-zinc-700 text-zinc-200 placeholder:text-zinc-500 focus-visible:ring-yellow-400"
+                      />
+                    </FormControl>
+                    <FormMessage className="text-red-400" />
+                  </FormItem>
+                )}
               />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="image" className="text-zinc-200">
-                Image
-              </Label>
-              <Input
-                id="image"
-                type="file"
-                ref={fileInputRef}
-                accept="image/*"
-                onChange={handleImageChange}
-                className="bg-zinc-800 border-zinc-700 text-zinc-200 file:bg-zinc-700 file:text-zinc-200 file:border-0 focus-visible:ring-yellow-400"
-              />
-            </div>
+              <div className="grid gap-2">
+                <Label htmlFor="image" className="text-zinc-200">
+                  Image
+                </Label>
+                <Input
+                  id="image"
+                  type="file"
+                  ref={fileInputRef}
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="bg-zinc-800 border-zinc-700 text-zinc-200 file:bg-zinc-700 file:text-zinc-200 file:border-0 focus-visible:ring-yellow-400"
+                />
+              </div>
+            </Form>
+
             {/* Image Preview and Cropping Area */}
             {imagePreviewUrl && !croppedImageUrl && (
               <div className="mt-4 space-y-4">
@@ -323,8 +381,7 @@ export function AddCategoryButton() {
           </div>
           <DialogFooter>
             <Button
-              type="button"
-              onClick={handleUpload}
+              type="submit"
               className="bg-yellow-500 hover:bg-yellow-600 text-black"
               disabled={isUploading}
             >

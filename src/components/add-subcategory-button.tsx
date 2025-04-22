@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Plus, X, Check } from "lucide-react";
 import ReactCrop, { type Crop } from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
@@ -27,6 +27,13 @@ import {
   SelectValue,
 } from "@/src/components/ui/select";
 import { Textarea } from "@/src/components/ui/textarea";
+import { getCategories, uploadSubCategories } from "../api/categories";
+
+interface categories {
+  id: number;
+  name: string;
+  image: string;
+}
 
 export function AddSubcategoryButton() {
   const [open, setOpen] = useState(false);
@@ -44,6 +51,12 @@ export function AddSubcategoryButton() {
   const [croppedImageUrl, setCroppedImageUrl] = useState<string | null>(null);
   const imageRef = useRef<HTMLImageElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [categories, setCategories] = useState<categories[]>([]);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(
+    null
+  );
+  const [name, setName] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -139,11 +152,47 @@ export function AddSubcategoryButton() {
     setCroppedImageUrl(null);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await getCategories({ search: "" });
+        console.log("Fetched categories:", response);
+        setCategories(response.result || []);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  console.log("categories are ", categories);
+
+  const handleCategoryChange = (value: string) => {
+    setSelectedCategoryId(Number(value));
+    console.log("Selected category ID:", value);
+  };
+
+  const handleSubmit = async(e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission with the cropped image file (imageFile)
-    console.log("Submitting with image:", imageFile);
-    setOpen(false);
+
+    const formData = {
+      category: selectedCategoryId,
+      name,
+      description,
+      image: imageFile,
+    };
+    try{
+        console.log("Sending payload to backend:", formData);
+      await uploadSubCategories(formData);
+      console.log("Sub Categories Submitted Successfully");
+    }catch(error){
+      console.log(error)
+    }finally{
+      setOpen(false);
+    }
+
+   
   };
 
   return (
@@ -168,7 +217,7 @@ export function AddSubcategoryButton() {
               <Label htmlFor="category" className="text-zinc-200">
                 Parent Category
               </Label>
-              <Select>
+              <Select onValueChange={handleCategoryChange}>
                 <SelectTrigger
                   id="category"
                   className="bg-zinc-800 border-zinc-700 text-zinc-200 focus:ring-yellow-400"
@@ -176,17 +225,14 @@ export function AddSubcategoryButton() {
                   <SelectValue placeholder="Select a category" />
                 </SelectTrigger>
                 <SelectContent className="bg-zinc-800 border-zinc-700 text-zinc-200">
-                  <SelectItem value="ac-repair">
-                    AC & Appliances Repair
-                  </SelectItem>
-                  <SelectItem value="cleaning">Cleaning Services</SelectItem>
-                  <SelectItem value="handyman">
-                    Electrician, Plumber, Carpenter & Painter
-                  </SelectItem>
-                  <SelectItem value="salon">Unisex Salon</SelectItem>
-                  <SelectItem value="pest-control">
-                    Pest Control Service
-                  </SelectItem>
+                  {categories.map((category) => (
+                    <SelectItem
+                      key={category.id}
+                      value={category.id.toString()}
+                    >
+                      {category.name}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -197,6 +243,8 @@ export function AddSubcategoryButton() {
               <Input
                 id="name"
                 placeholder="Subcategory name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 className="bg-zinc-800 border-zinc-700 text-zinc-200 placeholder:text-zinc-500 focus-visible:ring-yellow-400"
               />
             </div>
@@ -207,6 +255,8 @@ export function AddSubcategoryButton() {
               <Textarea
                 id="description"
                 placeholder="Subcategory description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
                 className="bg-zinc-800 border-zinc-700 text-zinc-200 placeholder:text-zinc-500 focus-visible:ring-yellow-400"
               />
             </div>

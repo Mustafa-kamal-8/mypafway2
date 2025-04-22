@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Edit, Search, Trash } from "lucide-react";
 
@@ -22,6 +22,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/src/components/ui/pagination";
+import { getProducts } from "../api/products";
 
 // Sample data
 const products = [
@@ -147,6 +148,8 @@ const products = [
 
 export function ProductsList() {
   const [searchTerm, setSearchTerm] = useState("");
+
+
 
   const filteredProducts = products.filter(
     (product) =>

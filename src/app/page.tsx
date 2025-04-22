@@ -7,6 +7,7 @@ import Navbar from "@/src/components/navbar";
 import Footer from "@/src/components/footer";
 import CategorySection from "@/src/components/category-section";
 import { useRouter } from "next/navigation";
+import { getProducts } from "../api/products";
 
 export default function Home() {
   const [navbarBg, setNavbarBg] = useState("bg-gray-200/30");
@@ -26,6 +27,19 @@ export default function Home() {
   const handleClick = () => {
     router.push("/about");
   };
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await getProducts({ search: "" });
+        console.log("Fetched products:", response); // ✅ No `.data` here
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   return (
     <main className="flex min-h-screen flex-col">

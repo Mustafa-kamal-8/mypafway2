@@ -70,6 +70,7 @@ function getSQLQuery(body: any) {
 }
 
 function getKey(method: HttpMethod, url: string, options: RequestOptions): string {
+  console.log(_DATABASE)
   if (!local_host) throw new Error("local_host is not defined");
 
   const _url = local_host + url;

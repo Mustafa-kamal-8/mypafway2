@@ -1,10 +1,11 @@
-"use client"; // 👈 Add this line
+"use client"; // 👈 Required for client-side logic
 
 import type React from "react";
 import { useState } from "react";
 import { DashboardSidebar } from "@/src/components/dashboard-sidebar";
 import { ThemeProvider } from "@/src/components/theme-provider";
 import { cn } from "@/src/lib/utils";
+import ToasterProvider from "@/src/ToasterProvider"; // 👈 Import it here
 
 export default function DashboardLayout({
   children,
@@ -29,6 +30,9 @@ export default function DashboardLayout({
           {children}
         </main>
       </div>
+
+      {/* ✅ Toast Notifications */}
+      <ToasterProvider />
     </ThemeProvider>
   );
 }

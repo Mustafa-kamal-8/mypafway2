@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Check, Plus, X } from "lucide-react";
 
 import { Button } from "@/src/components/ui/button";
@@ -27,10 +27,23 @@ import {
 import { Textarea } from "@/src/components/ui/textarea";
 import ReactCrop, { type Crop } from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
+import { getCategories, getSubCategories } from "../api/categories";
+import { uploadProducts } from "../api/products";
+
+interface categories {
+  id: number;
+  name: string;
+  image: string;
+}
+interface subcategories {
+  id: number;
+  name: string;
+  image: string;
+}
 
 export function AddProductButton() {
   const [open, setOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState("");
+
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
   const [crop, setCrop] = useState<Crop>({
@@ -39,12 +52,20 @@ export function AddProductButton() {
     height: 80,
     x: 10,
     y: 10,
-    aspect: 4 / 3, // Default aspect ratio for product images
+    aspect: 4 / 3,
   });
   const [completedCrop, setCompletedCrop] = useState<Crop | null>(null);
   const [croppedImageUrl, setCroppedImageUrl] = useState<string | null>(null);
   const imageRef = useRef<HTMLImageElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [categories, setCategories] = useState<categories[]>([]);
+  const [subCategories, setSubCategories] = useState<subcategories[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [price, setPrice] = useState("");
+  const [selectedSubCategoryId, setSelectedSubCategoryId] =
+    useState<string>("");
+  const [description, setDescription] = useState<string>("");
+  const [name, setName] = useState<string>("");
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -171,12 +192,65 @@ export function AddProductButton() {
     ],
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Handle form submission
-    setOpen(false);
-  };
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await getCategories({ search: "" });
+        console.log("Fetched categories:", response);
+        setCategories(response.result || []);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
 
+    fetchCategories();
+  }, []);
+
+  console.log("categories are ", categories);
+
+  useEffect(() => {
+    if (!selectedCategory || typeof window === "undefined") return;
+
+    const fetchSubCategories = async () => {
+      try {
+        const response = await getSubCategories({
+          search: `category:${selectedCategory}`,
+        });
+        console.log("Fetched subcategories:", response);
+        setSubCategories(response.result || []);
+      } catch (error) {
+        console.error("Error fetching subcategories:", error);
+      }
+    };
+
+    fetchSubCategories();
+  }, [selectedCategory]);
+
+  console.log("subCategories are ", subCategories);
+
+  console.log(selectedSubCategoryId);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const formData = {
+      category: selectedCategory,
+      sub_category: selectedSubCategoryId,
+      name,
+      price,
+      description,
+      image_link: imageFile,
+    };
+    try {
+      console.log("Sending payload to backend:", formData);
+      await uploadProducts(formData);
+      console.log("Products Submitted Successfully");
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setOpen(false);
+    }
+  };
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -201,6 +275,8 @@ export function AddProductButton() {
                 <Input
                   id="name"
                   placeholder="Product name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                   className="bg-zinc-800 border-zinc-700 text-zinc-200 placeholder:text-zinc-500 focus-visible:ring-yellow-400"
                 />
               </div>
@@ -211,6 +287,8 @@ export function AddProductButton() {
                 <Input
                   id="price"
                   type="number"
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
                   placeholder="0.00"
                   className="bg-zinc-800 border-zinc-700 text-zinc-200 placeholder:text-zinc-500 focus-visible:ring-yellow-400"
                 />
@@ -230,49 +308,44 @@ export function AddProductButton() {
                     <SelectValue placeholder="Select a category" />
                   </SelectTrigger>
                   <SelectContent className="bg-zinc-800 border-zinc-700 text-zinc-200">
-                    <SelectItem value="ac-repair">
-                      AC & Appliances Repair
-                    </SelectItem>
-                    <SelectItem value="cleaning">Cleaning Services</SelectItem>
-                    <SelectItem value="handyman">
-                      Electrician, Plumber, Carpenter & Painter
-                    </SelectItem>
-                    <SelectItem value="salon">Unisex Salon</SelectItem>
-                    <SelectItem value="pest-control">
-                      Pest Control Service
-                    </SelectItem>
+                    {categories.map((category) => (
+                      <SelectItem
+                        key={category.id}
+                        value={category.id.toString()}
+                      >
+                        {category.name}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
+
               <div className="grid gap-2">
-                <Label htmlFor="subcategory" className="text-zinc-200">
-                  Subcategory
+                <Label htmlFor="subCategory" className="text-zinc-200">
+                  Sub Category
                 </Label>
-                <Select disabled={!selectedCategory}>
+                <Select onValueChange={setSelectedSubCategoryId}>
                   <SelectTrigger
-                    id="subcategory"
+                    id="subCategory"
                     className="bg-zinc-800 border-zinc-700 text-zinc-200 focus:ring-yellow-400"
                   >
-                    <SelectValue
-                      placeholder={
-                        selectedCategory
-                          ? "Select a subcategory"
-                          : "Select a category first"
-                      }
-                    />
+                    <SelectValue placeholder="Select a Sub Category" />
                   </SelectTrigger>
                   <SelectContent className="bg-zinc-800 border-zinc-700 text-zinc-200">
-                    {selectedCategory &&
-                      subcategoriesByCategory[selectedCategory]?.map(
-                        (subcategory) => (
-                          <SelectItem
-                            key={subcategory.value}
-                            value={subcategory.value}
-                          >
-                            {subcategory.label}
-                          </SelectItem>
-                        )
-                      )}
+                    {subCategories.length > 0 ? (
+                      subCategories.map((category) => (
+                        <SelectItem
+                          key={category.id}
+                          value={category.id.toString()}
+                        >
+                          {category.name}
+                        </SelectItem>
+                      ))
+                    ) : (
+                      <div className="px-4 py-2 text-sm text-yellow-400">
+                        No subcategories found
+                      </div>
+                    )}
                   </SelectContent>
                 </Select>
               </div>
@@ -285,6 +358,8 @@ export function AddProductButton() {
               <Textarea
                 id="description"
                 placeholder="Product description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
                 className="bg-zinc-800 border-zinc-700 text-zinc-200 placeholder:text-zinc-500 focus-visible:ring-yellow-400"
               />
             </div>

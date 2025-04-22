@@ -6,7 +6,7 @@ const hostname = baseUrl.replace("https://", "");
 const basicAuth = process.env.NEXT_PUBLIC_AUTH;
 
 // const tokensPath = "./tokens.json";
-const tokensPath = "services/tokens.json";
+const tokensPath = "src/services/tokens.json";
 
 const CORS_HEADERS = {
   headers: {
