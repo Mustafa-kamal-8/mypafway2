@@ -23,7 +23,7 @@ console.log("response is",response)
 
 export async function uploadSubCategories(body) {
     console.log("here??")
-    const response = await Api.post("/subcategories", {
+    const response = await Api.post("/categories", {
         body,
     })
     console.log(response)
@@ -31,7 +31,7 @@ export async function uploadSubCategories(body) {
 }
 
 export async function getSubCategories({ search }) {
-    const response = await Api.get("/subcategories", {
+    const response = await Api.get("/categories", {
         search: search,
     })
 

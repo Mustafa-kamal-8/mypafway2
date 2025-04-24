@@ -33,6 +33,7 @@ import {
 } from "@/src/components/ui/form";
 import { uploadCategories } from "../api/categories";
 import toast from "react-hot-toast";
+import { compressImage, uploadImage } from "../lib/image";
 
 const categorySchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters" }),
@@ -78,19 +79,17 @@ export function AddCategoryButton() {
       const file = e.target.files[0];
       setImageFile(file);
 
-      // Create a preview URL for the selected image
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreviewUrl(reader.result as string);
-        setCroppedImageUrl(null); // Reset cropped image when new image is selected
+        setCroppedImageUrl(null);
 
-        // Set appropriate aspect ratio based on file type/name
         if (file.name.includes("banner")) {
-          setCrop((prev) => ({ ...prev, aspect: 16 / 9 })); // Rectangle aspect ratio for banners
+          setCrop((prev) => ({ ...prev, aspect: 16 / 9 }));
         } else if (file.name.includes("thumbnail")) {
-          setCrop((prev) => ({ ...prev, aspect: 1 })); // Square aspect ratio for thumbnails
+          setCrop((prev) => ({ ...prev, aspect: 1 }));
         } else {
-          setCrop((prev) => ({ ...prev, aspect: 4 / 3 })); // Default product image ratio
+          setCrop((prev) => ({ ...prev, aspect: 4 / 3 }));
         }
       };
       reader.readAsDataURL(file);
@@ -129,16 +128,13 @@ export function AddCategoryButton() {
       completedCrop.height
     );
 
-    // Convert canvas to blob
     canvas.toBlob(
       (blob) => {
         if (!blob) return;
 
-        // Create a new URL for the cropped image
         const croppedImageUrl = URL.createObjectURL(blob);
         setCroppedImageUrl(croppedImageUrl);
 
-        // Create a new File object from the blob for form submission
         const croppedFile = new File(
           [blob],
           imageFile?.name || "cropped-image.jpg",
@@ -158,6 +154,8 @@ export function AddCategoryButton() {
   const saveWithoutCrop = () => {
     // Use the original image file without cropping
     setCroppedImageUrl(imagePreviewUrl);
+    console.log("image file is", imageFile);
+    console.log("crop image fie is", croppedImageUrl);
   };
 
   const cancelCrop = () => {
@@ -170,15 +168,21 @@ export function AddCategoryButton() {
   };
 
   const onSubmit = async (data: CategoryFormValues) => {
+    if (!imageFile) {
+      toast.error("Image file not found");
+      return;
+    }
     console.log("Form data:", data);
 
-    const payload = {
-      name: data.name,
-      image: croppedImageUrl || data.imageUrl, // Use cropped image if available
-      description: data.description,
-    };
-
     try {
+      const compressedImage = await compressImage(imageFile);
+      const url = await uploadImage(compressedImage, "categories");
+      const payload = {
+        name: data.name,
+        image: url,
+        description: data.description,
+      };
+
       console.log("Sending payload to backend:", payload);
       await uploadCategories(payload);
       toast.success("Categories submitted successfully!");
@@ -188,16 +192,6 @@ export function AddCategoryButton() {
     } finally {
       setOpen(false); // Close the dialog
     }
-  };
-
-  const compressImage = async (file: File): Promise<File> => {
-    // Simple pass-through for now - implement actual compression if needed
-    return file;
-  };
-
-  const uploadImage = async (file: File, folder: string): Promise<string> => {
-    // Placeholder for actual upload implementation
-    return URL.createObjectURL(file);
   };
 
   const onUpload = (url: string) => {

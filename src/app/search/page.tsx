@@ -24,16 +24,27 @@ import {
 } from "@/src/components/ui/table";
 import { getProducts } from "@/src/api/products";
 
+import { useSearchParams } from "next/navigation";
+
 interface Product {
   id: number;
   name: string;
   category: string;
   sub_category: string;
   price: string;
-  image?: string;
+  image_link?: string;
   program_name?: string;
   description?: string;
   details?: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+interface Category {
+  id: number;
+  name: string;
+  description?: string;
+  image?: string;
   created_at?: string;
   updated_at?: string;
 }
@@ -44,12 +55,23 @@ export default function SearchPage() {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { addToCart } = useCartStore();
+  const searchParams = useSearchParams();
+
+  const img = process.env.NEXT_PUBLIC_IMAGE_URL;
+
+  const categoryId = searchParams.get("category");
+  const subcategoryId = searchParams.get("subcategory");
+
+  console.log("category is", categoryId);
+  console.log("sub-categoryid is", subcategoryId);
 
   useEffect(() => {
     const fetchProducts = async () => {
       setIsLoading(true);
       try {
-        const response = await getProducts({ search: "" });
+        const response = await getProducts({
+          search: `sub_category:${subcategoryId}`,
+        });
         console.log("Fetched products:", response);
         setProducts(response.result || []);
       } catch (error) {
@@ -109,163 +131,9 @@ export default function SearchPage() {
               </div>
             )}
 
-            <div className="flex flex-col gap-8">
-              {/* Compare Section */}
-              <div className="bg-white p-6 rounded-lg shadow-sm mb-8">
-                <div className="flex justify-between items-center border-b border-yellow-400 pb-2 mb-4">
-                  <h3 className="text-2xl font-bold text-yellow-500">
-                    Compare
-                  </h3>
-                  <span className="text-gray-600">
-                    {compareItems.length}/4 items
-                  </span>
-                </div>
-
-                {compareItems.length === 0 ? (
-                  <p className="text-gray-600 mb-4">
-                    Add items to start comparing.
-                  </p>
-                ) : (
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                    {compareItems.map((itemId) => {
-                      const product = products.find((p) => p.id === itemId);
-                      return product ? (
-                        <div key={itemId} className="relative">
-                          <img
-                            src={product.image || "/placeholder.svg"}
-                            alt={product.program_name}
-                            className="w-full h-20 object-cover rounded"
-                          />
-                          <button
-                            onClick={() => toggleCompareItem(itemId)}
-                            className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
-                          >
-                            <X className="w-4 h-4" />
-                          </button>
-                          <p className="text-sm mt-1 truncate">
-                            {product.name}
-                          </p>
-                        </div>
-                      ) : null;
-                    })}
-                  </div>
-                )}
-
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button
-                      className="w-full bg-yellow-400 hover:bg-yellow-500 text-black"
-                      disabled={compareItems.length < 2}
-                    >
-                      Compare Now
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="max-w-4xl">
-                    <DialogHeader>
-                      <DialogTitle>Product Comparison</DialogTitle>
-                    </DialogHeader>
-                    <div className="max-h-[70vh] overflow-auto">
-                      <Table>
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead className="w-[200px]">Feature</TableHead>
-                            {compareItems.map((itemId) => {
-                              const product = products.find(
-                                (p) => p.id === itemId
-                              );
-                              return product ? (
-                                <TableHead key={itemId}>
-                                  {product.name}
-                                </TableHead>
-                              ) : null;
-                            })}
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          <TableRow>
-                            <TableCell className="font-medium">Image</TableCell>
-                            {compareItems.map((itemId) => {
-                              const product = products.find(
-                                (p) => p.id === itemId
-                              );
-                              return product ? (
-                                <TableCell key={itemId}>
-                                  <img
-                                    src={product.image || "/placeholder.svg"}
-                                    alt={product.name}
-                                    className="w-24 h-24 object-cover rounded"
-                                  />
-                                </TableCell>
-                              ) : null;
-                            })}
-                          </TableRow>
-                          <TableRow>
-                            <TableCell className="font-medium">Price</TableCell>
-                            {compareItems.map((itemId) => {
-                              const product = products.find(
-                                (p) => p.id === itemId
-                              );
-                              return product ? (
-                                <TableCell key={itemId}>
-                                  ${product.price}
-                                </TableCell>
-                              ) : null;
-                            })}
-                          </TableRow>
-                          <TableRow>
-                            <TableCell className="font-medium">
-                              Category
-                            </TableCell>
-                            {compareItems.map((itemId) => {
-                              const product = products.find(
-                                (p) => p.id === itemId
-                              );
-                              return product ? (
-                                <TableCell key={itemId}>
-                                  {product.category}
-                                </TableCell>
-                              ) : null;
-                            })}
-                          </TableRow>
-                          <TableRow>
-                            <TableCell className="font-medium">
-                              Sub Category
-                            </TableCell>
-                            {compareItems.map((itemId) => {
-                              const product = products.find(
-                                (p) => p.id === itemId
-                              );
-                              return product ? (
-                                <TableCell key={itemId}>
-                                  {product.sub_category}
-                                </TableCell>
-                              ) : null;
-                            })}
-                          </TableRow>
-                          <TableRow>
-                            <TableCell className="font-medium">
-                              Details
-                            </TableCell>
-                            {compareItems.map((itemId) => {
-                              const product = products.find(
-                                (p) => p.id === itemId
-                              );
-                              return product ? (
-                                <TableCell key={itemId}>
-                                  {product.details || "N/A"}
-                                </TableCell>
-                              ) : null;
-                            })}
-                          </TableRow>
-                        </TableBody>
-                      </Table>
-                    </div>
-                  </DialogContent>
-                </Dialog>
-              </div>
-
-              {/* Products Grid */}
-              <div className="max-w-7xl mx-auto">
+            <div className="flex flex-col lg:flex-row gap-8">
+              {/* Products Grid - Takes more space */}
+              <div className="lg:w-[70%]">
                 {isLoading ? (
                   <div className="flex justify-center items-center py-20">
                     <Loader2 className="h-12 w-12 text-yellow-500 animate-spin" />
@@ -274,7 +142,7 @@ export default function SearchPage() {
                     </span>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
                     {products.map((product) => (
                       <div
                         key={product.id}
@@ -282,14 +150,15 @@ export default function SearchPage() {
                       >
                         <div className="relative">
                           <img
-                            src={product.image || "/placeholder.svg"}
+                            src={
+                              product.image_link
+                                ? `${img}${product.image_link}`
+                                : "/placeholder.svg"
+                            }
                             alt={product.name}
                             className="w-full h-40 object-cover"
                           />
                           <div className="absolute top-2 right-2">
-                            <span className="text-sm text-gray-700 p-2">
-                              Compare
-                            </span>
                             <Checkbox
                               id={`compare-${product.id}`}
                               checked={compareItems.includes(product.id)}
@@ -305,7 +174,7 @@ export default function SearchPage() {
                                 !compareItems.includes(product.id) &&
                                 compareItems.length >= 4
                               }
-                              className="bg-white"
+                              className="bg-white size-6"
                             />
                             <label
                               htmlFor={`compare-${product.id}`}
@@ -317,7 +186,7 @@ export default function SearchPage() {
                         </div>
                         <div className="p-4">
                           <h3 className="text-lg font-semibold text-gray-900">
-                            {product.program_name}
+                            {product.name || "Unknown"}
                           </h3>
                           <p className="text-gray-600 mt-1">${product.price}</p>
                           <div className="mt-4 flex space-x-2">
@@ -348,10 +217,9 @@ export default function SearchPage() {
                                   <div>
                                     <img
                                       src={
-                                        selectedProduct?.image ||
-                                        "/placeholder.svg" ||
-                                        "/placeholder.svg" ||
-                                        "/placeholder.svg"
+                                        selectedProduct?.image_link
+                                          ? `${img}${selectedProduct.image_link}`
+                                          : "/placeholder.svg"
                                       }
                                       alt={selectedProduct?.program_name}
                                       className="w-full h-auto object-cover rounded-lg"
@@ -366,25 +234,25 @@ export default function SearchPage() {
                                         <span className="font-medium w-1/3">
                                           Category:
                                         </span>
-                                        <span className="w-2/3">
-                                          {selectedProduct?.category}
+                                        <span className="w-2/3 ml-2">
+                                          {selectedProduct?.category?.name}
                                         </span>
                                       </div>
-                                      <div className="flex">
+                                      {/* <div className="flex">
                                         <span className="font-medium w-1/3">
                                           Sub Category:
                                         </span>
                                         <span className="w-2/3">
                                           {selectedProduct?.sub_category}
                                         </span>
-                                      </div>
-                                      {selectedProduct?.details && (
+                                      </div> */}
+                                      {selectedProduct?.description && (
                                         <div className="flex">
                                           <span className="font-medium w-1/3">
                                             Details:
                                           </span>
                                           <span className="w-2/3">
-                                            {selectedProduct.details}
+                                            {selectedProduct.description}
                                           </span>
                                         </div>
                                       )}
@@ -414,6 +282,179 @@ export default function SearchPage() {
                     ))}
                   </div>
                 )}
+              </div>
+
+              {/* Compare Section - Right sidebar */}
+              <div className="lg:w-[30%]">
+                <div className="bg-white p-6 rounded-lg shadow-sm sticky top-44">
+                  <div className="flex justify-between items-center border-b border-yellow-400 pb-2 mb-4">
+                    <h3 className="text-2xl font-bold text-yellow-500">
+                      Compare
+                    </h3>
+                    <span className="text-gray-600">
+                      {compareItems.length}/4 items
+                    </span>
+                  </div>
+
+                  {compareItems.length === 0 ? (
+                    <p className="text-gray-600 mb-4">
+                      Add items to start comparing.
+                    </p>
+                  ) : (
+                    <div className="flex flex-col gap-4 mb-4">
+                      {compareItems.map((itemId) => {
+                        const product = products.find((p) => p.id === itemId);
+                        return product ? (
+                          <div
+                            key={itemId}
+                            className="relative flex items-center gap-2 p-2 border rounded"
+                          >
+                            <img
+                              src={
+                                product.image_link
+                                  ? `${img}${product.image_link}`
+                                  : "/placeholder.svg"
+                              }
+                              alt={product.name || "placeholder"}
+                              className="w-16 h-16 object-cover rounded"
+                            />
+                            <p className="text-sm flex-1 truncate">
+                              {product.name}
+                            </p>
+                            <button
+                              onClick={() => toggleCompareItem(itemId)}
+                              className="bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          </div>
+                        ) : null;
+                      })}
+                    </div>
+                  )}
+
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button
+                        className="w-full bg-yellow-400 hover:bg-yellow-500 text-black"
+                        disabled={compareItems.length < 2}
+                      >
+                        Compare Now
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-4xl">
+                      <DialogHeader>
+                        <DialogTitle>Product Comparison</DialogTitle>
+                      </DialogHeader>
+                      <div className="max-h-[70vh] overflow-auto">
+                        <Table>
+                          <TableHeader>
+                            <TableRow>
+                              <TableHead className="w-[200px]">
+                                Feature
+                              </TableHead>
+                              {compareItems.map((itemId) => {
+                                const product = products.find(
+                                  (p) => p.id === itemId
+                                );
+                                return product ? (
+                                  <TableHead key={itemId}>
+                                    {product.name}
+                                  </TableHead>
+                                ) : null;
+                              })}
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            <TableRow>
+                              <TableCell className="font-medium">
+                                Image
+                              </TableCell>
+                              {compareItems.map((itemId) => {
+                                const product = products.find(
+                                  (p) => p.id === itemId
+                                );
+                                return product ? (
+                                  <TableCell key={itemId}>
+                                    <img
+                                      src={
+                                        product.image_link
+                                          ? `${img}${product.image_link}`
+                                          : "/placeholder.svg"
+                                      }
+                                      alt={product.name || "placeholder"}
+                                      className="w-24 h-24 object-cover rounded"
+                                    />
+                                  </TableCell>
+                                ) : null;
+                              })}
+                            </TableRow>
+                            <TableRow>
+                              <TableCell className="font-medium">
+                                Price
+                              </TableCell>
+                              {compareItems.map((itemId) => {
+                                const product = products.find(
+                                  (p) => p.id === itemId
+                                );
+                                return product ? (
+                                  <TableCell key={itemId}>
+                                    ${product.price}
+                                  </TableCell>
+                                ) : null;
+                              })}
+                            </TableRow>
+                            <TableRow>
+                              <TableCell className="font-medium">
+                                Category
+                              </TableCell>
+                              {compareItems.map((itemId) => {
+                                const product = products.find(
+                                  (p) => p.id === itemId
+                                );
+                                return product ? (
+                                  <TableCell key={itemId}>
+                                    {product.category.name}
+                                  </TableCell>
+                                ) : null;
+                              })}
+                            </TableRow>
+                            {/* <TableRow>
+                              <TableCell className="font-medium">
+                                Sub Category
+                              </TableCell>
+                              {compareItems.map((itemId) => {
+                                const product = products.find(
+                                  (p) => p.id === itemId
+                                );
+                                return product ? (
+                                  <TableCell key={itemId}>
+                                    {product.sub_category}
+                                  </TableCell>
+                                ) : null;
+                              })}
+                            </TableRow> */}
+                            <TableRow>
+                              <TableCell className="font-medium">
+                                Details
+                              </TableCell>
+                              {compareItems.map((itemId) => {
+                                const product = products.find(
+                                  (p) => p.id === itemId
+                                );
+                                return product ? (
+                                  <TableCell key={itemId}>
+                                    {product.description || "N/A"}
+                                  </TableCell>
+                                ) : null;
+                              })}
+                            </TableRow>
+                          </TableBody>
+                        </Table>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </div>
               </div>
             </div>
           </div>

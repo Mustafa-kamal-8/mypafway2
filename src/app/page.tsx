@@ -5,9 +5,10 @@ import Image from "next/image";
 import { Button } from "@/src/components/ui/button";
 import Navbar from "@/src/components/navbar";
 import Footer from "@/src/components/footer";
-import CategorySection from "@/src/components/category-section";
+
 import { useRouter } from "next/navigation";
 import { getProducts } from "../api/products";
+import CategorySection from "@/src/components/category-section";
 
 export default function Home() {
   const [navbarBg, setNavbarBg] = useState("bg-gray-200/30");

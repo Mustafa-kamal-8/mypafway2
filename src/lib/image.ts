@@ -26,11 +26,11 @@ export async function uploadImage(image: File, folderName: string) {
 	formData.append("folder", `mypafway/${folderName}`);
 	formData.append("image", file);
 
-	const { data } = await axios.post(process.env.NEXT_PUBLIC_FILE_UPLOAD_URL!, formData, {
+	const { data } = await axios.post(process.env.NEXT_PUBLIC_IMAGE_UPLOAD_URL!, formData, {
 		headers: {
 			"Content-Type": "multipart/form-data",
-			username: process.env.NEXT_PUBLIC_FILE_UPLOAD_ID,
-			password: process.env.NEXT_PUBLIC_FILE_UPLOAD_PASS,
+			username: process.env.NEXT_PUBLIC_UPLOAD_ID,
+			password: process.env.NEXT_PUBLIC_UPLOAD_PASS,
 		},
 	});
 

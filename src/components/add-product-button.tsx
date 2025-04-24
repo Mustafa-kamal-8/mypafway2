@@ -29,6 +29,8 @@ import ReactCrop, { type Crop } from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 import { getCategories, getSubCategories } from "../api/categories";
 import { uploadProducts } from "../api/products";
+import toast from "react-hot-toast";
+import { compressImage, uploadImage } from "../lib/image";
 
 interface categories {
   id: number;
@@ -214,7 +216,7 @@ export function AddProductButton() {
     const fetchSubCategories = async () => {
       try {
         const response = await getSubCategories({
-          search: `category:${selectedCategory}`,
+          search: `parent_id:${selectedCategory}`,
         });
         console.log("Fetched subcategories:", response);
         setSubCategories(response.result || []);
@@ -232,21 +234,28 @@ export function AddProductButton() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    const formData = {
-      category: selectedCategory,
-      sub_category: selectedSubCategoryId,
-      name,
-      price,
-      description,
-      image_link: imageFile,
-    };
+    if (!imageFile) {
+      toast.error("Image file not found");
+      return;
+    }
+ 
     try {
+        const compressedImage = await compressImage(imageFile);
+            const url = await uploadImage(compressedImage, "categories");
+      const formData = {
+        category: selectedCategory,
+        sub_category: selectedSubCategoryId,
+        name,
+        price,
+        description,
+        image_link: url,
+      };
       console.log("Sending payload to backend:", formData);
       await uploadProducts(formData);
-      console.log("Products Submitted Successfully");
+      toast.success("Products submitted successfully!");
     } catch (error) {
       console.log(error);
+      toast.error("Failed to submit Products. Please try again.");
     } finally {
       setOpen(false);
     }

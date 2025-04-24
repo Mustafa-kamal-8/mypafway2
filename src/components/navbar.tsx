@@ -50,8 +50,8 @@ export default function Navbar() {
       </div>
 
       {/* Main Navbar - Fully Transparent */}
-      <div className="bg-white/5  shadow-lg">
-        <div className="container mx-auto px-4 flex items-center justify-between py-4">
+      <div className="bg-white/5  shadow-lg ">
+        <div className="container mx-auto px-4 flex items-center justify-between py-6">
           {/* Mobile menu button */}
           <div className="lg:hidden">
             <Sheet>
@@ -97,36 +97,35 @@ export default function Navbar() {
           </Link>
           {/* Search bar */}
           <div className="hidden md:flex flex-col flex-1 max-w-xl mx-4">
-  <div className="relative w-full">
-    <Input
-      type="search"
-      placeholder="Auto Parts Keyword Search"
-      value={searchQuery}
-      onChange={(e) => setSearchQuery(e.target.value)}
-      onKeyPress={(e) => e.key === "Enter" && handleSearch()}
-      className="w-full bg-white text-black pr-10"
-    />
-    <div className="absolute inset-y-0 right-0 flex items-center">
-      <Button
-        type="button"
-        onClick={handleSearch}
-        variant="ghost"
-        className="h-full px-3 bg-gray-200 rounded-l-none"
-      >
-        <Search className="h-6 w-6 text-gray-600" />
-      </Button>
-    </div>
-  </div>
-  <div className="text-xs text-right mt-1">
-    <button
-      onClick={() => setAdvancedSearchOpen(true)}
-      className="text-white hover:underline"
-    >
-      Advanced Search
-    </button>
-  </div>
-</div>
-
+            <div className="relative w-full">
+              <Input
+                type="search"
+                placeholder="Auto Parts Keyword Search"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyPress={(e) => e.key === "Enter" && handleSearch()}
+                className="w-full bg-white text-black pr-10"
+              />
+              <div className="absolute inset-y-0 right-0 flex items-center">
+                <Button
+                  type="button"
+                  onClick={handleSearch}
+                  variant="ghost"
+                  className="h-full px-3 bg-gray-200 rounded-l-none"
+                >
+                  <Search className="h-6 w-6 text-gray-600" />
+                </Button>
+              </div>
+            </div>
+            <div className="text-xs text-right mt-1.5 -mb-1.5 h-0">
+              <button
+                onClick={() => setAdvancedSearchOpen(true)}
+                className="text-white hover:underline"
+              >
+                Advanced Search
+              </button>
+            </div>
+          </div>
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center space-x-8">
@@ -160,9 +159,9 @@ export default function Navbar() {
           <div className="relative ml-4">
             <Link href="/cart">
               <Button
-                variant="ghost"
+                variant="outline"
                 size="icon"
-                className="text-white relative"
+                className="text-black relative hover:!scale-110"
               >
                 <ShoppingCart className="h-20 w-20" />
                 {cartCount > 0 && (

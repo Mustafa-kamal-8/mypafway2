@@ -3,6 +3,7 @@ import Api from "@/src/services/Api"
 export async function getProducts({ search }) {
     const response = await Api.get("/products", {
         search: search,
+        joins:"category:categories"
     })
 
 console.log("response is",response)

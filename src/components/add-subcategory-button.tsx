@@ -28,6 +28,8 @@ import {
 } from "@/src/components/ui/select";
 import { Textarea } from "@/src/components/ui/textarea";
 import { getCategories, uploadSubCategories } from "../api/categories";
+import toast from "react-hot-toast";
+import { compressImage, uploadImage } from "../lib/image";
 
 interface categories {
   id: number;
@@ -173,26 +175,31 @@ export function AddSubcategoryButton() {
     console.log("Selected category ID:", value);
   };
 
-  const handleSubmit = async(e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    const formData = {
-      category: selectedCategoryId,
-      name,
-      description,
-      image: imageFile,
-    };
-    try{
-        console.log("Sending payload to backend:", formData);
-      await uploadSubCategories(formData);
-      console.log("Sub Categories Submitted Successfully");
-    }catch(error){
-      console.log(error)
-    }finally{
-      setOpen(false);
+    if (!imageFile) {
+      toast.error("Image file not found");
+      return;
     }
 
-   
+    try {
+      const compressedImage = await compressImage(imageFile);
+      const url = await uploadImage(compressedImage, "categories");
+      const formData = {
+        parent_id: selectedCategoryId,
+        name,
+        description,
+        image: url,
+      };
+      console.log("Sending payload to backend:", formData);
+      await uploadSubCategories(formData);
+      toast.success("Sub Categories submitted successfully!");
+    } catch (error) {
+      console.log(error);
+      toast.error("Failed to submit Sub Category. Please try again.");
+    } finally {
+      setOpen(false);
+    }
   };
 
   return (
