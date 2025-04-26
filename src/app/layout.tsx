@@ -4,6 +4,8 @@ import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/src/components/theme-provider";
 import { Toaster } from "react-hot-toast";
 import Client from "./client";
+import StoreProvider from "../store/StoreProvider";
+import ToasterProvider from "@/src/ToasterProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -27,15 +29,17 @@ export default function RootLayout({
       </head>
       <body className={inter.className} suppressHydrationWarning>
         <Client>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="light"
-            enableSystem
-            disableTransitionOnChange
-          >
-            {children}
-            <Toaster position="top-right" /> {/* 👈 add Toaster here */}
-          </ThemeProvider>
+          <StoreProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="light"
+              enableSystem
+              disableTransitionOnChange
+            >
+              {children}
+              <ToasterProvider />
+            </ThemeProvider>
+          </StoreProvider>
         </Client>
       </body>
     </html>

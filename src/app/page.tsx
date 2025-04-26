@@ -9,9 +9,15 @@ import Footer from "@/src/components/footer";
 import { useRouter } from "next/navigation";
 import { getProducts } from "../api/products";
 import CategorySection from "@/src/components/category-section";
+import { getCartData } from "../api/cart";
+import { useCartStore } from "../store/cartStore";
 
 export default function Home() {
   const [navbarBg, setNavbarBg] = useState("bg-gray-200/30");
+  const { setCartData } = useCartStore();
+
+
+
   const router = useRouter();
   useEffect(() => {
     const handleScroll = () => {
@@ -40,6 +46,30 @@ export default function Home() {
     };
 
     fetchProducts();
+  }, []);
+
+  useEffect(() => {
+    const userData = localStorage.getItem("currentUser");
+    const user = userData ? JSON.parse(userData) : null;
+
+    if (!user || !user.id) {
+      console.error("User not found in localStorage");
+      return;
+    }
+
+    const fetchCartData = async () => {
+      try {
+        const response = await getCartData({
+          search: `user:${user.id}`,
+        });
+        console.log("Fetched subcategories:", response);
+        setCartData(response.result || []);
+      } catch (error) {
+        console.error("Error fetching subcategories:", error);
+      }
+    };
+
+    fetchCartData();
   }, []);
 
   return (

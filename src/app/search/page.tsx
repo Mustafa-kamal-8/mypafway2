@@ -23,8 +23,10 @@ import {
   TableRow,
 } from "@/src/components/ui/table";
 import { getProducts } from "@/src/api/products";
-
+import { uploadCartData } from "@/src/api/cart";
 import { useSearchParams } from "next/navigation";
+import Stores from "@/src/store/stores";
+import toast from "react-hot-toast";
 
 interface Product {
   id: number;
@@ -56,6 +58,7 @@ export default function SearchPage() {
   const [isLoading, setIsLoading] = useState(true);
   const { addToCart } = useCartStore();
   const searchParams = useSearchParams();
+  const { cartItems, setCartItems } = Stores();
 
   const img = process.env.NEXT_PUBLIC_IMAGE_URL;
 
@@ -84,12 +87,62 @@ export default function SearchPage() {
     fetchProducts();
   }, []);
 
-  const handleAddToCart = (product: Product) => {
-    const productWithQuantity = {
-      ...product,
-      quantity: 1,
-    };
-    // addToCart(productWithQuantity);
+  // const handleAddToCart = async (product: Product) => {
+  //   console.log("Product ID:", product.id);
+  //   setCartItems([...cartItems, product]);
+  //   const storedCart = localStorage.getItem("cartItems");
+  //   const parsedCart: Product[] = storedCart ? JSON.parse(storedCart) : [];
+
+  //   // Check if the product is already in the cart
+  //   const isProductInCart = parsedCart.some((item) => item.id === product.id);
+
+  //   if (isProductInCart) {
+  //     console.error("Item is already present in the cart");
+  //     return;
+  //   } else {
+  //     const updatedCart = [...parsedCart, product];
+  //     localStorage.setItem("cartItems", JSON.stringify(updatedCart));
+  //     setCartItems(updatedCart); // Update state if needed
+  //     console.log("Product added to cart:", product.id);
+
+  //     const userData = localStorage.getItem("currentUser");
+  //     const user = userData ? JSON.parse(userData) : null;
+
+  //     if (!user || !user.id) {
+  //       console.error("User not found in localStorage");
+  //       return;
+  //     }
+
+  //     const payload = {
+  //       product: product.id,
+  //       user: user.id,
+  //       quantity: 1,
+  //     };
+
+  //     try {
+  //       const response = await uploadCartData(payload);
+  //       console.log("Cart upload response:", response);
+  //     } catch (error) {
+  //       console.error("Error uploading cart data:", error);
+  //     }
+  //   }
+  // };
+
+  const handleAddToCart = async (product: Product) => {
+    const storedCart = localStorage.getItem("cartItems");
+    const parsedCart: Product[] = storedCart ? JSON.parse(storedCart) : [];
+
+    const isProductInCart = parsedCart.some((item) => item.id === product.id);
+
+    if (isProductInCart) {
+      toast.error("Item is already present in the cart");
+      return;
+    }
+    const updatedCart = [...parsedCart, product];
+    localStorage.setItem("cartItems", JSON.stringify(updatedCart));
+    setCartItems(updatedCart);
+    toast.success("Product added to cart");
+    console.log("Product added to cart:", product.id);
   };
 
   // Toggle compare item

@@ -21,7 +21,7 @@ import {
 import { Label } from "@/src/components/ui/label";
 import { Checkbox } from "@/src/components/ui/checkbox";
 import { getUser, loginUser } from "@/src/api/auth";
-import { toast } from "@/src/hooks/use-toast";
+import toast from "react-hot-toast";
 
 const signInSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -61,11 +61,7 @@ export default function SignInPage() {
       });
 
       if (res.err || res.count === 0) {
-        toast({
-          variant: "destructive",
-          title: "Authentication failed",
-          description: "User not found. Please check your credentials.",
-        });
+        toast.error("User Not Found");
         console.log("user not found");
         return;
       }
@@ -74,11 +70,7 @@ export default function SignInPage() {
       console.log("usr is", user);
       const isPasswordCorrect = password === user.password;
       if (!isPasswordCorrect) {
-        toast({
-          variant: "destructive",
-          title: "Authentication failed",
-          description: "Password or User ID is incorrect!",
-        });
+        toast.error("Password or User ID is incorrect!");
         console.log("Password or User ID is incorrect!");
         return;
       }
@@ -88,11 +80,7 @@ export default function SignInPage() {
       const loginRes = await loginUser({ body });
 
       if (loginRes.err) {
-        toast({
-          variant: "destructive",
-          title: "Login failed",
-          description: "There was a problem with your login attempt.",
-        });
+        toast.error("Login Failed");
         console.log(loginRes);
         console.log("login failed");
         return;
@@ -101,6 +89,7 @@ export default function SignInPage() {
       setIsLoggedIn(true);
 
       const currentUser = loginRes.result;
+      localStorage.setItem("currentUser", JSON.stringify(currentUser));
 
       if (currentUser.role === "admin") {
         router.replace("/dashboard");
@@ -108,18 +97,11 @@ export default function SignInPage() {
         router.replace("/");
       }
 
-      toast({
-        title: "Login successful",
-        description: "Welcome back!",
-      });
+      toast.success("Login Successful");
       console.log("login successful");
     } catch (error) {
       console.error("Login error:", error);
-      toast({
-        variant: "destructive",
-        title: "An error occurred",
-        description: "Please try again later.",
-      });
+      toast.error("An Error Occured , Please Try Again Later");
     } finally {
       setIsLoading(false);
     }
@@ -132,7 +114,7 @@ export default function SignInPage() {
         <div className="absolute inset-0 flex items-center justify-center p-10">
           <div className="max-w-md text-center">
             <img
-              src="/placeholder.svg?height=400&width=400"
+              src="/loginimage.jpeg?height=400&width=400"
               alt="Login illustration"
               className="mx-auto mb-8"
             />
