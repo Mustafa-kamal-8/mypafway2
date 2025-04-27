@@ -64,16 +64,46 @@ export default function SearchPage() {
 
   const categoryId = searchParams.get("category");
   const subcategoryId = searchParams.get("subcategory");
+  const query = searchParams.get("query");
+  const year = searchParams.get("year");
+  const make = searchParams.get("make");
+  const model = searchParams.get("model");
+  const category = searchParams.get("categoryId");
 
   console.log("category is", categoryId);
   console.log("sub-categoryid is", subcategoryId);
+  console.log("query is", query);
 
   useEffect(() => {
     const fetchProducts = async () => {
       setIsLoading(true);
+      let searchConditions = [];
+
+      if (subcategoryId) {
+        searchConditions.push(`sub_category:${subcategoryId}`);
+      }
+      if (query) {
+        searchConditions.push(`name:${query}`);
+      }
+      if (year) {
+        searchConditions.push(`year:${year}`);
+      }
+      if (make) {
+        searchConditions.push(`make:${make}`);
+      }
+      if (model) {
+        searchConditions.push(`model:${model}`);
+      }
+      if (category) {
+        searchConditions.push(`category:${category}`);
+      }
+
+      // Join all conditions with a space between them
+      const searchString = searchConditions.join(" "); // Add space between conditions
+
       try {
         const response = await getProducts({
-          search: `sub_category:${subcategoryId}`,
+          search: searchString, // send the string with space-separated search conditions
         });
         console.log("Fetched products:", response);
         setProducts(response.result || []);
@@ -85,7 +115,7 @@ export default function SearchPage() {
     };
 
     fetchProducts();
-  }, []);
+  }, [subcategoryId, query, year, make, model, category]); // Ensure all dependencies are covered
 
   // const handleAddToCart = async (product: Product) => {
   //   console.log("Product ID:", product.id);

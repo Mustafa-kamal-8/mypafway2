@@ -4,64 +4,44 @@ import Navbar from "@/src/components/navbar";
 import Footer from "@/src/components/footer";
 import { Card, CardContent } from "@/src/components/ui/card";
 
-const blogPosts = [
-  {
-    id: 1,
-    title: "How to Choose the Right Oil for Your Vehicle",
-    excerpt:
-      "Understanding the different types of motor oil and how to select the best one for your specific car model and driving conditions.",
-    image: "/placeholder.svg?height=200&width=400",
-    date: "June 15, 2023",
-    author: "Sarah Johnson",
-  },
-  {
-    id: 2,
-    title: "DIY Brake Pad Replacement: A Step-by-Step Guide",
-    excerpt:
-      "Learn how to replace your vehicle's brake pads at home with this comprehensive guide, including tools needed and safety precautions.",
-    image: "/placeholder.svg?height=200&width=400",
-    date: "May 22, 2023",
-    author: "Michael Brown",
-  },
-  {
-    id: 3,
-    title: "Understanding Your Car's Electrical System",
-    excerpt:
-      "A beginner's guide to the components of your vehicle's electrical system and how to diagnose common electrical problems.",
-    image: "/placeholder.svg?height=200&width=400",
-    date: "April 10, 2023",
-    author: "David Wilson",
-  },
-  {
-    id: 4,
-    title: "The Benefits of Upgrading to Performance Parts",
-    excerpt:
-      "Explore how performance parts can enhance your vehicle's power, handling, and efficiency, with recommendations for popular upgrades.",
-    image: "/placeholder.svg?height=200&width=400",
-    date: "March 5, 2023",
-    author: "Jennifer Lee",
-  },
-  {
-    id: 5,
-    title: "Seasonal Maintenance Tips for Your Vehicle",
-    excerpt:
-      "Essential maintenance tasks to prepare your car for changing seasons, from winter preparations to summer readiness.",
-    image: "/placeholder.svg?height=200&width=400",
-    date: "February 18, 2023",
-    author: "Robert Martinez",
-  },
-  {
-    id: 6,
-    title: "How to Properly Detail Your Car's Interior",
-    excerpt:
-      "Professional tips and techniques for cleaning and maintaining your vehicle's interior to keep it looking new for years to come.",
-    image: "/placeholder.svg?height=200&width=400",
-    date: "January 30, 2023",
-    author: "Amanda Thompson",
-  },
-];
+async function getBlogPosts() {
+  try {
+    const response = await fetch(
+      "https://www.googleapis.com/blogger/v3/blogs/8838452285404351994/posts?fetchImages=true&fetchBodies=true&orderBy=published&status=live&key=AIzaSyAaZMw_5CXwe9brfb7HMOMo96uYr_dE0Qs",
+      { next: { revalidate: 3600 } } // Revalidate every hour
+    );
 
-export default function BlogPage() {
+    if (!response.ok) {
+      throw new Error("Failed to fetch blog posts");
+    }
+
+    const data = await response.json();
+    return data.items || [];
+  } catch (error) {
+    console.error("Error fetching blog posts:", error);
+    return [];
+  }
+}
+
+function formatDate(dateString: string) {
+  const date = new Date(dateString);
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}
+
+function extractExcerpt(content: string, maxLength = 150) {
+  // Remove HTML tags and get plain text
+  const plainText = content.replace(/<[^>]+>/g, "");
+  if (plainText.length <= maxLength) return plainText;
+  return plainText.substring(0, maxLength) + "...";
+}
+
+export default async function BlogPage() {
+  const posts = await getBlogPosts();
+
   return (
     <div className="flex min-h-screen flex-col">
       <div className="fixed top-0 left-0 w-full z-50 shadow-md bg-gray-500">
@@ -75,33 +55,48 @@ export default function BlogPage() {
             DIY guides.
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {blogPosts.map((post) => (
-              <Card key={post.id} className="overflow-hidden">
-                <div className="aspect-video relative">
-                  <Image
-                    src={post.image || "/placeholder.svg"}
-                    alt={post.title}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <CardContent className="p-6">
-                  <div className="text-sm text-muted-foreground mb-2">
-                    {post.date} • by {post.author}
+          {posts.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-lg text-muted-foreground">
+                No blog posts found.
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {posts.map((post: any) => (
+                <Card key={post.id} className="overflow-hidden">
+                  <div className="aspect-video relative">
+                    <Image
+                      src={
+                        post.images?.[0]?.url ||
+                        "/placeholder.svg?height=200&width=400"
+                      }
+                      alt={post.title}
+                      fill
+                      className="object-cover"
+                    />
                   </div>
-                  <h2 className="text-xl font-bold mb-2">{post.title}</h2>
-                  <p className="text-muted-foreground mb-4">{post.excerpt}</p>
-                  <Link
-                    href={`/blog/${post.id}`}
-                    className="text-primary font-medium hover:underline"
-                  >
-                    Read More
-                  </Link>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                  <CardContent className="p-6">
+                    <div className="text-sm text-muted-foreground mb-2">
+                      {formatDate(post.published)} • by{" "}
+                      {post.author.displayName}
+                    </div>
+                    <h2 className="text-xl font-bold mb-2">{post.title}</h2>
+                    <p className="text-muted-foreground mb-4">
+                      {extractExcerpt(post.content)}
+                    </p>
+                    <Link
+                      href={`/blog/${post.id}`}
+                      className="text-primary font-medium hover:underline"
+                      prefetch={true}
+                    >
+                      Read More
+                    </Link>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
         </div>
       </main>
       <Footer />

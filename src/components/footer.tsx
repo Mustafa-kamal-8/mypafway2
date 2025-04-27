@@ -13,6 +13,7 @@ export default function Footer() {
                 <Link
                   href="/about"
                   className="text-gray-300 hover:text-white transition-colors"
+                  prefetch={true}
                 >
                   About Us
                 </Link>
@@ -21,6 +22,7 @@ export default function Footer() {
                 <Link
                   href="/services"
                   className="text-gray-300 hover:text-white transition-colors"
+                  prefetch={true}
                 >
                   Services
                 </Link>
@@ -29,6 +31,7 @@ export default function Footer() {
                 <Link
                   href="/blog"
                   className="text-gray-300 hover:text-white transition-colors"
+                  prefetch={true}
                 >
                   Blog
                 </Link>
@@ -37,6 +40,7 @@ export default function Footer() {
                 <Link
                   href="/contact"
                   className="text-gray-300 hover:text-white transition-colors"
+                  prefetch={true}
                 >
                   Contact Us
                 </Link>
@@ -51,6 +55,7 @@ export default function Footer() {
                 <Link
                   href="/faq"
                   className="text-gray-300 hover:text-white transition-colors"
+                  prefetch={true}
                 >
                   FAQ
                 </Link>
@@ -59,6 +64,7 @@ export default function Footer() {
                 <Link
                   href="/privacy"
                   className="text-gray-300 hover:text-white transition-colors"
+                  prefetch={true}
                 >
                   Privacy Policy
                 </Link>
@@ -67,6 +73,7 @@ export default function Footer() {
                 <Link
                   href="/terms"
                   className="text-gray-300 hover:text-white transition-colors"
+                  prefetch={true}
                 >
                   Terms & Conditions
                 </Link>
@@ -75,6 +82,7 @@ export default function Footer() {
                 <Link
                   href="/sitemap"
                   className="text-gray-300 hover:text-white transition-colors"
+                  prefetch={true}
                 >
                   Sitemap
                 </Link>
@@ -89,6 +97,7 @@ export default function Footer() {
                 <Link
                   href="/signin"
                   className="text-gray-300 hover:text-white transition-colors"
+                  prefetch={true}
                 >
                   Sign In
                 </Link>
@@ -97,6 +106,7 @@ export default function Footer() {
                 <Link
                   href="/register"
                   className="text-gray-300 hover:text-white transition-colors"
+                  prefetch={true}
                 >
                   Register
                 </Link>
@@ -105,6 +115,7 @@ export default function Footer() {
                 <Link
                   href="/business"
                   className="text-gray-300 hover:text-white transition-colors"
+                  prefetch={true}
                 >
                   Business Portal
                 </Link>

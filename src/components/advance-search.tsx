@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/src/components/ui/button";
 import {
@@ -16,10 +16,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/src/components/ui/select";
+import { getCategories } from "../api/categories";
 
 interface AdvancedSearchModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+}
+
+interface categories {
+  id: string;
+  name: string;
+  image: string;
+  parent_id: number;
 }
 
 export default function AdvancedSearchModal({
@@ -29,13 +37,37 @@ export default function AdvancedSearchModal({
   const [year, setYear] = useState<string>("");
   const [make, setMake] = useState<string>("");
   const [model, setModel] = useState<string>("");
-  const [category, setCategory] = useState<string>("");
+  const [categoryId, setCategory] = useState<string>("");
+  const [categories, setCategories] = useState<categories[]>([]);
 
   const handleSearch = () => {
-    // Implement search functionality here
-    console.log({ year, make, model, category });
-    onOpenChange(false);
+    if (year || make || model || categoryId) {
+      // if at least one field is filled
+      const queryParams = new URLSearchParams();
+
+      if (year) queryParams.append("year", year);
+      if (make) queryParams.append("make", make);
+      if (model) queryParams.append("model", model);
+      if (categoryId) queryParams.append("categoryId", categoryId);
+
+      window.location.href = `/search?${queryParams.toString()}`;
+      onOpenChange(false);
+    }
   };
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await getCategories({ search: "" });
+        console.log("Fetched categories:", response);
+        setCategories(response.result || []);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   // Sample data for dropdowns
   const years = Array.from({ length: 30 }, (_, i) =>
@@ -49,9 +81,10 @@ export default function AdvancedSearchModal({
     "BMW",
     "Mercedes",
     "Audi",
-    "Nissan",
     "Hyundai",
     "Kia",
+    "Acura",
+    "Nissan",
   ];
   const models = [
     "Corolla",
@@ -64,17 +97,19 @@ export default function AdvancedSearchModal({
     "Altima",
     "Elantra",
     "Sportage",
+    "RL",
+    "NV200",
   ];
-  const categories = [
-    "Engine",
-    "Transmission",
-    "Brakes",
-    "Suspension",
-    "Electrical",
-    "Body Parts",
-    "Interior",
-    "Accessories",
-  ];
+  // const categories = [
+  //   "Engine",
+  //   "Transmission",
+  //   "Brakes",
+  //   "Suspension",
+  //   "Electrical",
+  //   "Body Parts",
+  //   "Interior",
+  //   "Accessories",
+  // ];
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -124,16 +159,18 @@ export default function AdvancedSearchModal({
             </SelectContent>
           </Select>
 
-          <Select value={category} onValueChange={setCategory}>
+          <Select value={categoryId} onValueChange={setCategory}>
             <SelectTrigger>
               <SelectValue placeholder="Select Category" />
             </SelectTrigger>
             <SelectContent>
-              {categories.map((c) => (
-                <SelectItem key={c} value={c}>
-                  {c}
-                </SelectItem>
-              ))}
+              {categories
+                .filter((c) => c.parent_id === null) // show only categories with parentId = null
+                .map((c) => (
+                  <SelectItem key={c.id} value={c.id}>
+                    {c.name}
+                  </SelectItem>
+                ))}
             </SelectContent>
           </Select>
         </div>

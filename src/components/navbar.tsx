@@ -70,16 +70,32 @@ export default function Navbar() {
                     <Image src="/logo.png" alt="Logo" width={150} height={40} />
                   </Link>
                   <div className="grid gap-3">
-                    <Link href="/about" className="text-lg font-medium">
+                    <Link
+                      href="/about"
+                      className="text-lg font-medium"
+                      prefetch={true}
+                    >
                       ABOUT US
                     </Link>
-                    <Link href="/services" className="text-lg font-medium">
+                    <Link
+                      href="/services"
+                      className="text-lg font-medium"
+                      prefetch={true}
+                    >
                       SERVICES
                     </Link>
-                    <Link href="/blog" className="text-lg font-medium">
+                    <Link
+                      href="/blog"
+                      className="text-lg font-medium"
+                      prefetch={true}
+                    >
                       BLOG
                     </Link>
-                    <Link href="/contact" className="text-lg font-medium">
+                    <Link
+                      href="/contact"
+                      className="text-lg font-medium"
+                      prefetch={true}
+                    >
                       CONTACT US
                     </Link>
                   </div>
