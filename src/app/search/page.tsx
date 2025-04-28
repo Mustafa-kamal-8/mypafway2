@@ -23,7 +23,6 @@ import {
   TableRow,
 } from "@/src/components/ui/table";
 import { getProducts } from "@/src/api/products";
-import { uploadCartData } from "@/src/api/cart";
 import { useSearchParams } from "next/navigation";
 import Stores from "@/src/store/stores";
 import toast from "react-hot-toast";
@@ -40,6 +39,8 @@ interface Product {
   details?: string;
   created_at?: string;
   updated_at?: string;
+  other_categories?: string;
+  brand?: string;
 }
 
 interface Category {
@@ -77,7 +78,7 @@ export default function SearchPage() {
   useEffect(() => {
     const fetchProducts = async () => {
       setIsLoading(true);
-      let searchConditions = [];
+      const searchConditions = [];
 
       if (subcategoryId) {
         searchConditions.push(`sub_category:${subcategoryId}`);
@@ -117,47 +118,6 @@ export default function SearchPage() {
     fetchProducts();
   }, [subcategoryId, query, year, make, model, category]); // Ensure all dependencies are covered
 
-  // const handleAddToCart = async (product: Product) => {
-  //   console.log("Product ID:", product.id);
-  //   setCartItems([...cartItems, product]);
-  //   const storedCart = localStorage.getItem("cartItems");
-  //   const parsedCart: Product[] = storedCart ? JSON.parse(storedCart) : [];
-
-  //   // Check if the product is already in the cart
-  //   const isProductInCart = parsedCart.some((item) => item.id === product.id);
-
-  //   if (isProductInCart) {
-  //     console.error("Item is already present in the cart");
-  //     return;
-  //   } else {
-  //     const updatedCart = [...parsedCart, product];
-  //     localStorage.setItem("cartItems", JSON.stringify(updatedCart));
-  //     setCartItems(updatedCart); // Update state if needed
-  //     console.log("Product added to cart:", product.id);
-
-  //     const userData = localStorage.getItem("currentUser");
-  //     const user = userData ? JSON.parse(userData) : null;
-
-  //     if (!user || !user.id) {
-  //       console.error("User not found in localStorage");
-  //       return;
-  //     }
-
-  //     const payload = {
-  //       product: product.id,
-  //       user: user.id,
-  //       quantity: 1,
-  //     };
-
-  //     try {
-  //       const response = await uploadCartData(payload);
-  //       console.log("Cart upload response:", response);
-  //     } catch (error) {
-  //       console.error("Error uploading cart data:", error);
-  //     }
-  //   }
-  // };
-
   const handleAddToCart = async (product: Product) => {
     const storedCart = localStorage.getItem("cartItems");
     const parsedCart: Product[] = storedCart ? JSON.parse(storedCart) : [];
@@ -192,11 +152,52 @@ export default function SearchPage() {
         <Navbar />
       </div>
 
-      <main className="flex-1 pt-64 md:pt-64 lg:pt-44 py-12">
+      <main className="flex-1 pt-20 py-12 mt-36">
+        <div className="bg-gray-600 p-4 mb-8 rounded-lg">
+          <div className="container mx-auto">
+            <h2 className="text-2xl font-bold text-yellow-400 mb-2">
+              Select Vehicle
+            </h2>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <input
+                type="text"
+                placeholder="Select Year"
+                className="flex-1 p-2 rounded border border-gray-300"
+              />
+              <input
+                type="text"
+                placeholder="Select Make"
+                className="flex-1 p-2 rounded border border-gray-300"
+              />
+              <input
+                type="text"
+                placeholder="Select Model"
+                className="flex-1 p-2 rounded border border-gray-300"
+              />
+              <button className="bg-yellow-400 text-white p-2 rounded">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="lucide lucide-search"
+                >
+                  <circle cx="11" cy="11" r="8" />
+                  <path d="m21 21-4.3-4.3" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
         <section className="py-8">
           <div className="container mx-auto px-4">
             <h2 className="text-4xl font-bold text-yellow-500 mb-4">
-              Products
+              Search results
             </h2>
 
             {products.length === 0 ? (
@@ -209,14 +210,91 @@ export default function SearchPage() {
             ) : (
               <div className="mb-8">
                 <h3 className="text-2xl font-bold mb-2">
-                  Found {products.length} Results
+                  {products.length} Results
                 </h3>
               </div>
             )}
 
             <div className="flex flex-col lg:flex-row gap-8">
+              {/* Left Sidebar - Categories and Brands */}
+              <div className="lg:w-[20%] order-2 lg:order-1">
+                <div className="bg-white p-6 rounded-lg shadow-sm sticky top-44">
+                  {/* Categories Section */}
+                  <div className="mb-6">
+                    <div className="flex justify-between items-center border-b border-yellow-400 pb-2 mb-4">
+                      <h3 className="text-xl font-bold text-yellow-500">
+                        Categories
+                      </h3>
+                      <span className="text-yellow-500">-</span>
+                    </div>
+
+                    <div className="space-y-2">
+                      {/* Extract unique categories from products */}
+                      {Array.from(
+                        new Set(
+                          products
+                            .map((product) => product.other_categories || "")
+                            .filter((cat) => cat)
+                            .flatMap((cat) => cat.split(","))
+                        )
+                      ).map((category, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center space-x-2"
+                        >
+                          <Checkbox id={`category-${index}`} />
+                          <label
+                            htmlFor={`category-${index}`}
+                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                          >
+                            {category.trim()}
+                          </label>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Brands Section */}
+                  <div className="mb-6">
+                    <div className="flex justify-between items-center border-b border-yellow-400 pb-2 mb-4">
+                      <h3 className="text-xl font-bold text-yellow-500">
+                        Brands
+                      </h3>
+                      <span className="text-yellow-500">-</span>
+                    </div>
+
+                    <div className="space-y-2">
+                      {/* Extract unique brands from products */}
+                      {Array.from(
+                        new Set(products.map((product) => product.brand || ""))
+                      )
+                        .filter((brand) => brand)
+                        .map((brand, index) => (
+                          <div
+                            key={index}
+                            className="flex items-center space-x-2"
+                          >
+                            <Checkbox id={`brand-${index}`} />
+                            <label
+                              htmlFor={`brand-${index}`}
+                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            >
+                              {brand}
+                            </label>
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+
+                  {/* Filter Button */}
+                  <Button className="w-full bg-yellow-400 hover:bg-yellow-500 text-black">
+                    Filter
+                  </Button>
+                </div>
+              </div>
+
               {/* Products Grid - Takes more space */}
-              <div className="lg:w-[70%]">
+              <div className="lg:w-[50%] order-1 lg:order-2">
                 {isLoading ? (
                   <div className="flex justify-center items-center py-20">
                     <Loader2 className="h-12 w-12 text-yellow-500 animate-spin" />
@@ -225,7 +303,7 @@ export default function SearchPage() {
                     </span>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     {products.map((product) => (
                       <div
                         key={product.id}
@@ -321,14 +399,6 @@ export default function SearchPage() {
                                           {selectedProduct?.category?.name}
                                         </span>
                                       </div>
-                                      {/* <div className="flex">
-                                        <span className="font-medium w-1/3">
-                                          Sub Category:
-                                        </span>
-                                        <span className="w-2/3">
-                                          {selectedProduct?.sub_category}
-                                        </span>
-                                      </div> */}
                                       {selectedProduct?.description && (
                                         <div className="flex">
                                           <span className="font-medium w-1/3">
@@ -368,7 +438,7 @@ export default function SearchPage() {
               </div>
 
               {/* Compare Section - Right sidebar */}
-              <div className="lg:w-[30%]">
+              <div className="lg:w-[30%] order-3">
                 <div className="bg-white p-6 rounded-lg shadow-sm sticky top-44">
                   <div className="flex justify-between items-center border-b border-yellow-400 pb-2 mb-4">
                     <h3 className="text-2xl font-bold text-yellow-500">
@@ -502,21 +572,6 @@ export default function SearchPage() {
                                 ) : null;
                               })}
                             </TableRow>
-                            {/* <TableRow>
-                              <TableCell className="font-medium">
-                                Sub Category
-                              </TableCell>
-                              {compareItems.map((itemId) => {
-                                const product = products.find(
-                                  (p) => p.id === itemId
-                                );
-                                return product ? (
-                                  <TableCell key={itemId}>
-                                    {product.sub_category}
-                                  </TableCell>
-                                ) : null;
-                              })}
-                            </TableRow> */}
                             <TableRow>
                               <TableCell className="font-medium">
                                 Details
