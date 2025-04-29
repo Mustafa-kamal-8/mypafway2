@@ -8,7 +8,7 @@ import { Input } from "@/src/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/src/components/ui/sheet";
 import AdvancedSearchModal from "./advance-search";
 import Image from "next/image";
-import { useCartStore } from "@/src/store/cartStore";
+// import { useCartStore } from "@/src/store/cartStore";
 import Stores from "../store/stores";
 
 export default function Navbar() {
@@ -16,7 +16,7 @@ export default function Navbar() {
   const [advancedSearchOpen, setAdvancedSearchOpen] = useState(false);
   const { cartItems, setCartItems } = Stores();
 
-  const { cart } = useCartStore();
+  // const { cart } = useCartStore();
   const cartCount = cartItems.length;
   // const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
 

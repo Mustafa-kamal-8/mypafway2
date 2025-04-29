@@ -10,13 +10,11 @@ import { useRouter } from "next/navigation";
 import { getProducts } from "../api/products";
 import CategorySection from "@/src/components/category-section";
 import { getCartData } from "../api/cart";
-import { useCartStore } from "../store/cartStore";
+// import { useCartStore } from "../store/cartStore";
 
 export default function Home() {
   const [navbarBg, setNavbarBg] = useState("bg-gray-200/30");
-  const { setCartData } = useCartStore();
-
-
+  // const { setCartData } = useCartStore();
 
   const router = useRouter();
   useEffect(() => {
@@ -63,7 +61,7 @@ export default function Home() {
           search: `user:${user.id}`,
         });
         console.log("Fetched subcategories:", response);
-        setCartData(response.result || []);
+        // setCartData(response.result || []);
       } catch (error) {
         console.error("Error fetching subcategories:", error);
       }

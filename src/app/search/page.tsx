@@ -6,7 +6,7 @@ import { Button } from "@/src/components/ui/button";
 import { Checkbox } from "@/src/components/ui/checkbox";
 import Navbar from "@/src/components/navbar";
 import Footer from "@/src/components/footer";
-import { useCartStore } from "@/src/store/cartStore";
+// import { useCartStore } from "@/src/store/cartStore";
 import {
   Dialog,
   DialogContent,
@@ -57,7 +57,7 @@ export default function SearchPage() {
   const [compareItems, setCompareItems] = useState<number[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const { addToCart } = useCartStore();
+  // const { addToCart } = useCartStore();
   const searchParams = useSearchParams();
   const { cartItems, setCartItems } = Stores();
 
@@ -74,6 +74,25 @@ export default function SearchPage() {
   console.log("category is", categoryId);
   console.log("sub-categoryid is", subcategoryId);
   console.log("query is", query);
+
+  const getColor = (color?: string) => {
+    if (!color) return "transparent";
+
+    const cleaned = color.replace(/[^a-zA-Z]/g, "").toLowerCase();
+
+    const colorMap: Record<string, string> = {
+      black: "#000000",
+      red: "#FF0000",
+      green: "#008000",
+      blue: "#0000FF",
+      white: "#FFFFFF",
+      yellow: "#FFFF00",
+      grey: "#808080",
+      gray: "#808080",
+    };
+
+    return colorMap[cleaned] || "transparent";
+  };
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -104,10 +123,17 @@ export default function SearchPage() {
 
       try {
         const response = await getProducts({
-          search: searchString, // send the string with space-separated search conditions
+          search: searchString,
         });
+
         console.log("Fetched products:", response);
-        setProducts(response.result || []);
+
+        if (!response.err) {
+          setProducts(response.result || []);
+        } else {
+          console.error("API Error:", response.result); // optional logging
+          setProducts([]); // optional: clear previous data
+        }
       } catch (error) {
         console.error("Error fetching products:", error);
       } finally {
@@ -116,7 +142,7 @@ export default function SearchPage() {
     };
 
     fetchProducts();
-  }, [subcategoryId, query, year, make, model, category]); // Ensure all dependencies are covered
+  }, [subcategoryId, query, year, make, model, category]);
 
   const handleAddToCart = async (product: Product) => {
     const storedCart = localStorage.getItem("cartItems");
@@ -152,50 +178,50 @@ export default function SearchPage() {
         <Navbar />
       </div>
 
-      <main className="flex-1 pt-20 py-12 mt-36">
-        <div className="bg-gray-600 p-4 mb-8 rounded-lg">
-          <div className="container mx-auto">
-            <h2 className="text-2xl font-bold text-yellow-400 mb-2">
-              Select Vehicle
-            </h2>
-            <div className="flex flex-col sm:flex-row gap-2">
-              <input
-                type="text"
-                placeholder="Select Year"
-                className="flex-1 p-2 rounded border border-gray-300"
-              />
-              <input
-                type="text"
-                placeholder="Select Make"
-                className="flex-1 p-2 rounded border border-gray-300"
-              />
-              <input
-                type="text"
-                placeholder="Select Model"
-                className="flex-1 p-2 rounded border border-gray-300"
-              />
-              <button className="bg-yellow-400 text-white p-2 rounded">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="lucide lucide-search"
-                >
-                  <circle cx="11" cy="11" r="8" />
-                  <path d="m21 21-4.3-4.3" />
-                </svg>
-              </button>
-            </div>
-          </div>
-        </div>
+      <main className="flex-1 pt-20 sm:pt-8 py-12 mt-36">
         <section className="py-8">
           <div className="container mx-auto px-4">
+            <div className="bg-gray-600 p-10 mb-8 rounded-lg">
+              <div className="container mx-auto">
+                <h2 className="text-2xl font-bold text-yellow-400 mb-2">
+                  Select Vehicle
+                </h2>
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <input
+                    type="text"
+                    placeholder="Select Year"
+                    className="flex-1 p-2 rounded border border-gray-300"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Select Make"
+                    className="flex-1 p-2 rounded border border-gray-300"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Select Model"
+                    className="flex-1 p-2 rounded border border-gray-300"
+                  />
+                  <button className="bg-yellow-400 text-white p-2 rounded">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="lucide lucide-search"
+                    >
+                      <circle cx="11" cy="11" r="8" />
+                      <path d="m21 21-4.3-4.3" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
             <h2 className="text-4xl font-bold text-yellow-500 mb-4">
               Search results
             </h2>
@@ -368,7 +394,7 @@ export default function SearchPage() {
                                   Details
                                 </button>
                               </DialogTrigger>
-                              <DialogContent>
+                              <DialogContent className="w-full max-w-[90vw] md:max-w-[70vw]">
                                 <DialogHeader>
                                   <DialogTitle>
                                     {selectedProduct?.name}
@@ -390,6 +416,40 @@ export default function SearchPage() {
                                     <h3 className="text-2xl font-bold mb-2">
                                       ${selectedProduct?.price}
                                     </h3>
+                                    {selectedProduct?.color ? (
+                                      <div className="flex items-center gap-2 flex-wrap">
+                                        {selectedProduct.color
+                                          .split(",")
+                                          .map((colorItem, index) => {
+                                            const rawColor = colorItem.trim();
+                                            const normalizedColor =
+                                              rawColor.toLowerCase();
+                                            return (
+                                              <div
+                                                key={index}
+                                                className="flex items-center gap-1"
+                                              >
+                                                <div
+                                                  className="w-6 h-6 rounded-full border"
+                                                  style={{
+                                                    backgroundColor:
+                                                      getColor(normalizedColor),
+                                                  }}
+                                                  title={normalizedColor}
+                                                />
+                                                <span className="text-sm font-medium capitalize">
+                                                  {normalizedColor}
+                                                </span>
+                                              </div>
+                                            );
+                                          })}
+                                      </div>
+                                    ) : (
+                                      <p className="text-gray-500 text-sm">
+                                        No color available
+                                      </p>
+                                    )}
+
                                     <div className="space-y-2 mt-4">
                                       <div className="flex">
                                         <span className="font-medium w-1/3">
@@ -399,6 +459,7 @@ export default function SearchPage() {
                                           {selectedProduct?.category?.name}
                                         </span>
                                       </div>
+
                                       {selectedProduct?.description && (
                                         <div className="flex">
                                           <span className="font-medium w-1/3">
