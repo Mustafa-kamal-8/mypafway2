@@ -111,20 +111,13 @@ export default function SignInPage() {
     <div className="min-h-screen flex flex-col md:flex-row bg-gray-50">
       {/* Left side - Image */}
       <div className="hidden md:flex md:w-1/2 bg-primary/10 relative overflow-hidden">
-        <div className="absolute inset-0 flex items-center justify-center p-10">
-          <div className="max-w-md text-center">
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="w-full text-center">
             <img
-              src="/loginimage.jpeg?height=400&width=400"
+              src="/loginimage.jpeg?height=800&width=600"
               alt="Login illustration"
               className="mx-auto mb-8"
             />
-            <h2 className="text-3xl font-bold text-primary mb-4">
-              Welcome Back
-            </h2>
-            <p className="text-gray-700">
-              Sign in to access your account and manage your services. We're
-              glad to see you again.
-            </p>
           </div>
         </div>
       </div>

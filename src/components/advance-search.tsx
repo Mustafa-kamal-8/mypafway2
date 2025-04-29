@@ -17,6 +17,7 @@ import {
   SelectValue,
 } from "@/src/components/ui/select";
 import { getCategories } from "../api/categories";
+import { getMake } from "../api/make";
 
 interface AdvancedSearchModalProps {
   open: boolean;
@@ -30,6 +31,18 @@ interface categories {
   parent_id: number;
 }
 
+interface makes {
+  id: string;
+  name: string;
+  parent_id: string;
+}
+
+interface models {
+  id: string;
+  name: string;
+  parent_id: string;
+}
+
 export default function AdvancedSearchModal({
   open,
   onOpenChange,
@@ -39,6 +52,8 @@ export default function AdvancedSearchModal({
   const [model, setModel] = useState<string>("");
   const [categoryId, setCategory] = useState<string>("");
   const [categories, setCategories] = useState<categories[]>([]);
+  const [makes, setMakes] = useState<makes[]>([]);
+  const [models, setModels] = useState<models[]>([]);
 
   const handleSearch = () => {
     if (year || make || model || categoryId) {
@@ -69,47 +84,40 @@ export default function AdvancedSearchModal({
     fetchCategories();
   }, []);
 
+  useEffect(() => {
+    const fetchMake = async () => {
+      try {
+        const response = await getMake({ search: "" });
+        console.log("Fetched make:", response);
+        setMakes(response.result || []);
+      } catch (error) {
+        console.error("Error fetching make:", error);
+      }
+    };
+
+    fetchMake();
+  }, []);
+
+  useEffect(() => {
+    const fetchModel = async () => {
+      try {
+        const response = await getMake({ search: `parent_id:${make}` });
+        console.log("Fetched make:", response);
+        setModels(response.result || []);
+      } catch (error) {
+        console.error("Error fetching make:", error);
+      }
+    };
+
+    fetchModel();
+  }, [make]);
+
+  console.log("makes are", make);
+
   // Sample data for dropdowns
   const years = Array.from({ length: 30 }, (_, i) =>
     (new Date().getFullYear() - i).toString()
   );
-  const makes = [
-    "Toyota",
-    "Honda",
-    "Ford",
-    "Chevrolet",
-    "BMW",
-    "Mercedes",
-    "Audi",
-    "Hyundai",
-    "Kia",
-    "Acura",
-    "Nissan",
-  ];
-  const models = [
-    "Corolla",
-    "Civic",
-    "F-150",
-    "Silverado",
-    "3 Series",
-    "C-Class",
-    "A4",
-    "Altima",
-    "Elantra",
-    "Sportage",
-    "RL",
-    "NV200",
-  ];
-  // const categories = [
-  //   "Engine",
-  //   "Transmission",
-  //   "Brakes",
-  //   "Suspension",
-  //   "Electrical",
-  //   "Body Parts",
-  //   "Interior",
-  //   "Accessories",
-  // ];
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -138,11 +146,13 @@ export default function AdvancedSearchModal({
               <SelectValue placeholder="Select Make" />
             </SelectTrigger>
             <SelectContent>
-              {makes.map((m) => (
-                <SelectItem key={m} value={m}>
-                  {m}
-                </SelectItem>
-              ))}
+              {makes
+                .filter((c) => c.parent_id === null)
+                .map((m) => (
+                  <SelectItem key={m.id} value={m.id}>
+                    {m.name}
+                  </SelectItem>
+                ))}
             </SelectContent>
           </Select>
 
@@ -151,9 +161,9 @@ export default function AdvancedSearchModal({
               <SelectValue placeholder="Select Model" />
             </SelectTrigger>
             <SelectContent>
-              {models.map((m) => (
-                <SelectItem key={m} value={m}>
-                  {m}
+              {(Array.isArray(models) ? models : []).map((m) => (
+                <SelectItem key={m.id} value={m.id}>
+                  {m.name}
                 </SelectItem>
               ))}
             </SelectContent>

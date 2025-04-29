@@ -26,6 +26,14 @@ import { getProducts } from "@/src/api/products";
 import { useSearchParams } from "next/navigation";
 import Stores from "@/src/store/stores";
 import toast from "react-hot-toast";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/src/components/ui/select";
+import { getMake } from "@/src/api/make";
 
 interface Product {
   id: number;
@@ -52,6 +60,18 @@ interface Category {
   updated_at?: string;
 }
 
+interface makes {
+  id: string;
+  name: string;
+  parent_id: string;
+}
+
+interface models {
+  id: string;
+  name: string;
+  parent_id: string;
+}
+
 export default function SearchPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [compareItems, setCompareItems] = useState<number[]>([]);
@@ -60,6 +80,13 @@ export default function SearchPage() {
   // const { addToCart } = useCartStore();
   const searchParams = useSearchParams();
   const { cartItems, setCartItems } = Stores();
+
+  const [makes, setMakes] = useState<makes[]>([]);
+  const [models, setModels] = useState<models[]>([]);
+
+  const [formMake, setMake] = useState<string>("");
+  const [formModel, setModel] = useState<string>("");
+  const [formYear, setYear] = useState<string>("");
 
   const img = process.env.NEXT_PUBLIC_IMAGE_URL;
 
@@ -93,6 +120,10 @@ export default function SearchPage() {
 
     return colorMap[cleaned] || "transparent";
   };
+
+  const years = Array.from({ length: 30 }, (_, i) =>
+    (new Date().getFullYear() - i).toString()
+  );
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -144,6 +175,34 @@ export default function SearchPage() {
     fetchProducts();
   }, [subcategoryId, query, year, make, model, category]);
 
+  useEffect(() => {
+    const fetchMake = async () => {
+      try {
+        const response = await getMake({ search: "" });
+        console.log("Fetched make:", response);
+        setMakes(response.result || []);
+      } catch (error) {
+        console.error("Error fetching make:", error);
+      }
+    };
+
+    fetchMake();
+  }, []);
+
+  useEffect(() => {
+    const fetchModel = async () => {
+      try {
+        const response = await getMake({ search: `parent_id:${formMake}` });
+        console.log("Fetched make:", response);
+        setModels(response.result || []);
+      } catch (error) {
+        console.error("Error fetching make:", error);
+      }
+    };
+
+    fetchModel();
+  }, [formMake]);
+
   const handleAddToCart = async (product: Product) => {
     const storedCart = localStorage.getItem("cartItems");
     const parsedCart: Product[] = storedCart ? JSON.parse(storedCart) : [];
@@ -187,21 +246,44 @@ export default function SearchPage() {
                   Select Vehicle
                 </h2>
                 <div className="flex flex-col sm:flex-row gap-2">
-                  <input
-                    type="text"
-                    placeholder="Select Year"
-                    className="flex-1 p-2 rounded border border-gray-300"
-                  />
-                  <input
-                    type="text"
-                    placeholder="Select Make"
-                    className="flex-1 p-2 rounded border border-gray-300"
-                  />
-                  <input
-                    type="text"
-                    placeholder="Select Model"
-                    className="flex-1 p-2 rounded border border-gray-300"
-                  />
+                  <Select value={formYear} onValueChange={setYear}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Year" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {years.map((y) => (
+                        <SelectItem key={y} value={y}>
+                          {y}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Select value={formMake} onValueChange={setMake}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Make" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {makes
+                        .filter((c) => c.parent_id === null)
+                        .map((m) => (
+                          <SelectItem key={m.id} value={m.id}>
+                            {m.name}
+                          </SelectItem>
+                        ))}
+                    </SelectContent>
+                  </Select>
+                  <Select value={formModel} onValueChange={setModel}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Model" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {(Array.isArray(models) ? models : []).map((m) => (
+                        <SelectItem key={m.id} value={m.id}>
+                          {m.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <button className="bg-yellow-400 text-white p-2 rounded">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
