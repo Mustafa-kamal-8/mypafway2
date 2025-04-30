@@ -23,7 +23,8 @@ import {
   TableRow,
 } from "@/src/components/ui/table";
 import { getProducts } from "@/src/api/products";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
+
 import Stores from "@/src/store/stores";
 import toast from "react-hot-toast";
 import {
@@ -79,6 +80,7 @@ export default function SearchPage() {
   const [isLoading, setIsLoading] = useState(true);
   // const { addToCart } = useCartStore();
   const searchParams = useSearchParams();
+  const router = useRouter();
   const { cartItems, setCartItems } = Stores();
 
   const [makes, setMakes] = useState<makes[]>([]);
@@ -87,6 +89,9 @@ export default function SearchPage() {
   const [formMake, setMake] = useState<string>("");
   const [formModel, setModel] = useState<string>("");
   const [formYear, setYear] = useState<string>("");
+  const [searchFormParams, setSearchParams] = useSearchParams();
+  const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
   const img = process.env.NEXT_PUBLIC_IMAGE_URL;
 
@@ -97,10 +102,6 @@ export default function SearchPage() {
   const make = searchParams.get("make");
   const model = searchParams.get("model");
   const category = searchParams.get("categoryId");
-
-  console.log("category is", categoryId);
-  console.log("sub-categoryid is", subcategoryId);
-  console.log("query is", query);
 
   const getColor = (color?: string) => {
     if (!color) return "transparent";
@@ -125,53 +126,78 @@ export default function SearchPage() {
     (new Date().getFullYear() - i).toString()
   );
 
+  const handleCategoryChange = (category: string) => {
+    setSelectedCategories((prev) =>
+      prev.includes(category)
+        ? prev.filter((item) => item !== category)
+        : [...prev, category]
+    );
+  };
+
+  const handleBrandChange = (brand: string) => {
+    setSelectedBrands((prev) =>
+      prev.includes(brand)
+        ? prev.filter((item) => item !== brand)
+        : [...prev, brand]
+    );
+  };
+
+  const fetchProducts = async () => {
+    setIsLoading(true);
+    const searchConditions = [];
+
+    if (subcategoryId) {
+      searchConditions.push(`sub_category:${subcategoryId}`);
+    }
+    if (formYear) {
+      searchConditions.push(`year:${formYear}`);
+    }
+    if (formMake) {
+      searchConditions.push(`make:${formMake}`);
+    }
+    if (formModel) {
+      searchConditions.push(`model:${formModel}`);
+    }
+    if (query) {
+      searchConditions.push(`name:${query}`);
+    }
+    if (year) {
+      searchConditions.push(`year:${year}`);
+    }
+    if (make) {
+      searchConditions.push(`make:${make}`);
+    }
+    if (model) {
+      searchConditions.push(`model:${model}`);
+    }
+    if (category) {
+      searchConditions.push(`category:${category}`);
+    }
+
+    // Join all conditions with a space between them
+    const searchString = searchConditions.join(","); // Add space between conditions
+
+    try {
+      const response = await getProducts({
+        search: searchString,
+      });
+
+      console.log("Fetched products:", response);
+
+      if (!response.err) {
+        setProducts(response.result || []);
+      } else {
+        console.error("API Error:", response.result); // optional logging
+        setProducts([]); // optional: clear previous data
+      }
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchProducts = async () => {
-      setIsLoading(true);
-      const searchConditions = [];
-
-      if (subcategoryId) {
-        searchConditions.push(`sub_category:${subcategoryId}`);
-      }
-      if (query) {
-        searchConditions.push(`name:${query}`);
-      }
-      if (year) {
-        searchConditions.push(`year:${year}`);
-      }
-      if (make) {
-        searchConditions.push(`make:${make}`);
-      }
-      if (model) {
-        searchConditions.push(`model:${model}`);
-      }
-      if (category) {
-        searchConditions.push(`category:${category}`);
-      }
-
-      // Join all conditions with a space between them
-      const searchString = searchConditions.join(" "); // Add space between conditions
-
-      try {
-        const response = await getProducts({
-          search: searchString,
-        });
-
-        console.log("Fetched products:", response);
-
-        if (!response.err) {
-          setProducts(response.result || []);
-        } else {
-          console.error("API Error:", response.result); // optional logging
-          setProducts([]); // optional: clear previous data
-        }
-      } catch (error) {
-        console.error("Error fetching products:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fetchProducts();
   }, [subcategoryId, query, year, make, model, category]);
 
@@ -231,6 +257,55 @@ export default function SearchPage() {
     );
   };
 
+  const handleSearch = () => {
+    const params = new URLSearchParams(searchParams.toString());
+
+    if (formMake) params.set("make", formMake);
+    else params.delete("make");
+
+    if (formModel) params.set("model", formModel);
+    else params.delete("model");
+
+    if (formYear) params.set("year", formYear);
+    else params.delete("year");
+
+    router.push(`?${params.toString()}`);
+    fetchProducts(); // 👈 Call fetch here too
+  };
+
+  const fetchProductsWithFilters = async (
+    brands: string[],
+    categories: string[]
+  ) => {
+    setIsLoading(true);
+    const searchConditions: string[] = [];
+
+    categories.forEach((cat) => {
+      if (cat) searchConditions.push(`other_categories:${cat}`);
+    });
+
+    brands.forEach((brand) => {
+      if (brand) searchConditions.push(`brand:${brand}`);
+    });
+
+    const searchString = searchConditions.join(",");
+
+    try {
+      const response = await getProducts({ search: searchString });
+
+      if (!response.err) {
+        setProducts(response.result || []);
+      } else {
+        console.error("API Error:", response.result);
+        setProducts([]);
+      }
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="flex min-h-screen flex-col">
       <div className="fixed top-0 left-0 w-full z-50 shadow-md bg-gray-500">
@@ -284,7 +359,10 @@ export default function SearchPage() {
                       ))}
                     </SelectContent>
                   </Select>
-                  <button className="bg-yellow-400 text-white p-2 rounded">
+                  <button
+                    onClick={handleSearch}
+                    className="bg-yellow-400 text-white p-2 rounded"
+                  >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="24"
@@ -350,7 +428,15 @@ export default function SearchPage() {
                           key={index}
                           className="flex items-center space-x-2"
                         >
-                          <Checkbox id={`category-${index}`} />
+                          <Checkbox
+                            id={`category-${index}`}
+                            checked={selectedCategories.includes(
+                              category.trim()
+                            )}
+                            onCheckedChange={() =>
+                              handleCategoryChange(category.trim())
+                            }
+                          />
                           <label
                             htmlFor={`category-${index}`}
                             className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -382,7 +468,12 @@ export default function SearchPage() {
                             key={index}
                             className="flex items-center space-x-2"
                           >
-                            <Checkbox id={`brand-${index}`} />
+                            <Checkbox
+                              id={`brand-${index}`}
+                              checked={selectedBrands.includes(brand)}
+                              onCheckedChange={() => handleBrandChange(brand)}
+                            />
+
                             <label
                               htmlFor={`brand-${index}`}
                               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -395,7 +486,15 @@ export default function SearchPage() {
                   </div>
 
                   {/* Filter Button */}
-                  <Button className="w-full bg-yellow-400 hover:bg-yellow-500 text-black">
+                  <Button
+                    className="w-full bg-yellow-400 hover:bg-yellow-500 text-black"
+                    onClick={() =>
+                      fetchProductsWithFilters(
+                        selectedBrands,
+                        selectedCategories
+                      )
+                    }
+                  >
                     Filter
                   </Button>
                 </div>

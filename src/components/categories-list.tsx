@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Edit, Trash } from "lucide-react";
 
@@ -20,48 +20,46 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/src/components/ui/pagination";
+import { getCategories } from "../api/categories";
 
-// Sample data
-const categories = [
-  {
-    id: 1,
-    name: "Engine & Performance Parts",
-    description:
-      "Upgrade your vehicle with high-performance engine parts, including air filters, turbochargers, exhaust systems, and more. Boost your car's power and efficiency with our premium selection.",
-    enabled: true,
-  },
-  {
-    id: 2,
-    name: "Brakes & Suspension",
-    description:
-      "Ensure safety and smooth driving with our range of high-quality brake pads, rotors, shock absorbers, and suspension kits. We provide durable parts for a better driving experience.",
-    enabled: true,
-  },
-  {
-    id: 3,
-    name: "Electrical & Lighting",
-    description:
-      "Find the best automotive electrical components, including batteries, alternators, spark plugs, headlights, LED lights, and wiring harnesses, to keep your car running smoothly.",
-    enabled: true,
-  },
-  {
-    id: 4,
-    name: "Body & Exterior Parts",
-    description:
-      "Enhance your vehicle's appearance and aerodynamics with our selection of bumpers, fenders, spoilers, side mirrors, and body kits. Improve both style and functionality.",
-    enabled: true,
-  },
-  {
-    id: 5,
-    name: "Tires & Wheels",
-    description:
-      "Get the perfect grip on the road with our premium tires and alloy wheels. Choose from top brands to improve your car's performance, handling, and aesthetics.",
-    enabled: true,
-  },
-];
+interface Category {
+  id: number;
+  name: string;
+  description: string;
+  image: string;
+}
+
+const ITEMS_PER_PAGE = 10;
 
 export function CategoriesList() {
   const [activeTab, setActiveTab] = useState("categories");
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await getCategories({ search: "" });
+        const cats = response.result || [];
+        setCategories(cats);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+    fetchCategories();
+  }, []);
+
+  const totalPages = Math.ceil(categories.length / ITEMS_PER_PAGE);
+  const currentItems = categories.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+
+  const handlePageChange = (page: number) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
 
   return (
     <Tabs
@@ -72,7 +70,7 @@ export function CategoriesList() {
       <div className="text-lg font-semibold text-white">Categories</div>
 
       <TabsContent value="categories" className="space-y-4">
-        {categories.map((category) => (
+        {currentItems.map((category) => (
           <Card
             key={category.id}
             className="bg-zinc-900 border-zinc-800 overflow-hidden"
@@ -86,7 +84,6 @@ export function CategoriesList() {
                       alt={category.name}
                       width={40}
                       height={40}
-                      className="text-black"
                     />
                   </div>
                 </div>
@@ -102,7 +99,6 @@ export function CategoriesList() {
                         className="h-8 w-8 bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700 hover:text-zinc-100"
                       >
                         <Edit className="h-4 w-4" />
-                        <span className="sr-only">Edit</span>
                       </Button>
                       <Button
                         variant="outline"
@@ -110,24 +106,12 @@ export function CategoriesList() {
                         className="h-8 w-8 bg-zinc-800 border-zinc-700 text-red-400 hover:bg-zinc-700 hover:text-red-300"
                       >
                         <Trash className="h-4 w-4" />
-                        <span className="sr-only">Delete</span>
                       </Button>
                     </div>
                   </div>
                   <p className="mt-2 text-sm text-zinc-400">
                     {category.description}
                   </p>
-                  <div className="mt-4">
-                    <span
-                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                        category.enabled
-                          ? "bg-green-100 text-green-800"
-                          : "bg-red-100 text-red-800"
-                      }`}
-                    >
-                      {category.enabled ? "Enabled" : "Disabled"}
-                    </span>
-                  </div>
                 </div>
               </div>
             </CardContent>
@@ -135,42 +119,46 @@ export function CategoriesList() {
         ))}
 
         <Pagination>
-          <PaginationContent>
+          <PaginationContent className="flex flex-wrap justify-center gap-2">
             <PaginationItem>
               <PaginationPrevious
                 href="#"
-                className="bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700 hover:text-zinc-100"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handlePageChange(currentPage - 1);
+                }}
+                className="min-w-[80px] h-10 px-4 bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700 hover:text-zinc-100 text-sm"
               />
             </PaginationItem>
-            <PaginationItem>
-              <PaginationLink
-                href="#"
-                isActive
-                className="bg-yellow-500 text-black hover:bg-yellow-600"
-              >
-                1
-              </PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink
-                href="#"
-                className="bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700 hover:text-zinc-100"
-              >
-                2
-              </PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink
-                href="#"
-                className="bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700 hover:text-zinc-100"
-              >
-                3
-              </PaginationLink>
-            </PaginationItem>
+
+            {Array.from({ length: totalPages }, (_, index) => (
+              <PaginationItem key={index}>
+                <PaginationLink
+                  href="#"
+                  isActive={currentPage === index + 1}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handlePageChange(index + 1);
+                  }}
+                  className={`w-10 h-10 text-sm flex items-center justify-center rounded-md border ${
+                    currentPage === index + 1
+                      ? "bg-yellow-500 text-black hover:bg-yellow-600"
+                      : "bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700 hover:text-zinc-100"
+                  }`}
+                >
+                  {index + 1}
+                </PaginationLink>
+              </PaginationItem>
+            ))}
+
             <PaginationItem>
               <PaginationNext
                 href="#"
-                className="bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700 hover:text-zinc-100"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handlePageChange(currentPage + 1);
+                }}
+                className="min-w-[80px] h-10 px-4 bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700 hover:text-zinc-100 text-sm"
               />
             </PaginationItem>
           </PaginationContent>
