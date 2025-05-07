@@ -8,7 +8,7 @@ async function getBlogPosts() {
   try {
     const response = await fetch(
       "https://www.googleapis.com/blogger/v3/blogs/8838452285404351994/posts?fetchImages=true&fetchBodies=true&orderBy=published&status=live&key=AIzaSyAaZMw_5CXwe9brfb7HMOMo96uYr_dE0Qs",
-      { next: { revalidate: 3600 } } // Revalidate every hour
+      { cache: "force-cache" } // Changed to force-cache for static export
     );
 
     if (!response.ok) {
@@ -69,7 +69,8 @@ export default async function BlogPage() {
                     <Image
                       src={
                         post.images?.[0]?.url ||
-                        "/placeholder.svg?height=200&width=400"
+                        "/placeholder.svg?height=200&width=400" ||
+                        "/placeholder.svg"
                       }
                       alt={post.title}
                       fill
@@ -86,7 +87,7 @@ export default async function BlogPage() {
                       {extractExcerpt(post.content)}
                     </p>
                     <Link
-                      href={`/blog/${post.id}`}
+                      href={`/blog-post/${post.id}`}
                       className="text-primary font-medium hover:underline"
                       prefetch={true}
                     >

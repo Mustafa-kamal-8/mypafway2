@@ -68,6 +68,15 @@ export function AddProductButton() {
     useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [name, setName] = useState<string>("");
+  const [color, setColor] = useState<string>("");
+  const [make, setMake] = useState<string>("");
+  const [model, setModel] = useState<string>("");
+  const [year, setYear] = useState<string>("");
+  const [brand, setBrand] = useState<string>("");
+  const [quantity, setQuantity] = useState<string>("");
+  const [websiteUrl, setWebsiteUrl] = useState<string>("");
+  const [weight, setWeight] = useState<string>("");
+  const [height, setHeight] = useState<string>("");
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -238,17 +247,39 @@ export function AddProductButton() {
       toast.error("Image file not found");
       return;
     }
- 
+
     try {
-        const compressedImage = await compressImage(imageFile);
-            const url = await uploadImage(compressedImage, "categories");
+      const currentUser = JSON.parse(
+        localStorage.getItem("currentUser") || "{}"
+      );
+      const seller_id = currentUser?.id;
+      const seller_name = currentUser?.name;
+
+      if (!seller_id || !seller_name) {
+        toast.error("User information missing. Please login again.");
+        return;
+      }
+      const compressedImage = await compressImage(imageFile);
+      const url = await uploadImage(compressedImage, "categories");
       const formData = {
         category: selectedCategory,
-        sub_category: selectedSubCategoryId,
+        sub_category: selectedSubCategoryId, //name, description, color, category, sub_category, details, make, model, year, price, quantity, image_url, website_url, seller_id, seller_name
         name,
         price,
         description,
-        image_link: url,
+        image_url: url,
+        color,
+        make,
+        model,
+        year,
+        quantity,
+        website_url: websiteUrl,
+        seller_id,
+        seller_name,
+        details: {
+          weight: weight,
+          heigth: height,
+        },
       };
       console.log("Sending payload to backend:", formData);
       await uploadProducts(formData);
@@ -304,60 +335,58 @@ export function AddProductButton() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="category" className="text-zinc-200">
-                  Category
-                </Label>
-                <Select onValueChange={setSelectedCategory}>
-                  <SelectTrigger
-                    id="category"
-                    className="bg-zinc-800 border-zinc-700 text-zinc-200 focus:ring-yellow-400"
-                  >
-                    <SelectValue placeholder="Select a category" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-zinc-800 border-zinc-700 text-zinc-200">
-                    {categories.map((category) => (
+            <div className="grid gap-2">
+              <Label htmlFor="category" className="text-zinc-200">
+                Category
+              </Label>
+              <Select onValueChange={setSelectedCategory}>
+                <SelectTrigger
+                  id="category"
+                  className="bg-zinc-800 border-zinc-700 text-zinc-200 focus:ring-yellow-400"
+                >
+                  <SelectValue placeholder="Select a category" />
+                </SelectTrigger>
+                <SelectContent className="bg-zinc-800 border-zinc-700 text-zinc-200">
+                  {categories.map((category) => (
+                    <SelectItem
+                      key={category.id}
+                      value={category.id.toString()}
+                    >
+                      {category.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="grid gap-2">
+              <Label htmlFor="subCategory" className="text-zinc-200">
+                Sub Category
+              </Label>
+              <Select onValueChange={setSelectedSubCategoryId}>
+                <SelectTrigger
+                  id="subCategory"
+                  className="bg-zinc-800 border-zinc-700 text-zinc-200 focus:ring-yellow-400"
+                >
+                  <SelectValue placeholder="Select a Sub Category" />
+                </SelectTrigger>
+                <SelectContent className="bg-zinc-800 border-zinc-700 text-zinc-200">
+                  {subCategories.length > 0 ? (
+                    subCategories.map((category) => (
                       <SelectItem
                         key={category.id}
                         value={category.id.toString()}
                       >
                         {category.name}
                       </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="grid gap-2">
-                <Label htmlFor="subCategory" className="text-zinc-200">
-                  Sub Category
-                </Label>
-                <Select onValueChange={setSelectedSubCategoryId}>
-                  <SelectTrigger
-                    id="subCategory"
-                    className="bg-zinc-800 border-zinc-700 text-zinc-200 focus:ring-yellow-400"
-                  >
-                    <SelectValue placeholder="Select a Sub Category" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-zinc-800 border-zinc-700 text-zinc-200">
-                    {subCategories.length > 0 ? (
-                      subCategories.map((category) => (
-                        <SelectItem
-                          key={category.id}
-                          value={category.id.toString()}
-                        >
-                          {category.name}
-                        </SelectItem>
-                      ))
-                    ) : (
-                      <div className="px-4 py-2 text-sm text-yellow-400">
-                        No subcategories found
-                      </div>
-                    )}
-                  </SelectContent>
-                </Select>
-              </div>
+                    ))
+                  ) : (
+                    <div className="px-4 py-2 text-sm text-yellow-400">
+                      No subcategories found
+                    </div>
+                  )}
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="grid gap-2">
@@ -369,6 +398,117 @@ export function AddProductButton() {
                 placeholder="Product description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
+                className="bg-zinc-800 border-zinc-700 text-zinc-200 placeholder:text-zinc-500 focus-visible:ring-yellow-400"
+              />
+            </div>
+
+            <div className="grid gap-2">
+              <Label htmlFor="color" className="text-zinc-200">
+                Color
+              </Label>
+              <Textarea
+                id="color"
+                placeholder="Product Color"
+                value={color}
+                onChange={(e) => setColor(e.target.value)}
+                className="bg-zinc-800 border-zinc-700 text-zinc-200 placeholder:text-zinc-500 focus-visible:ring-yellow-400"
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="make" className="text-zinc-200">
+                Make
+              </Label>
+              <Textarea
+                id="make"
+                placeholder="Product Make"
+                value={make}
+                onChange={(e) => setMake(e.target.value)}
+                className="bg-zinc-800 border-zinc-700 text-zinc-200 placeholder:text-zinc-500 focus-visible:ring-yellow-400"
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="model" className="text-zinc-200">
+                Model
+              </Label>
+              <Textarea
+                id="model"
+                placeholder="Product Model"
+                value={model}
+                onChange={(e) => setModel(e.target.value)}
+                className="bg-zinc-800 border-zinc-700 text-zinc-200 placeholder:text-zinc-500 focus-visible:ring-yellow-400"
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="year" className="text-zinc-200">
+                Year
+              </Label>
+              <Textarea
+                id="year"
+                placeholder="Product Model"
+                value={year}
+                onChange={(e) => setYear(e.target.value)}
+                className="bg-zinc-800 border-zinc-700 text-zinc-200 placeholder:text-zinc-500 focus-visible:ring-yellow-400"
+              />
+            </div>
+
+            <div className="grid gap-2">
+              <Label htmlFor="brand" className="text-zinc-200">
+                Brand
+              </Label>
+              <Textarea
+                id="brand"
+                placeholder="Product Brand"
+                value={brand}
+                onChange={(e) => setBrand(e.target.value)}
+                className="bg-zinc-800 border-zinc-700 text-zinc-200 placeholder:text-zinc-500 focus-visible:ring-yellow-400"
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="quantity" className="text-zinc-200">
+                Quantity
+              </Label>
+              <Textarea
+                id="quantity"
+                placeholder="Product quantity"
+                value={quantity}
+                onChange={(e) => setQuantity(e.target.value)}
+                className="bg-zinc-800 border-zinc-700 text-zinc-200 placeholder:text-zinc-500 focus-visible:ring-yellow-400"
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="websiteurl" className="text-zinc-200">
+                Website URL
+              </Label>
+              <Textarea
+                id="websiteurl"
+                placeholder="Product Website URL"
+                value={websiteUrl}
+                onChange={(e) => setWebsiteUrl(e.target.value)}
+                className="bg-zinc-800 border-zinc-700 text-zinc-200 placeholder:text-zinc-500 focus-visible:ring-yellow-400"
+              />
+            </div>
+
+            <div className="grid gap-2">
+              <Label htmlFor="height" className="text-zinc-200">
+                Height
+              </Label>
+              <Textarea
+                id="height"
+                placeholder="Product Height"
+                value={height}
+                onChange={(e) => setHeight(e.target.value)}
+                className="bg-zinc-800 border-zinc-700 text-zinc-200 placeholder:text-zinc-500 focus-visible:ring-yellow-400"
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="weight" className="text-zinc-200">
+                Weight
+              </Label>
+              <Textarea
+                id="weight"
+                placeholder="Product Height"
+                value={weight}
+                onChange={(e) => setWeight(e.target.value)}
                 className="bg-zinc-800 border-zinc-700 text-zinc-200 placeholder:text-zinc-500 focus-visible:ring-yellow-400"
               />
             </div>
@@ -464,7 +604,7 @@ export function AddProductButton() {
             )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="grid gap-2">
+              {/* <div className="grid gap-2">
                 <Label htmlFor="status" className="text-zinc-200">
                   Status
                 </Label>
@@ -481,8 +621,8 @@ export function AddProductButton() {
                     <SelectItem value="out-of-stock">Out of Stock</SelectItem>
                   </SelectContent>
                 </Select>
-              </div>
-              <div className="grid gap-2">
+              </div> */}
+              {/* <div className="grid gap-2">
                 <Label htmlFor="sku" className="text-zinc-200">
                   SKU
                 </Label>
@@ -491,7 +631,7 @@ export function AddProductButton() {
                   placeholder="Stock Keeping Unit"
                   className="bg-zinc-800 border-zinc-700 text-zinc-200 placeholder:text-zinc-500 focus-visible:ring-yellow-400"
                 />
-              </div>
+              </div> */}
             </div>
           </div>
           <DialogFooter className="sticky bottom-0 pt-2 pb-2 bg-zinc-900">

@@ -6,6 +6,7 @@ import { Toaster } from "react-hot-toast";
 import Client from "./client";
 import StoreProvider from "../store/StoreProvider";
 import ToasterProvider from "@/src/ToasterProvider";
+import ConditionalTawkWidget from "@/src/components/conditional-tawk-widget";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -38,6 +39,7 @@ export default function RootLayout({
             >
               {children}
               <ToasterProvider />
+              <ConditionalTawkWidget />
             </ThemeProvider>
           </StoreProvider>
         </Client>

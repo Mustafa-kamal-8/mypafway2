@@ -1,40 +1,20 @@
+// blog-post/[id]/page.tsx
+
+import { notFound } from "next/navigation";
 import Image from "next/image";
-import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import Navbar from "@/src/components/navbar";
 import Footer from "@/src/components/footer";
 import { Button } from "@/src/components/ui/button";
-
-async function getAllBlogPostIds() {
-  try {
-    const response = await fetch(
-      "https://www.googleapis.com/blogger/v3/blogs/8838452285404351994/posts?fields=items(id)&key=AIzaSyAaZMw_5CXwe9brfb7HMOMo96uYr_dE0Qs",
-      { cache: "force-cache" }
-    );
-
-    if (!response.ok) {
-      throw new Error("Failed to fetch blog posts");
-    }
-
-    const data = await response.json();
-    return data.items || [];
-  } catch (error) {
-    console.error("Error fetching blog post IDs:", error);
-    return [];
-  }
-}
+import Link from "next/link";
 
 async function getBlogPost(id: string) {
   try {
     const response = await fetch(
       `https://www.googleapis.com/blogger/v3/blogs/8838452285404351994/posts/${id}?key=AIzaSyAaZMw_5CXwe9brfb7HMOMo96uYr_dE0Qs`,
-      { next: { revalidate: 3600 } }
+      { cache: "force-cache" }
     );
-
-    if (!response.ok) {
-      throw new Error("Failed to fetch blog post");
-    }
-
+    if (!response.ok) throw new Error("Failed to fetch blog post");
     return await response.json();
   } catch (error) {
     console.error("Error fetching blog post:", error);
@@ -51,12 +31,23 @@ function formatDate(dateString: string) {
   });
 }
 
+// Generate the static params for the blog post pages
 export async function generateStaticParams() {
-  const posts = await getAllBlogPostIds();
+  try {
+    const response = await fetch(
+      "https://www.googleapis.com/blogger/v3/blogs/8838452285404351994/posts?fetchImages=true&fetchBodies=true&orderBy=published&status=live&key=AIzaSyAaZMw_5CXwe9brfb7HMOMo96uYr_dE0Qs",
+      { cache: "force-cache" }
+    );
+    const data = await response.json();
+    const posts = data.items || [];
 
-  return posts.map((post: any) => ({
-    id: post.id,
-  }));
+    return posts.map((post: any) => ({
+      id: post.id,
+    }));
+  } catch (error) {
+    console.error("Error fetching static params:", error);
+    return [];
+  }
 }
 
 export default async function BlogPostPage({
@@ -112,16 +103,16 @@ export default async function BlogPostPage({
 
             <div className="flex items-center gap-4 mb-8 text-muted-foreground">
               <div className="flex items-center gap-2">
-                {post.author.image && (
+                {post.author?.image?.url && (
                   <Image
-                    src={post.author.image.url || "/placeholder.svg"}
-                    alt={post.author.displayName}
+                    src={post.author.image.url}
+                    alt={post.author.displayName || "Author"}
                     width={40}
                     height={40}
                     className="rounded-full"
                   />
                 )}
-                <span>{post.author.displayName}</span>
+                <span>{post.author?.displayName}</span>
               </div>
               <span>•</span>
               <time dateTime={post.published}>
@@ -129,10 +120,10 @@ export default async function BlogPostPage({
               </time>
             </div>
 
-            {post.images && post.images[0] && (
+            {post.images?.[0]?.url && (
               <div className="relative w-full aspect-video mb-8 overflow-hidden rounded-lg">
                 <Image
-                  src={post.images[0].url || "/placeholder.svg"}
+                  src={post.images[0].url}
                   alt={post.title}
                   fill
                   className="object-cover"

@@ -42,7 +42,8 @@ interface Product {
   category: string;
   sub_category: string;
   price: string;
-  image_link?: string;
+  color: string;
+  image_url?: string;
   program_name?: string;
   description?: string;
   details?: string;
@@ -187,8 +188,8 @@ export default function SearchPage() {
       if (!response.err) {
         setProducts(response.result || []);
       } else {
-        console.error("API Error:", response.result); // optional logging
-        setProducts([]); // optional: clear previous data
+        console.error("API Error:", response.result);
+        setProducts([]);
       }
     } catch (error) {
       console.error("Error fetching products:", error);
@@ -414,7 +415,7 @@ export default function SearchPage() {
                       <span className="text-yellow-500">-</span>
                     </div>
 
-                    <div className="space-y-2">
+                    <div className="max-h-28 overflow-auto pr-2 space-y-2">
                       {/* Extract unique categories from products */}
                       {Array.from(
                         new Set(
@@ -457,8 +458,8 @@ export default function SearchPage() {
                       <span className="text-yellow-500">-</span>
                     </div>
 
-                    <div className="space-y-2">
-                      {/* Extract unique brands from products */}
+                    {/* Add scrollable wrapper with fixed height */}
+                    <div className="max-h-28 overflow-auto pr-2 space-y-2">
                       {Array.from(
                         new Set(products.map((product) => product.brand || ""))
                       )
@@ -473,7 +474,6 @@ export default function SearchPage() {
                               checked={selectedBrands.includes(brand)}
                               onCheckedChange={() => handleBrandChange(brand)}
                             />
-
                             <label
                               htmlFor={`brand-${index}`}
                               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -518,11 +518,7 @@ export default function SearchPage() {
                       >
                         <div className="relative">
                           <img
-                            src={
-                              product.image_link
-                                ? `${img}${product.image_link}`
-                                : "/placeholder.svg"
-                            }
+                            src={product.image_url || "/placeholder.svg"}
                             alt={product.name}
                             className="w-full h-40 object-cover"
                           />
@@ -585,11 +581,10 @@ export default function SearchPage() {
                                   <div>
                                     <img
                                       src={
-                                        selectedProduct?.image_link
-                                          ? `${img}${selectedProduct.image_link}`
-                                          : "/placeholder.svg"
+                                        selectedProduct?.image_url ||
+                                        "/placeholder.svg"
                                       }
-                                      alt={selectedProduct?.program_name}
+                                      alt={selectedProduct?.name}
                                       className="w-full h-auto object-cover rounded-lg"
                                     />
                                   </div>
@@ -705,11 +700,7 @@ export default function SearchPage() {
                             className="relative flex items-center gap-2 p-2 border rounded"
                           >
                             <img
-                              src={
-                                product.image_link
-                                  ? `${img}${product.image_link}`
-                                  : "/placeholder.svg"
-                              }
+                              src={product.image_url || "/placeholder.svg"}
                               alt={product.name || "placeholder"}
                               className="w-16 h-16 object-cover rounded"
                             />
@@ -773,9 +764,7 @@ export default function SearchPage() {
                                   <TableCell key={itemId}>
                                     <img
                                       src={
-                                        product.image_link
-                                          ? `${img}${product.image_link}`
-                                          : "/placeholder.svg"
+                                        product.image_url || "/placeholder.svg"
                                       }
                                       alt={product.name || "placeholder"}
                                       className="w-24 h-24 object-cover rounded"

@@ -1,5 +1,7 @@
 "use client";
 
+import type React from "react";
+
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Edit, Search, Trash } from "lucide-react";
@@ -22,141 +24,99 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/src/components/ui/pagination";
-import { getProducts } from "../api/products";
 
-// Sample data
-const products = [
-  {
-    id: 1,
-    name: "AC Service",
-    category: "AC & Appliances Repair",
-    subcategory: "AC Repair",
-    price: 49.99,
-    status: "Active",
-    image: "/placeholder.svg?height=64&width=64",
-  },
-  {
-    id: 2,
-    name: "Deep Home Cleaning",
-    category: "Cleaning Services",
-    subcategory: "Deep Cleaning",
-    price: 99.99,
-    status: "Active",
-    image: "/placeholder.svg?height=64&width=64",
-  },
-  {
-    id: 3,
-    name: "Electrical Wiring",
-    category: "Electrician, Plumber, Carpenter & Painter",
-    subcategory: "Electrical Repairs",
-    price: 79.99,
-    status: "Active",
-    image: "/placeholder.svg?height=64&width=64",
-  },
-  {
-    id: 4,
-    name: "Haircut & Styling",
-    category: "Unisex Salon",
-    subcategory: "Hair Services",
-    price: 29.99,
-    status: "Active",
-    image: "/placeholder.svg?height=64&width=64",
-  },
-  {
-    id: 5,
-    name: "Pest Control Treatment",
-    category: "Pest Control Service",
-    subcategory: "General Pest Control",
-    price: 149.99,
-    status: "Active",
-    image: "/placeholder.svg?height=64&width=64",
-  },
-  // Car-related products
-  {
-    id: 6,
-    name: "Engine Overhaul Service",
-    category: "Engine & Performance Parts",
-    subcategory: "Engine Repair",
-    price: 799.99,
-    status: "Active",
-    image: "/placeholder.svg?height=64&width=64",
-  },
-  {
-    id: 7,
-    name: "Turbocharger Installation",
-    category: "Engine & Performance Parts",
-    subcategory: "Turbocharger Services",
-    price: 499.99,
-    status: "Active",
-    image: "/placeholder.svg?height=64&width=64",
-  },
-  {
-    id: 8,
-    name: "Brake Pad Replacement",
-    category: "Brakes & Suspension",
-    subcategory: "Brake Services",
-    price: 149.99,
-    status: "Active",
-    image: "/placeholder.svg?height=64&width=64",
-  },
-  {
-    id: 9,
-    name: "Suspension Upgrade",
-    category: "Brakes & Suspension",
-    subcategory: "Suspension Services",
-    price: 399.99,
-    status: "Active",
-    image: "/placeholder.svg?height=64&width=64",
-  },
-  {
-    id: 10,
-    name: "LED Headlight Installation",
-    category: "Electrical & Lighting",
-    subcategory: "Lighting Services",
-    price: 149.99,
-    status: "Active",
-    image: "/placeholder.svg?height=64&width=64",
-  },
-  {
-    id: 11,
-    name: "Battery Replacement",
-    category: "Electrical & Lighting",
-    subcategory: "Electrical Services",
-    price: 129.99,
-    status: "Active",
-    image: "/placeholder.svg?height=64&width=64",
-  },
-  {
-    id: 12,
-    name: "Alloy Wheels Installation",
-    category: "Tires & Wheels",
-    subcategory: "Wheels & Tires",
-    price: 699.99,
-    status: "Active",
-    image: "/placeholder.svg?height=64&width=64",
-  },
-  {
-    id: 13,
-    name: "Tire Replacement",
-    category: "Tires & Wheels",
-    subcategory: "Tires",
-    price: 199.99,
-    status: "Active",
-    image: "/placeholder.svg?height=64&width=64",
-  },
-];
+import { getProducts } from "../api/products";
+import { debounce } from "@/src/lib/utils";
 
 export function ProductsList() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [products, setProducts] = useState<any[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(true);
+  const productsPerPage = 10;
 
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setIsLoading(true);
+      try {
+        const searchParam = searchTerm ? `name:${searchTerm}` : "";
+        const response = await getProducts({ search: searchParam });
+        const fetchedProducts = response.result || [];
+        setProducts(fetchedProducts);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
+    if (searchTerm) {
+      debounce(fetchProducts, 5000);
+    } else {
+      fetchProducts();
+    }
+  }, [searchTerm]);
 
-  const filteredProducts = products.filter(
-    (product) =>
-      product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.subcategory.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredProducts = Array.isArray(products) ? products : [];
+
+  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+  const indexOfLastProduct = currentPage * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+  const currentProducts = filteredProducts.slice(
+    indexOfFirstProduct,
+    indexOfLastProduct
   );
+
+  const generatePaginationItems = () => {
+    const maxPagesToShow = 5;
+    const pages = [];
+
+    if (totalPages <= maxPagesToShow) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      pages.push(1);
+
+      let startPage = Math.max(2, currentPage - 1);
+      let endPage = Math.min(totalPages - 1, currentPage + 1);
+
+      if (currentPage <= 3) {
+        endPage = Math.min(maxPagesToShow - 1, totalPages - 1);
+      }
+
+      if (currentPage >= totalPages - 2) {
+        startPage = Math.max(2, totalPages - maxPagesToShow + 2);
+      }
+
+      if (startPage > 2) {
+        pages.push("ellipsis-start");
+      }
+
+      for (let i = startPage; i <= endPage; i++) {
+        pages.push(i);
+      }
+
+      if (endPage < totalPages - 1) {
+        pages.push("ellipsis-end");
+      }
+
+      if (totalPages > 1) {
+        pages.push(totalPages);
+      }
+    }
+
+    return pages;
+  };
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1);
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
 
   return (
     <div className="space-y-6">
@@ -166,10 +126,10 @@ export function ProductsList() {
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-zinc-500" />
           <Input
             type="search"
-            placeholder="Search products..."
+            placeholder="Search products by name..."
             className="pl-8 bg-zinc-800 border-zinc-700 text-zinc-200 placeholder:text-zinc-500 focus-visible:ring-yellow-400"
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={handleSearch}
           />
         </div>
       </div>
@@ -182,76 +142,88 @@ export function ProductsList() {
               <TableHead className="text-zinc-400">Name</TableHead>
               <TableHead className="text-zinc-400">Category</TableHead>
               <TableHead className="text-zinc-400 hidden md:table-cell">
-                Subcategory
+                Model
               </TableHead>
               <TableHead className="text-zinc-400 hidden md:table-cell">
                 Price
               </TableHead>
-              <TableHead className="text-zinc-400">Status</TableHead>
               <TableHead className="text-zinc-400 text-right">
                 Actions
               </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredProducts.map((product) => (
-              <TableRow
-                key={product.id}
-                className="border-zinc-800 bg-zinc-900 hover:bg-zinc-800/50"
-              >
-                <TableCell>
-                  <Image
-                    src={product.image || "/placeholder.svg"}
-                    alt={product.name}
-                    width={40}
-                    height={40}
-                    className="rounded-md"
-                  />
-                </TableCell>
-                <TableCell className="font-medium text-zinc-200">
-                  {product.name}
-                </TableCell>
-                <TableCell className="text-zinc-400">
-                  {product.category}
-                </TableCell>
-                <TableCell className="text-zinc-400 hidden md:table-cell">
-                  {product.subcategory}
-                </TableCell>
-                <TableCell className="text-zinc-400 hidden md:table-cell">
-                  ${product.price.toFixed(2)}
-                </TableCell>
-                <TableCell>
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                    {product.status}
-                  </span>
-                </TableCell>
-                <TableCell className="text-right">
-                  <div className="flex justify-end gap-2">
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="h-8 w-8 bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700 hover:text-zinc-100"
-                    >
-                      <Edit className="h-4 w-4" />
-                      <span className="sr-only">Edit</span>
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="h-8 w-8 bg-zinc-800 border-zinc-700 text-red-400 hover:bg-zinc-700 hover:text-red-300"
-                    >
-                      <Trash className="h-4 w-4" />
-                      <span className="sr-only">Delete</span>
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-
-            {filteredProducts.length === 0 && (
+            {isLoading ? (
               <TableRow className="border-zinc-800 bg-zinc-900">
                 <TableCell
-                  colSpan={7}
+                  colSpan={6}
+                  className="h-24 text-center text-zinc-400"
+                >
+                  Loading products...
+                </TableCell>
+              </TableRow>
+            ) : currentProducts.length > 0 ? (
+              currentProducts.map((product) => (
+                <TableRow
+                  key={product.id}
+                  className="border-zinc-800 bg-zinc-900 hover:bg-zinc-800/50"
+                >
+                  <TableCell>
+                    <div className="w-10 h-10 rounded-md overflow-hidden flex items-center justify-center bg-gray-100">
+                      {product.image_url ? (
+                        <Image
+                          src={product.image_url || "/placeholder.svg"}
+                          alt={product.name}
+                          width={50}
+                          height={50}
+                          className="rounded-md object-cover"
+                        />
+                      ) : (
+                        <span className="text-[10px] text-gray-500 text-center px-1">
+                          {product.name}
+                        </span>
+                      )}
+                    </div>
+                  </TableCell>
+
+                  <TableCell className="font-medium text-zinc-200 max-w-[200px] truncate">
+                    {product.name}
+                  </TableCell>
+                  <TableCell className="text-zinc-400">
+                    {product.category || "N/A"}
+                  </TableCell>
+                  <TableCell className="text-zinc-400 hidden md:table-cell">
+                    {product.model || "N/A"}
+                  </TableCell>
+                  <TableCell className="text-zinc-400 hidden md:table-cell">
+                    {product.price || "N/A"}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex justify-end gap-2">
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="h-8 w-8 bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700 hover:text-zinc-100"
+                      >
+                        <Edit className="h-4 w-4" />
+                        <span className="sr-only">Edit</span>
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="h-8 w-8 bg-zinc-800 border-zinc-700 text-red-400 hover:bg-zinc-700 hover:text-red-300"
+                      >
+                        <Trash className="h-4 w-4" />
+                        <span className="sr-only">Delete</span>
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow className="border-zinc-800 bg-zinc-900">
+                <TableCell
+                  colSpan={6}
                   className="h-24 text-center text-zinc-400"
                 >
                   No products found.
@@ -262,39 +234,62 @@ export function ProductsList() {
         </Table>
       </div>
 
-      <Pagination>
-        <PaginationContent>
-          <PaginationItem>
-            <PaginationPrevious
-              href="#"
-              className="bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700 hover:text-zinc-100"
-            />
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationLink
-              href="#"
-              isActive
-              className="bg-yellow-500 text-black hover:bg-yellow-600"
-            >
-              1
-            </PaginationLink>
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationLink
-              href="#"
-              className="bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700 hover:text-zinc-100"
-            >
-              2
-            </PaginationLink>
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationNext
-              href="#"
-              className="bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700 hover:text-zinc-100"
-            />
-          </PaginationItem>
-        </PaginationContent>
-      </Pagination>
+      {totalPages > 0 && (
+        <div className="flex justify-center">
+          <Pagination>
+            <PaginationContent className="overflow-x-auto flex-nowrap max-w-full">
+              <PaginationItem>
+                <PaginationPrevious
+                  onClick={() =>
+                    currentPage > 1 && handlePageChange(currentPage - 1)
+                  }
+                  className={`bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700 hover:text-zinc-100 ${
+                    currentPage === 1
+                      ? "pointer-events-none opacity-50"
+                      : "cursor-pointer"
+                  }`}
+                />
+              </PaginationItem>
+
+              {generatePaginationItems().map((page, index) =>
+                page === "ellipsis-start" || page === "ellipsis-end" ? (
+                  <PaginationItem key={`ellipsis-${index}`}>
+                    <span className="px-4 py-2 text-zinc-400">...</span>
+                  </PaginationItem>
+                ) : (
+                  <PaginationItem key={index}>
+                    <PaginationLink
+                      onClick={() => handlePageChange(page as number)}
+                      isActive={currentPage === page}
+                      className={
+                        currentPage === page
+                          ? "bg-yellow-500 text-black hover:bg-yellow-600 cursor-pointer"
+                          : "bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700 hover:text-zinc-100 cursor-pointer"
+                      }
+                    >
+                      {page}
+                    </PaginationLink>
+                  </PaginationItem>
+                )
+              )}
+
+              <PaginationItem>
+                <PaginationNext
+                  onClick={() =>
+                    currentPage < totalPages &&
+                    handlePageChange(currentPage + 1)
+                  }
+                  className={`bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700 hover:text-zinc-100 ${
+                    currentPage === totalPages
+                      ? "pointer-events-none opacity-50"
+                      : "cursor-pointer"
+                  }`}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </div>
+      )}
     </div>
   );
 }

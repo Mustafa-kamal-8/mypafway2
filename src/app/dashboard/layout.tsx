@@ -31,7 +31,6 @@ export default function DashboardLayout({
         </main>
       </div>
 
-      {/* ✅ Toast Notifications */}
       <ToasterProvider />
     </ThemeProvider>
   );
