@@ -1,6 +1,5 @@
 import Api from "@/src/services/Api"
 
-
 export async function uploadCategories(body) {
     console.log("here??")
     const response = await Api.post("/categories", {

@@ -49,6 +49,7 @@ interface Product {
   details?: string;
   created_at?: string;
   updated_at?: string;
+  website_url?: string;
   other_categories?: string;
   brand?: string;
 }
@@ -175,8 +176,7 @@ export default function SearchPage() {
       searchConditions.push(`category:${category}`);
     }
 
-    // Join all conditions with a space between them
-    const searchString = searchConditions.join(","); // Add space between conditions
+    const searchString = searchConditions.join(",");
 
     try {
       const response = await getProducts({
@@ -231,6 +231,10 @@ export default function SearchPage() {
   }, [formMake]);
 
   const handleAddToCart = async (product: Product) => {
+    if (product.website_url) {
+      window.open(product.website_url, "_blank"); // open in new tab
+      return;
+    }
     const storedCart = localStorage.getItem("cartItems");
     const parsedCart: Product[] = storedCart ? JSON.parse(storedCart) : [];
 
@@ -518,7 +522,14 @@ export default function SearchPage() {
                       >
                         <div className="relative">
                           <img
-                            src={product.image_url || "/placeholder.svg"}
+                            // src={product.image_url || "/placeholder.svg"}
+                            src={
+                              !product.image_url
+                                ? "/placeholder.svg"
+                                : product.image_url?.includes("https")
+                                ? product.image_url
+                                : `${img}${product.image_url}`
+                            }
                             alt={product.name}
                             className="w-full h-40 object-cover"
                           />
@@ -571,7 +582,7 @@ export default function SearchPage() {
                                   Details
                                 </button>
                               </DialogTrigger>
-                              <DialogContent className="w-full max-w-[90vw] md:max-w-[70vw]">
+                              <DialogContent className="w-full max-w-[100vw] md:max-w-[70vw]  h-[80vh] overflow-auto">
                                 <DialogHeader>
                                   <DialogTitle>
                                     {selectedProduct?.name}
@@ -581,8 +592,13 @@ export default function SearchPage() {
                                   <div>
                                     <img
                                       src={
-                                        selectedProduct?.image_url ||
-                                        "/placeholder.svg"
+                                        !selectedProduct?.image_url
+                                          ? "/placeholder.svg"
+                                          : selectedProduct?.image_url?.includes(
+                                              "https"
+                                            )
+                                          ? selectedProduct?.image_url
+                                          : `${img}${selectedProduct?.image_url}`
                                       }
                                       alt={selectedProduct?.name}
                                       className="w-full h-auto object-cover rounded-lg"
@@ -700,7 +716,13 @@ export default function SearchPage() {
                             className="relative flex items-center gap-2 p-2 border rounded"
                           >
                             <img
-                              src={product.image_url || "/placeholder.svg"}
+                              src={
+                                !product?.image_url
+                                  ? "/placeholder.svg"
+                                  : product?.image_url?.includes("https")
+                                  ? product?.image_url
+                                  : `${img}${product?.image_url}`
+                              }
                               alt={product.name || "placeholder"}
                               className="w-16 h-16 object-cover rounded"
                             />
@@ -764,7 +786,13 @@ export default function SearchPage() {
                                   <TableCell key={itemId}>
                                     <img
                                       src={
-                                        product.image_url || "/placeholder.svg"
+                                        !product?.image_url
+                                          ? "/placeholder.svg"
+                                          : product?.image_url?.includes(
+                                              "https"
+                                            )
+                                          ? product?.image_url
+                                          : `${img}${product?.image_url}`
                                       }
                                       alt={product.name || "placeholder"}
                                       className="w-24 h-24 object-cover rounded"

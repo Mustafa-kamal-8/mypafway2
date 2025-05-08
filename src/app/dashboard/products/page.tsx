@@ -7,7 +7,7 @@ import Papa from "papaparse";
 import { Dialog } from "@headlessui/react";
 import { DashboardHeader } from "@/src/components/dashboard-header";
 import { ProductsList } from "@/src/components/products-list";
-import { AddProductButton } from "@/src/components/add-product-button";
+import { ProductFormButton } from "@/src/components/add-product-button";
 import { uploadProducts } from "@/src/api/products";
 import { debounce } from "@/src/lib/utils";
 
@@ -193,7 +193,7 @@ export default function ProductsPage() {
     <div className="flex flex-col">
       <DashboardHeader heading="Products" text="Manage your products">
         <div className="flex gap-2">
-          <AddProductButton />
+          <ProductFormButton />
           <button
             onClick={() => setIsModalOpen(true)}
             className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm"

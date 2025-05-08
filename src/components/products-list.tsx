@@ -27,13 +27,18 @@ import {
 
 import { getProducts } from "../api/products";
 import { debounce } from "@/src/lib/utils";
+import { ProductFormButton } from "../components/add-product-button";
 
 export function ProductsList() {
   const [searchTerm, setSearchTerm] = useState("");
   const [products, setProducts] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
+  const [isFormOpen, setIsFormOpen] = useState(false);
   const productsPerPage = 10;
+  const [selectedProductId, setSelectedProductId] = useState<
+    string | undefined
+  >(undefined);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -118,6 +123,13 @@ export function ProductsList() {
     setCurrentPage(page);
   };
 
+  const handleEditClick = (productId: string) => {
+    setSelectedProductId(productId);
+    setIsFormOpen(true);
+    // Trigger the dialog to open
+    document.getElementById("edit-product-trigger")?.click();
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
@@ -130,6 +142,13 @@ export function ProductsList() {
             className="pl-8 bg-zinc-800 border-zinc-700 text-zinc-200 placeholder:text-zinc-500 focus-visible:ring-yellow-400"
             value={searchTerm}
             onChange={handleSearch}
+          />
+        </div>
+        <div className="hidden">
+          <ProductFormButton
+            productId={selectedProductId}
+            open={isFormOpen}
+            setOpen={setIsFormOpen}
           />
         </div>
       </div>
@@ -204,6 +223,7 @@ export function ProductsList() {
                         variant="outline"
                         size="icon"
                         className="h-8 w-8 bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700 hover:text-zinc-100"
+                        onClick={() => handleEditClick(product.id)}
                       >
                         <Edit className="h-4 w-4" />
                         <span className="sr-only">Edit</span>

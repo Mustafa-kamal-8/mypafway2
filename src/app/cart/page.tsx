@@ -84,9 +84,11 @@ const CartPage = () => {
                       <div className="relative h-24 w-24 bg-gray-200 rounded-md overflow-hidden flex-shrink-0">
                         <Image
                           src={
-                            product.image_link
-                              ? `${img}${product.image_link}`
-                              : "/placeholder.svg"
+                            !product?.image_url
+                              ? "/placeholder.svg"
+                              : product?.image_url?.includes("https")
+                              ? product?.image_url
+                              : `${img}${product?.image_url}`
                           }
                           alt={product.name}
                           fill
@@ -101,13 +103,13 @@ const CartPage = () => {
                             ? product.category?.name || "Exterior"
                             : product.category || "Exterior"}
                         </p>
-                        <button
+                        {/* <button
                           onClick={() => saveForLater(product.id)}
                           className="flex items-center text-sm text-gray-600 mt-2 hover:text-gray-900"
                         >
                           <Heart className="h-4 w-4 mr-1" />
                           Save for Later
-                        </button>
+                        </button> */}
 
                         {/* Mobile price and quantity */}
                         <div className="flex justify-between items-center mt-3 md:hidden">

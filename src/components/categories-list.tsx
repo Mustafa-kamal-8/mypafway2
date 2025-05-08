@@ -36,6 +36,8 @@ export function CategoriesList() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
 
+  const img = process.env.NEXT_PUBLIC_IMAGE_URL;
+
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -43,7 +45,7 @@ export function CategoriesList() {
         const cats = response.result || [];
         setCategories(cats);
       } catch (error) {
-        console.error("Error fetching products:", error);
+        console.error("Error fetching categories:", error);
       }
     };
     fetchCategories();
@@ -70,53 +72,55 @@ export function CategoriesList() {
       <div className="text-lg font-semibold text-white">Categories</div>
 
       <TabsContent value="categories" className="space-y-4">
-        {currentItems.map((category) => (
-          <Card
-            key={category.id}
-            className="bg-zinc-900 border-zinc-800 overflow-hidden"
-          >
-            <CardContent className="p-0">
-              <div className="flex flex-col md:flex-row">
-                <div className="flex items-center p-4 md:w-24">
-                  <div className="w-16 h-16 bg-yellow-500 rounded-full flex items-center justify-center">
-                    <Image
-                      src="/placeholder.svg?height=64&width=64"
-                      alt={category.name}
-                      width={40}
-                      height={40}
-                    />
-                  </div>
-                </div>
-                <div className="flex-1 p-4 border-l border-zinc-800">
-                  <div className="flex flex-col md:flex-row md:items-center justify-between">
-                    <h3 className="text-lg font-semibold text-zinc-100">
-                      {category.name}
-                    </h3>
-                    <div className="flex items-center space-x-2 mt-2 md:mt-0">
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        className="h-8 w-8 bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700 hover:text-zinc-100"
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        className="h-8 w-8 bg-zinc-800 border-zinc-700 text-red-400 hover:bg-zinc-700 hover:text-red-300"
-                      >
-                        <Trash className="h-4 w-4" />
-                      </Button>
+        {currentItems
+          .filter((category) => category.parent_id === null)
+          .map((category) => (
+            <Card
+              key={category.id}
+              className="bg-zinc-900 border-zinc-800 overflow-hidden"
+            >
+              <CardContent className="p-0">
+                <div className="flex flex-col md:flex-row">
+                  <div className="flex items-center p-4 md:w-24">
+                    <div className="w-16 h-16 flex items-center justify-center">
+                      <Image
+                        src={`${img}${category.image}`}
+                        alt={category.name}
+                        width={80}
+                        height={80}
+                      />
                     </div>
                   </div>
-                  <p className="mt-2 text-sm text-zinc-400">
-                    {category.description}
-                  </p>
+                  <div className="flex-1 p-4 border-l border-zinc-800">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between">
+                      <h3 className="text-lg font-semibold text-zinc-100">
+                        {category.name}
+                      </h3>
+                      <div className="flex items-center space-x-2 mt-2 md:mt-0">
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="h-8 w-8 bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700 hover:text-zinc-100"
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="h-8 w-8 bg-zinc-800 border-zinc-700 text-red-400 hover:bg-zinc-700 hover:text-red-300"
+                        >
+                          <Trash className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                    <p className="mt-2 text-sm text-zinc-400">
+                      {category.description}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+              </CardContent>
+            </Card>
+          ))}
 
         <Pagination>
           <PaginationContent className="flex flex-wrap justify-center gap-2">

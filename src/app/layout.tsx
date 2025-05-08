@@ -7,6 +7,7 @@ import Client from "./client";
 import StoreProvider from "../store/StoreProvider";
 import ToasterProvider from "@/src/ToasterProvider";
 import ConditionalTawkWidget from "@/src/components/conditional-tawk-widget";
+import TawkCleanUpListener from "@/src/components/tawk-cleanup-listener";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -40,6 +41,7 @@ export default function RootLayout({
               {children}
               <ToasterProvider />
               <ConditionalTawkWidget />
+              <TawkCleanUpListener />
             </ThemeProvider>
           </StoreProvider>
         </Client>

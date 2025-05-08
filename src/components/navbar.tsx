@@ -48,6 +48,15 @@ export default function Navbar() {
                 Business
               </Button>
             </Link>
+            <Link href="/dashboard/products">
+              <Button
+                variant="outline"
+                size="sm"
+                className="bg-white text-black hover:bg-gray-100"
+              >
+                Freemium
+              </Button>
+            </Link>
           </div>
         </div>
       </div>

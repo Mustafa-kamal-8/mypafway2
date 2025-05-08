@@ -19,5 +19,14 @@ export async function uploadProducts(body) {
  console.log("response is",response)
      return response
  }
- 
+
+
+ export async function updateProducts(body) {
+    console.log("Updating this to backend:", body);
+    const response = await Api.put("/products",{
+        body
+    }); 
+    console.log(response);
+    return response;
+  }
   

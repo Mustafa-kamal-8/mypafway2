@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Edit, Trash } from "lucide-react";
 
@@ -21,92 +21,28 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/src/components/ui/select";
-
-// Sample data
-const subcategories = [
-  {
-    id: 1,
-    name: "Engine Overhaul",
-    categoryName: "Engine & Performance Parts",
-    description:
-      "Complete engine rebuilds and performance upgrades for enhanced power and efficiency.",
-    enabled: true,
-  },
-  {
-    id: 2,
-    name: "Turbocharger Installation",
-    categoryName: "Engine & Performance Parts",
-    description:
-      "Install high-performance turbochargers for a significant boost in your car's engine power.",
-    enabled: true,
-  },
-  {
-    id: 3,
-    name: "Brake Pad Replacement",
-    categoryName: "Brakes & Suspension",
-    description:
-      "High-quality brake pads replacement to ensure the safety and efficiency of your braking system.",
-    enabled: true,
-  },
-  {
-    id: 4,
-    name: "Suspension Upgrade",
-    categoryName: "Brakes & Suspension",
-    description:
-      "Upgrade your suspension system for better handling, stability, and comfort on the road.",
-    enabled: true,
-  },
-  {
-    id: 5,
-    name: "LED Headlight Installation",
-    categoryName: "Electrical & Lighting",
-    description:
-      "Install bright and energy-efficient LED headlights for improved night visibility and style.",
-    enabled: true,
-  },
-  {
-    id: 6,
-    name: "Battery Replacement",
-    categoryName: "Electrical & Lighting",
-    description:
-      "Replace old or faulty car batteries to ensure reliable engine starts and optimal electrical system performance.",
-    enabled: true,
-  },
-  {
-    id: 7,
-    name: "Custom Body Kits",
-    categoryName: "Body & Exterior Parts",
-    description:
-      "Install custom body kits for enhanced aesthetics and aerodynamics for your car.",
-    enabled: true,
-  },
-  {
-    id: 8,
-    name: "Alloy Wheels Installation",
-    categoryName: "Tires & Wheels",
-    description:
-      "Upgrade to stylish alloy wheels that improve your car's performance, handling, and looks.",
-    enabled: true,
-  },
-  {
-    id: 9,
-    name: "Tire Replacement",
-    categoryName: "Tires & Wheels",
-    description:
-      "Get high-quality tires for better grip, safety, and longevity on the road.",
-    enabled: true,
-  },
-];
+import { getCategories } from "../api/categories";
 
 export function SubcategoriesList() {
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [subCategories, setsubCategories] = useState([]);
 
-  const filteredSubcategories =
-    selectedCategory === "all"
-      ? subcategories
-      : subcategories.filter(
-          (subcat) => subcat.categoryName === selectedCategory
-        );
+  const img = process.env.NEXT_PUBLIC_IMAGE_URL;
+
+  useEffect(() => {
+    const fetchSubCategories = async () => {
+      try {
+        const response = await getCategories({ search: "" });
+        const cat = response.result || [];
+        setsubCategories(cat);
+      } catch (error) {
+        console.log("error fetching sub Categories", error);
+      }
+    };
+    fetchSubCategories();
+  }, []);
+
+  console.log("sub categories are", subCategories);
 
   return (
     <div className="space-y-6">
@@ -134,74 +70,77 @@ export function SubcategoriesList() {
       </div>
 
       <div className="space-y-4">
-        {filteredSubcategories.map((subcategory) => (
-          <Card
-            key={subcategory.id}
-            className="bg-zinc-900 border-zinc-800 overflow-hidden"
-          >
-            <CardContent className="p-0">
-              <div className="flex flex-col md:flex-row">
-                <div className="flex items-center p-4 md:w-24">
-                  <div className="w-16 h-16 bg-yellow-500 rounded-full flex items-center justify-center">
-                    <Image
-                      src="/placeholder.svg?height=64&width=64"
-                      alt={subcategory.name}
-                      width={40}
-                      height={40}
-                      className="text-black"
-                    />
-                  </div>
-                </div>
-                <div className="flex-1 p-4 border-l border-zinc-800">
-                  <div className="flex flex-col md:flex-row md:items-center justify-between">
-                    <div>
-                      <h3 className="text-lg font-semibold text-zinc-100">
-                        {subcategory.name}
-                      </h3>
-                      <p className="text-sm text-yellow-400">
-                        Category: {subcategory.categoryName}
-                      </p>
-                    </div>
-                    <div className="flex items-center space-x-2 mt-2 md:mt-0">
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        className="h-8 w-8 bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700 hover:text-zinc-100"
-                      >
-                        <Edit className="h-4 w-4" />
-                        <span className="sr-only">Edit</span>
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        className="h-8 w-8 bg-zinc-800 border-zinc-700 text-red-400 hover:bg-zinc-700 hover:text-red-300"
-                      >
-                        <Trash className="h-4 w-4" />
-                        <span className="sr-only">Delete</span>
-                      </Button>
+        {subCategories
+          .filter((subcategory) => subcategory.parent_id !== null)
+          .map((subcategory) => (
+            <Card
+              key={subcategory.id}
+              className="bg-zinc-900 border-zinc-800 overflow-hidden"
+            >
+              <CardContent className="p-0">
+                <div className="flex flex-col md:flex-row">
+                  <div className="flex items-center p-4 md:w-32">
+                    <div className="w-20 h-20 flex items-center justify-center">
+                      <Image
+                        src={`${img}${subcategory.image}`}
+                        alt={subcategory.name}
+                        width={80}
+                        height={80}
+                        className="text-black"
+                      />
                     </div>
                   </div>
-                  <p className="mt-2 text-sm text-zinc-400">
-                    {subcategory.description}
-                  </p>
-                  <div className="mt-4">
-                    <span
-                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                        subcategory.enabled
-                          ? "bg-green-100 text-green-800"
-                          : "bg-red-100 text-red-800"
-                      }`}
-                    >
-                      {subcategory.enabled ? "Enabled" : "Disabled"}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
 
-        {filteredSubcategories.length === 0 && (
+                  <div className="flex-1 p-4 border-l border-zinc-800">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between">
+                      <div>
+                        <h3 className="text-lg font-semibold text-zinc-100">
+                          {subcategory.name}
+                        </h3>
+                        <p className="text-sm text-yellow-400">
+                          Sub Category: {subcategory.categoryName}
+                        </p>
+                      </div>
+                      <div className="flex items-center space-x-2 mt-2 md:mt-0">
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="h-8 w-8 bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700 hover:text-zinc-100"
+                        >
+                          <Edit className="h-4 w-4" />
+                          <span className="sr-only">Edit</span>
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="h-8 w-8 bg-zinc-800 border-zinc-700 text-red-400 hover:bg-zinc-700 hover:text-red-300"
+                        >
+                          <Trash className="h-4 w-4" />
+                          <span className="sr-only">Delete</span>
+                        </Button>
+                      </div>
+                    </div>
+                    <p className="mt-2 text-sm text-zinc-400">
+                      {subcategory.description}
+                    </p>
+                    {/* <div className="mt-4">
+                      <span
+                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                          subcategory.enabled
+                            ? "bg-green-100 text-green-800"
+                            : "bg-red-100 text-red-800"
+                        }`}
+                      >
+                        {subcategory.enabled ? "Enabled" : "Disabled"}
+                      </span>
+                    </div> */}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+
+        {subCategories.length === 0 && (
           <Card className="bg-zinc-900 border-zinc-800">
             <CardContent className="p-6">
               <p className="text-zinc-400">

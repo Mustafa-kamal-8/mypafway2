@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import {
   ChevronLeft,
   ChevronRight,
@@ -16,7 +16,7 @@ import {
 import { cn } from "@/src/lib/utils";
 import { Button } from "@/src/components/ui/button";
 
-const sidebarLinks = [
+const allSidebarLinks = [
   { name: "Dashboard", href: "/dashboard", icon: Home },
   { name: "Categories", href: "/dashboard/categories", icon: Grid },
   { name: "Sub Categories", href: "/dashboard/subcategories", icon: Layers },
@@ -30,6 +30,29 @@ interface SidebarProps {
 
 export function DashboardSidebar({ collapsed, setCollapsed }: SidebarProps) {
   const pathname = usePathname();
+  const [role, setRole] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const currentUser = localStorage.getItem("currentUser");
+      if (currentUser) {
+        try {
+          const parsed = JSON.parse(currentUser);
+          setRole(parsed.role);
+        } catch (err) {
+          console.error("Failed to parse currentUser from localStorage");
+        }
+      }
+    }
+  }, []);
+
+  // Filter links based on role
+  const sidebarLinks = allSidebarLinks.filter((item) => {
+    if (role === "user") {
+      return item.name === "Products"; // only show Products for "user"
+    }
+    return true; // show all for other roles
+  });
 
   return (
     <div
@@ -55,6 +78,7 @@ export function DashboardSidebar({ collapsed, setCollapsed }: SidebarProps) {
           )}
         </Button>
       </div>
+
       <div className="flex-1 flex flex-col overflow-y-auto pt-5 pb-4">
         <nav className="mt-5 flex-1 px-2 space-y-1">
           {sidebarLinks.map((item) => {
@@ -88,6 +112,7 @@ export function DashboardSidebar({ collapsed, setCollapsed }: SidebarProps) {
           })}
         </nav>
       </div>
+
       <div className="flex-shrink-0 flex border-t border-zinc-800 p-4">
         <Button
           variant="ghost"
