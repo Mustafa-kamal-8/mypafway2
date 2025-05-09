@@ -11,7 +11,7 @@ interface Category {
   id: number;
   name: string;
   image: string;
-  parent_id: number;
+  parent_name: string;
 }
 
 interface SubCategory {
@@ -25,7 +25,7 @@ interface SubCategory {
 }
 
 export default function CategorySection() {
-  const [categoryId, setCategoryId] = useState<number | null>(null);
+  const [categoryId, setCategoryId] = useState<string | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
   const [subCategories, setSubCategories] = useState<SubCategory[]>([]);
   const [selectedCategoryName, setSelectedCategoryName] = useState<string>("");
@@ -68,7 +68,7 @@ export default function CategorySection() {
   };
 
   const handleCategoryClick = (id: number, name: string) => {
-    setCategoryId(id);
+    setCategoryId(name);
     setSelectedCategoryName(name);
   };
 
@@ -78,7 +78,7 @@ export default function CategorySection() {
     const fetchSubCategories = async () => {
       try {
         const response = await getSubCategories({
-          search: `parent_id:${categoryId}`,
+          search: `parent_name:${categoryId}`,
         });
         console.log("Fetched subcategories:", response);
 
@@ -171,7 +171,7 @@ export default function CategorySection() {
           // Main categories view
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {categories
-              .filter((category) => category.parent_id === null)
+              .filter((category) => category.parent_name === null)
               .map((category) => (
                 <div
                   key={category.id}
@@ -214,7 +214,7 @@ export default function CategorySection() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {subCategories.map((subcat) => (
                   <Link
-                    href={`/search?category=${categoryId}&subcategory=${subcat.id}`}
+                    href={`/search?category=${categoryId}&subcategory=${subcat.name}`}
                     key={subcat.id}
                     className="group flex items-center space-x-4"
                   >

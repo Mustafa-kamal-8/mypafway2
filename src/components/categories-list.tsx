@@ -27,6 +27,7 @@ interface Category {
   name: string;
   description: string;
   image: string;
+  parent_name: string;
 }
 
 const ITEMS_PER_PAGE = 10;
@@ -73,7 +74,7 @@ export function CategoriesList() {
 
       <TabsContent value="categories" className="space-y-4">
         {currentItems
-          .filter((category) => category.parent_id === null)
+          .filter((category) => category.parent_name === null)
           .map((category) => (
             <Card
               key={category.id}

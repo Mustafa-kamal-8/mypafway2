@@ -37,23 +37,27 @@ interface categories {
   id: number;
   name: string;
   image: string;
+  parent_name: string;
 }
 interface subcategories {
   id: number;
   name: string;
   image: string;
+  parent_name: string;
 }
 
 interface ProductFormButtonProps {
   productId?: string;
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  fetchProducts: () => Promise<void>;
 }
 
 export function ProductFormButton({
   productId,
   open,
   setOpen,
+  fetchProducts,
 }: ProductFormButtonProps) {
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const [products, setProducts] = useState<any[]>([]);
@@ -203,8 +207,9 @@ export function ProductFormButton({
 
     const fetchSubCategories = async () => {
       try {
+        const cleanedCategory = selectedCategory.trim();
         const response = await getSubCategories({
-          search: `parent_id:${selectedCategory}`,
+          search: `parent_name:${cleanedCategory}`,
         });
         console.log("Fetched subcategories:", response);
         setSubCategories(response.result || []);
@@ -328,24 +333,66 @@ export function ProductFormButton({
       };
 
       console.log("Sending payload to backend:", formData);
+
+      let response;
+
       if (isEditMode) {
-        await updateProducts(formData);
-        toast.success("Product updated successfully!");
+        response = await updateProducts(formData);
       } else {
-        await uploadProducts(formData);
-        toast.success("Product submitted successfully!");
+        response = await uploadProducts(formData);
+      }
+
+      console.log("API Response:", response);
+
+      if (response?.err === false) {
+        toast.success(
+          isEditMode
+            ? "Product updated successfully!"
+            : "Product submitted successfully!"
+        );
+        await fetchProducts(); // Call fetchProducts first
+        setOpen(false); // Then close the modal
+      } else {
+        toast.error(
+          isEditMode
+            ? "Failed to update Product. Please try again."
+            : "Failed to submit Product. Please try again."
+        );
       }
     } catch (error) {
-      console.log(error);
-      toast.error(
-        isEditMode
-          ? "Failed to update Product. Please try again."
-          : "Failed to submit Product. Please try again."
-      );
-    } finally {
-      setOpen(false);
+      console.error("Unexpected Error:", error);
     }
   };
+
+  useEffect(() => {
+    // When modal closes, reset form state if it was a successful submission
+    if (!open) {
+      if (!productId) {
+        // Only reset if not in edit mode
+        setName("");
+        setPrice("");
+        setSelectedCategory("");
+        setSelectedSubCategoryId("");
+        setDescription("");
+        setColor("");
+        setMake("");
+        setModel("");
+        setYear("");
+        setBrand("");
+        setQuantity("");
+        setWebsiteUrl("");
+        setWeight("");
+        setHeight("");
+        setImagePreviewUrl(null);
+        setCroppedImageUrl(null);
+        setImageFile(null);
+        if (fileInputRef.current) {
+          fileInputRef.current.value = "";
+        }
+      }
+    }
+  }, [open]);
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -354,7 +401,7 @@ export function ProductFormButton({
           {isEditMode ? "Edit Product" : "Add Product"}
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh] bg-zinc-900 border-zinc-800 text-zinc-100 overflow-y-auto">
+      <DialogContent className="sm:max-w-[1100px] max-h-[90vh] bg-zinc-900 border-zinc-800 text-zinc-100 overflow-y-auto">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle className="text-zinc-100">
@@ -367,7 +414,91 @@ export function ProductFormButton({
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="category" className="text-zinc-200">
+                  Category
+                </Label>
+                <Select onValueChange={setSelectedCategory}>
+                  <SelectTrigger
+                    id="category"
+                    className="bg-zinc-800 border-zinc-700 text-zinc-200 focus:ring-yellow-400"
+                  >
+                    <SelectValue placeholder="Select a category" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-zinc-800 border-zinc-700 text-zinc-200">
+                    {categories
+                      .filter((category) => category.parent_name === null)
+                      .map((category) => (
+                        <SelectItem
+                          key={category.id}
+                          value={category.name.toString()}
+                        >
+                          {category.name}
+                        </SelectItem>
+                      ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="subCategory" className="text-zinc-200">
+                  Sub Category
+                </Label>
+                <Select onValueChange={setSelectedSubCategoryId}>
+                  <SelectTrigger
+                    id="subCategory"
+                    className="bg-zinc-800 border-zinc-700 text-zinc-200 focus:ring-yellow-400"
+                  >
+                    <SelectValue placeholder="Select a Sub Category" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-zinc-800 border-zinc-700 text-zinc-200">
+                    {Array.isArray(subCategories) &&
+                    subCategories.length > 0 ? (
+                      subCategories
+                        .filter((category) => category.parent_name !== null)
+                        .map((category) => (
+                          <SelectItem
+                            key={category.image}
+                            value={category.name.toString()}
+                          >
+                            {category.name}
+                          </SelectItem>
+                        ))
+                    ) : (
+                      <div className="px-4 py-2 text-sm text-yellow-400">
+                        No subcategories found
+                      </div>
+                    )}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="make" className="text-zinc-200">
+                  Make
+                </Label>
+                <Input
+                  id="make"
+                  placeholder="Product Make"
+                  value={make}
+                  onChange={(e) => setMake(e.target.value)}
+                  className="bg-zinc-800 border-zinc-700 text-zinc-200 placeholder:text-zinc-500 focus-visible:ring-yellow-400"
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="model" className="text-zinc-200">
+                  Model
+                </Label>
+                <Input
+                  id="model"
+                  placeholder="Product Model"
+                  value={model}
+                  onChange={(e) => setModel(e.target.value)}
+                  className="bg-zinc-800 border-zinc-700 text-zinc-200 placeholder:text-zinc-500 focus-visible:ring-yellow-400"
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="name" className="text-zinc-200">
                   Product Name
@@ -393,64 +524,6 @@ export function ProductFormButton({
                   className="bg-zinc-800 border-zinc-700 text-zinc-200 placeholder:text-zinc-500 focus-visible:ring-yellow-400"
                 />
               </div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="category" className="text-zinc-200">
-                  Category
-                </Label>
-                <Select onValueChange={setSelectedCategory}>
-                  <SelectTrigger
-                    id="category"
-                    className="bg-zinc-800 border-zinc-700 text-zinc-200 focus:ring-yellow-400"
-                  >
-                    <SelectValue placeholder="Select a category" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-zinc-800 border-zinc-700 text-zinc-200">
-                    {categories.map((category) => (
-                      <SelectItem
-                        key={category.id}
-                        value={category.id.toString()}
-                      >
-                        {category.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="grid gap-2">
-                <Label htmlFor="subCategory" className="text-zinc-200">
-                  Sub Category
-                </Label>
-                <Select onValueChange={setSelectedSubCategoryId}>
-                  <SelectTrigger
-                    id="subCategory"
-                    className="bg-zinc-800 border-zinc-700 text-zinc-200 focus:ring-yellow-400"
-                  >
-                    <SelectValue placeholder="Select a Sub Category" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-zinc-800 border-zinc-700 text-zinc-200">
-                    {subCategories.length > 0 ? (
-                      subCategories.map((category) => (
-                        <SelectItem
-                          key={category.id}
-                          value={category.id.toString()}
-                        >
-                          {category.name}
-                        </SelectItem>
-                      ))
-                    ) : (
-                      <div className="px-4 py-2 text-sm text-yellow-400">
-                        No subcategories found
-                      </div>
-                    )}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="color" className="text-zinc-200">
                   Color
@@ -463,32 +536,9 @@ export function ProductFormButton({
                   className="bg-zinc-800 border-zinc-700 text-zinc-200 placeholder:text-zinc-500 focus-visible:ring-yellow-400"
                 />
               </div>
-              <div className="grid gap-2">
-                <Label htmlFor="make" className="text-zinc-200">
-                  Make
-                </Label>
-                <Input
-                  id="make"
-                  placeholder="Product Make"
-                  value={make}
-                  onChange={(e) => setMake(e.target.value)}
-                  className="bg-zinc-800 border-zinc-700 text-zinc-200 placeholder:text-zinc-500 focus-visible:ring-yellow-400"
-                />
-              </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="model" className="text-zinc-200">
-                  Model
-                </Label>
-                <Input
-                  id="model"
-                  placeholder="Product Model"
-                  value={model}
-                  onChange={(e) => setModel(e.target.value)}
-                  className="bg-zinc-800 border-zinc-700 text-zinc-200 placeholder:text-zinc-500 focus-visible:ring-yellow-400"
-                />
-              </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="year" className="text-zinc-200">
                   Year
@@ -501,9 +551,6 @@ export function ProductFormButton({
                   className="bg-zinc-800 border-zinc-700 text-zinc-200 placeholder:text-zinc-500 focus-visible:ring-yellow-400"
                 />
               </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="brand" className="text-zinc-200">
                   Brand
@@ -529,7 +576,8 @@ export function ProductFormButton({
                 />
               </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="websiteurl" className="text-zinc-200">
                   Website URL
@@ -542,7 +590,6 @@ export function ProductFormButton({
                   className="bg-zinc-800 border-zinc-700 text-zinc-200 placeholder:text-zinc-500 focus-visible:ring-yellow-400"
                 />
               </div>
-
               <div className="grid gap-2">
                 <Label htmlFor="height" className="text-zinc-200">
                   Height
@@ -555,122 +602,124 @@ export function ProductFormButton({
                   className="bg-zinc-800 border-zinc-700 text-zinc-200 placeholder:text-zinc-500 focus-visible:ring-yellow-400"
                 />
               </div>
+              <div className="grid gap-2">
+                <Label htmlFor="weight" className="text-zinc-200">
+                  Weight
+                </Label>
+                <Input
+                  id="weight"
+                  placeholder="Product Height"
+                  value={weight}
+                  onChange={(e) => setWeight(e.target.value)}
+                  className="bg-zinc-800 border-zinc-700 text-zinc-200 placeholder:text-zinc-500 focus-visible:ring-yellow-400"
+                />
+              </div>
             </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="image" className="text-zinc-200">
+                  Image
+                </Label>
+                <Input
+                  id="image"
+                  type="file"
+                  ref={fileInputRef}
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="bg-zinc-800 border-zinc-700 text-zinc-200 file:bg-zinc-700 file:text-zinc-200 file:border-0 focus-visible:ring-yellow-400"
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="description" className="text-zinc-200">
+                  Description
+                </Label>
+                <Textarea
+                  id="description"
+                  placeholder="Product description"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  className="bg-zinc-800 border-zinc-700 text-zinc-200 placeholder:text-zinc-500 focus-visible:ring-yellow-400"
+                />
+              </div>
 
-            <div className="grid gap-2">
-              <Label htmlFor="weight" className="text-zinc-200">
-                Weight
-              </Label>
-              <Input
-                id="weight"
-                placeholder="Product Height"
-                value={weight}
-                onChange={(e) => setWeight(e.target.value)}
-                className="bg-zinc-800 border-zinc-700 text-zinc-200 placeholder:text-zinc-500 focus-visible:ring-yellow-400"
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="description" className="text-zinc-200">
-                Description
-              </Label>
-              <Textarea
-                id="description"
-                placeholder="Product description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                className="bg-zinc-800 border-zinc-700 text-zinc-200 placeholder:text-zinc-500 focus-visible:ring-yellow-400"
-              />
-            </div>
-
-            <div className="grid gap-2">
-              <Label htmlFor="image" className="text-zinc-200">
-                Image
-              </Label>
-              <Input
-                id="image"
-                type="file"
-                ref={fileInputRef}
-                accept="image/*"
-                onChange={handleImageChange}
-                className="bg-zinc-800 border-zinc-700 text-zinc-200 file:bg-zinc-700 file:text-zinc-200 file:border-0 focus-visible:ring-yellow-400"
-              />
-            </div>
-
-            {/* Image Preview and Cropping Area */}
-            {imagePreviewUrl && !croppedImageUrl && (
-              <div className="mt-4 space-y-4">
-                <div className="border border-zinc-700 rounded-md p-4 bg-zinc-800">
-                  <h4 className="text-zinc-200 mb-2 font-medium">Crop Image</h4>
-                  <div className="max-h-[200px] overflow-auto">
-                    <ReactCrop
-                      crop={crop}
-                      onChange={(c) => setCrop(c)}
-                      onComplete={handleCropComplete}
-                      aspect={crop.aspect}
-                      className="max-w-full"
-                    >
-                      <img
-                        ref={imageRef}
-                        src={imagePreviewUrl || "/placeholder.svg"}
-                        alt="Preview"
+              {/* Image Preview and Cropping Area */}
+              {imagePreviewUrl && !croppedImageUrl && (
+                <div className="mt-4 space-y-4">
+                  <div className="border border-zinc-700 rounded-md p-4 bg-zinc-800">
+                    <h4 className="text-zinc-200 mb-2 font-medium">
+                      Crop Image
+                    </h4>
+                    <div className="max-h-[200px] overflow-auto">
+                      <ReactCrop
+                        crop={crop}
+                        onChange={(c) => setCrop(c)}
+                        onComplete={handleCropComplete}
+                        aspect={crop.aspect}
                         className="max-w-full"
-                      />
-                    </ReactCrop>
-                  </div>
-                  <div className="flex justify-end gap-2 mt-4">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={cancelCrop}
-                      className="border-zinc-700 text-zinc-200 hover:bg-zinc-700"
-                    >
-                      <X className="mr-2 h-4 w-4" /> Cancel
-                    </Button>
-                    <Button
-                      type="button"
-                      onClick={saveWithoutCrop}
-                      className="border-zinc-700 text-zinc-200 hover:bg-zinc-700"
-                    >
-                      Skip Crop
-                    </Button>
-                    <Button
-                      type="button"
-                      onClick={getCroppedImg}
-                      className="bg-yellow-500 hover:bg-yellow-600 text-black"
-                    >
-                      <Check className="mr-2 h-4 w-4" /> Apply Crop
-                    </Button>
+                      >
+                        <img
+                          ref={imageRef}
+                          src={imagePreviewUrl || "/placeholder.svg"}
+                          alt="Preview"
+                          className="max-w-full"
+                        />
+                      </ReactCrop>
+                    </div>
+                    <div className="flex justify-end gap-2 mt-4">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={cancelCrop}
+                        className="border-zinc-700 text-zinc-200 hover:bg-zinc-700"
+                      >
+                        <X className="mr-2 h-4 w-4" /> Cancel
+                      </Button>
+                      <Button
+                        type="button"
+                        onClick={saveWithoutCrop}
+                        className="border-zinc-700 text-zinc-200 hover:bg-zinc-700"
+                      >
+                        Skip Crop
+                      </Button>
+                      <Button
+                        type="button"
+                        onClick={getCroppedImg}
+                        className="bg-yellow-500 hover:bg-yellow-600 text-black"
+                      >
+                        <Check className="mr-2 h-4 w-4" /> Apply Crop
+                      </Button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* Cropped Image Preview */}
-            {croppedImageUrl && (
-              <div className="mt-4">
-                <div className="border border-zinc-700 rounded-md p-4 bg-zinc-800">
-                  <h4 className="text-zinc-200 mb-2 font-medium">
-                    Product Image
-                  </h4>
-                  <div className="relative">
-                    <img
-                      src={croppedImageUrl || "/placeholder.svg"}
-                      alt="Product preview"
-                      className="max-w-full rounded-md"
-                    />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={cancelCrop}
-                      className="absolute top-2 right-2 bg-zinc-800/80 border-zinc-700 text-zinc-200 hover:bg-zinc-700"
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
+              {/* Cropped Image Preview */}
+              {croppedImageUrl && (
+                <div className="mt-4">
+                  <div className="border border-zinc-700 rounded-md p-4 bg-zinc-800">
+                    <h4 className="text-zinc-200 mb-2 font-medium">
+                      Product Image
+                    </h4>
+                    <div className="relative">
+                      <img
+                        src={croppedImageUrl || "/placeholder.svg"}
+                        alt="Product preview"
+                        className="max-w-full rounded-md"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={cancelCrop}
+                        className="absolute top-2 right-2 bg-zinc-800/80 border-zinc-700 text-zinc-200 hover:bg-zinc-700"
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
           </div>

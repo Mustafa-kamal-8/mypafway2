@@ -1,6 +1,11 @@
+import Image from "next/image";
+import Link from "next/link";
+import { Search } from "lucide-react";
 import Navbar from "@/src/components/navbar";
 import Footer from "@/src/components/footer";
 import { Card, CardContent } from "@/src/components/ui/card";
+import { Button } from "@/src/components/ui/button";
+import { Input } from "@/src/components/ui/input";
 
 export default function ServicesPage() {
   return (
@@ -8,112 +13,215 @@ export default function ServicesPage() {
       <div className="fixed top-0 left-0 w-full z-50 shadow-md bg-gray-500">
         <Navbar />
       </div>
-      <main className="flex-1 pt-64 md:pt-64 lg:pt-44 py-12">
-        <div className="container mx-auto px-4">
-          <h1 className="text-3xl font-bold mb-6">Our Services</h1>
+      <section className="relative bg-gray-700 text-white mt-52 lg:mt-32">
+        <div className="container mx-auto px-4 py-16 md:py-24">
+          <h1 className="text-4xl md:text-6xl font-bold mb-4">Services</h1>
+        </div>
+        <div className="absolute bottom-0 left-0 right-0">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 1440 120"
+            className="w-full"
+          >
+            <path
+              fill="#FFC107"
+              fillOpacity="1"
+              d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"
+            ></path>
+          </svg>
+        </div>
+      </section>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
-            <Card>
-              <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-3">
-                  Wide Product Selection
+      <main className="flex-1 bg-white">
+        <div className="container mx-auto px-4 py-8">
+          {/* Breadcrumb */}
+          <div className="mb-8">
+            <p className="text-gray-600">
+              <Link href="#" className="hover:underline">
+                Home
+              </Link>{" "}
+              &gt; Services: Consumers
+            </p>
+          </div>
+
+          {/* Services heading */}
+          <h2 className="text-5xl font-bold text-amber-400 mb-12">Services</h2>
+
+          {/* Three column layout */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
+            {/* First column - Search Engine section */}
+            <div className="lg:col-span-1">
+              <img
+                src="https://via.placeholder.com/256x256?text=Image"
+                alt="Placeholder"
+                className="bg-gray-300 rounded-lg h-64 w-full object-cover mb-8"
+              />
+              <div className="lg:col-span-1 mt-20 sm:mt-40">
+                <img
+                  src="https://via.placeholder.com/256x256?text=Image"
+                  alt="Placeholder"
+                  className="bg-gray-300 rounded-lg h-64 w-full object-cover mb-8"
+                />
+              </div>
+            </div>
+
+            {/* Second column - Text content */}
+            <div className="lg:col-span-1">
+              <div className="mb-16">
+                <h3 className="text-4xl font-bold text-amber-400 mb-4">
+                  Search Engine
                 </h3>
-                <p>
-                  Access thousands of auto parts and accessories for virtually
-                  any make and model. Our extensive inventory ensures you'll
-                  find exactly what you need.
+                <p className="text-gray-600 mb-4">
+                  We're an online store locator via Google Earth, specializing
+                  in comparative shopping for auto parts and accessories.
+                  Comparative shopping will rise to prominence because it
+                  embraces two of the most fundamental attributes. The first is
+                  ease of access to auto part information. Mypafway's search
+                  engine enables consumers to compare prices and auto parts from
+                  an array of different products at one location. The second
+                  attribute is the commercial opportunity to match buyers with
+                  sellers.
                 </p>
-              </CardContent>
-            </Card>
+                <Button className="bg-amber-400 hover:bg-amber-500 text-black font-semibold rounded-full px-8">
+                  Try it now!
+                </Button>
+              </div>
 
-            <Card>
-              <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-3">Expert Advice</h3>
-                <p>
-                  Our team of automotive experts is available to help you find
-                  the right parts for your specific vehicle and answer any
-                  technical questions you may have.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-3">Fast Shipping</h3>
-                <p>
-                  We offer quick and reliable shipping options to ensure you get
-                  your parts when you need them, with tracking information
-                  provided for every order.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-3">Easy Returns</h3>
-                <p>
-                  If a part doesn't fit or meet your expectations, our
-                  hassle-free return policy makes it simple to return or
-                  exchange your purchase.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-3">Price Comparison</h3>
-                <p>
-                  Our platform allows you to compare prices from multiple
-                  suppliers, ensuring you get the best deal on the parts you
-                  need.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-3">
-                  Vehicle-Specific Search
+              <div>
+                <h3 className="text-4xl font-bold text-amber-400 mb-4">
+                  Comparison Shopping Engine
                 </h3>
-                <p>
-                  Our advanced search functionality allows you to find parts
-                  that are guaranteed to fit your specific vehicle make, model,
-                  and year.
+                <p className="text-gray-600 mb-4">
+                  Mypafway's Comparison Shopping Engine is an application
+                  enabling consumers and businesses to search for automotive
+                  parts. The Comparison Shopping Engine is easy to navigate and
+                  fun to use. Its design theme looks fantastic. Consumers can
+                  select from a wide variety of car manufacturers and select
+                  which automotive parts they want to buy. Mypafway's Comparison
+                  Shopping Engine allows consumers to search for many different
+                  automotive parts from many different clients.
                 </p>
-              </CardContent>
-            </Card>
+                <Button className="bg-amber-400 hover:bg-amber-500 text-black font-semibold rounded-full px-8">
+                  Try it now!
+                </Button>
+              </div>
+            </div>
 
-            <Card>
-              <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-3">Business Accounts</h3>
-                <p>
-                  Special services for automotive businesses, including bulk
-                  ordering, dedicated account management, and competitive
-                  pricing.
-                </p>
-              </CardContent>
-            </Card>
+            {/* Third column - Images */}
+            <div className="col-span-1 flex flex-col space-y-4">
+              {/* First Image - Full width, more height */}
+              <div className="w-full">
+                {/* Image section */}
+                <div className="relative w-full h-[40rem]">
+                  {/* Image */}
+                  <Image
+                    src="/brembo-logo.png" // Replace with actual path
+                    alt="Brembo Logo"
+                    width={350}
+                    height={100}
+                    className="absolute top-5 left-1/2 transform -translate-x-1/2 z-10"
+                  />
+                  <Image
+                    src="/hondacivicty-img.png"
+                    alt="Privacy Illustration"
+                    fill
+                    className="object-cover rounded-lg shadow-lg"
+                  />
 
-            <Card>
-              <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-3">Technical Resources</h3>
-                <p>
-                  Access to installation guides, technical specifications, and
-                  helpful articles to assist with your automotive projects.
-                </p>
-              </CardContent>
-            </Card>
+                  {/* Button inside image */}
+                  <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2">
+                    <Link href="/about">
+                      <button className="w-[300px] lg:w-[360px] bg-yellow-400 text-gray-800 font-semibold py-3 rounded-full shadow-md hover:bg-yellow-300 transition">
+                        Learn More
+                      </button>
+                    </Link>
+                  </div>
+                </div>
+              </div>
+              {/* Second Image - Full width, smaller height */}
+              <div className="flex flex-col w-full h-[22rem] bg-black items-center p-20">
+                {/* Image */}
+                <Image
+                  src="/logo2.png"
+                  alt="Security Illustration"
+                  width={200}
+                  height={200}
+                  className="object-cover rounded-lg shadow-md w-full"
+                />
 
-            <Card>
-              <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-3">Customer Support</h3>
-                <p>
-                  Our dedicated customer service team is available to assist
-                  with orders, answer questions, and resolve any issues
-                  promptly.
-                </p>
-              </CardContent>
-            </Card>
+                {/* Button or content on top */}
+                <div className="mt-10">
+                  <Link href="/register">
+                    <button className="w-[300px] lg:w-[360px] bg-yellow-400 text-gray-800 font-semibold px-6 py-3 rounded-full shadow-md hover:bg-yellow-300 transition">
+                      Register Now
+                    </button>
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Benefits Section - Takes first two columns */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
+            <div className="lg:col-span-2">
+              <div className="relative mb-8">
+                <div className="bg-amber-400 text-black font-bold text-2xl py-2 px-8 inline-block rounded-r-full">
+                  Benefits
+                </div>
+                <div className="absolute top-1/2 left-[200px] right-0 h-1 bg-amber-400 -translate-y-1/2"></div>
+              </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div className="text-center">
+                  <div className="mx-auto w-32 h-32 bg-gray-300 rounded-full mb-4 flex items-center justify-center">
+                    <div className="w-20 h-20 bg-gray-400 rounded-full"></div>
+                  </div>
+                  <h4 className="text-xl font-bold text-gray-700 mb-2">
+                    Cross Selling
+                  </h4>
+                  <p className="text-gray-500 text-sm">
+                    Reach a target audience missed by other media
+                  </p>
+                </div>
+
+                <div className="text-center">
+                  <div className="mx-auto w-32 h-32 bg-gray-300 rounded-full mb-4 flex items-center justify-center">
+                    <div className="w-20 h-20 bg-gray-400 rounded-full"></div>
+                  </div>
+                  <h4 className="text-xl font-bold text-gray-700 mb-2">
+                    Lead Generation
+                  </h4>
+                  <p className="text-gray-500 text-sm">
+                    Generate leads, drive traffic and revenue online
+                  </p>
+                </div>
+
+                <div className="text-center">
+                  <div className="mx-auto w-32 h-32 bg-gray-300 rounded-full mb-4 flex items-center justify-center">
+                    <div className="w-20 h-20 bg-gray-400 rounded-full"></div>
+                  </div>
+                  <h4 className="text-xl font-bold text-gray-700 mb-2">
+                    Leveraging of Technology
+                  </h4>
+                  <p className="text-gray-500 text-sm">
+                    Leverage technology and lower operating costs
+                  </p>
+                </div>
+
+                <div className="text-center">
+                  <div className="mx-auto w-32 h-32 bg-gray-300 rounded-full mb-4 flex items-center justify-center">
+                    <div className="w-20 h-20 bg-gray-400 rounded-full"></div>
+                  </div>
+                  <h4 className="text-xl font-bold text-gray-700 mb-2">
+                    Streamlining Inventory
+                  </h4>
+                  <p className="text-gray-500 text-sm">
+                    Eliminate the traditional practice of selling through an
+                    auto parts catalogue
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </main>

@@ -193,7 +193,7 @@ export default function ProductsPage() {
     <div className="flex flex-col">
       <DashboardHeader heading="Products" text="Manage your products">
         <div className="flex gap-2">
-          <ProductFormButton />
+          {/* <ProductFormButton /> */}
           <button
             onClick={() => setIsModalOpen(true)}
             className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm"

@@ -23,9 +23,18 @@ import {
 } from "@/src/components/ui/select";
 import { getCategories } from "../api/categories";
 
+interface subCategory {
+  id: number;
+  name: string;
+  description: string;
+  image: string;
+  parent_name: string;
+  categoryName: string;
+}
+
 export function SubcategoriesList() {
   const [selectedCategory, setSelectedCategory] = useState("all");
-  const [subCategories, setsubCategories] = useState([]);
+  const [subCategories, setsubCategories] = useState<subCategory[]>([]);
 
   const img = process.env.NEXT_PUBLIC_IMAGE_URL;
 
@@ -71,7 +80,7 @@ export function SubcategoriesList() {
 
       <div className="space-y-4">
         {subCategories
-          .filter((subcategory) => subcategory.parent_id !== null)
+          .filter((subcategory) => subcategory.parent_name !== null)
           .map((subcategory) => (
             <Card
               key={subcategory.id}

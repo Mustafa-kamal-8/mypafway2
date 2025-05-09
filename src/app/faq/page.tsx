@@ -2,6 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/src/components/ui/button";
 import { FaqAccordion } from "@/src/components/faq-accordion";
+import Navbar from "@/src/components/navbar";
+import Footer from "@/src/components/footer";
 
 export default function FaqPage() {
   // FAQ data
@@ -63,8 +65,31 @@ export default function FaqPage() {
 
   return (
     <main className="min-h-screen">
+      <div className="fixed top-0 left-0 w-full z-50 shadow-md bg-gray-500">
+        <Navbar />
+      </div>
+      <section className="relative bg-gray-700 text-white mt-52 lg:mt-32">
+        <div className="container mx-auto px-4 py-16 md:py-24">
+          <h1 className="text-4xl md:text-6xl font-bold mb-4">
+            Terms & Conditions
+          </h1>
+        </div>
+        <div className="absolute bottom-0 left-0 right-0">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 1440 120"
+            className="w-full"
+          >
+            <path
+              fill="#FFC107"
+              fillOpacity="1"
+              d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"
+            ></path>
+          </svg>
+        </div>
+      </section>
       {/* Hero Section with Wave */}
-      <section className="relative bg-gray-700 text-white">
+      <section className="relative bg-gray-700 text-white mt-52 lg:mt-32">
         <div className="container mx-auto px-4 py-16 md:py-24">
           <h1 className="text-4xl md:text-6xl font-bold mb-4">
             Frequent Asked Questions
@@ -117,43 +142,61 @@ export default function FaqPage() {
             </div>
 
             {/* Image Section */}
-            <div className="lg:col-span-1">
-              <div className="rounded-lg overflow-hidden shadow-lg">
-                <div className="relative h-[400px]">
+            <div className="col-span-1 flex flex-col space-y-4">
+              {/* First Image - Full width, more height */}
+              <div className="w-full">
+                {/* Image section */}
+                <div className="relative w-full h-[40rem]">
+                  {/* Image */}
                   <Image
-                    src="logo.png"
-                    alt="Brembo Brakes"
-                    fill
-                    className="object-cover"
+                    src="/brembo-logo.png" // Replace with actual path
+                    alt="Brembo Logo"
+                    width={350}
+                    height={100}
+                    className="absolute top-5 left-1/2 transform -translate-x-1/2 z-10"
                   />
-                </div>
-                <div className="bg-gray-100 p-6">
-                  <h3 className="text-xl font-bold mb-2">Premium Auto Parts</h3>
-                  <p className="text-gray-600 mb-4">
-                    Get access to high-quality auto parts from top brands like
-                    Brembo. Create an account today to start shopping.
-                  </p>
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    <Link href="/register">
-                      <Button className="w-full bg-amber-400 hover:bg-amber-500 text-black">
-                        Register
-                      </Button>
-                    </Link>
+                  <Image
+                    src="/hondacivicty-img.png"
+                    alt="Privacy Illustration"
+                    fill
+                    className="object-cover rounded-lg shadow-lg"
+                  />
+
+                  {/* Button inside image */}
+                  <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2">
                     <Link href="/about">
-                      <Button
-                        variant="outline"
-                        className="w-full border-amber-400 text-amber-500 hover:bg-amber-50"
-                      >
+                      <button className="w-[300px] lg:w-[360px] bg-yellow-400 text-gray-800 font-semibold py-3 rounded-full shadow-md hover:bg-yellow-300 transition">
                         Learn More
-                      </Button>
+                      </button>
                     </Link>
                   </div>
+                </div>
+              </div>
+              {/* Second Image - Full width, smaller height */}
+              <div className="flex flex-col w-full h-[22rem] bg-black items-center p-20">
+                {/* Image */}
+                <Image
+                  src="/logo2.png"
+                  alt="Security Illustration"
+                  width={200}
+                  height={200}
+                  className="object-cover rounded-lg shadow-md w-full"
+                />
+
+                {/* Button or content on top */}
+                <div className="mt-10">
+                  <Link href="/register">
+                    <button className="w-[300px] lg:w-[360px] bg-yellow-400 text-gray-800 font-semibold px-6 py-3 rounded-full shadow-md hover:bg-yellow-300 transition">
+                      Register Now
+                    </button>
+                  </Link>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </section>
+      <Footer />
     </main>
   );
 }

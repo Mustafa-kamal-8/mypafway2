@@ -304,6 +304,15 @@ export default function PrivacyPage() {
                 <div className="relative w-full h-[40rem]">
                   {/* Image */}
                   <Image
+                    src="/brembo-logo.png" // Replace with actual path
+                    alt="Brembo Logo"
+                    width={350}
+                    height={100}
+                    className="absolute top-5 left-1/2 transform -translate-x-1/2 z-10"
+                  />
+
+                  {/* Background Image */}
+                  <Image
                     src="/hondacivicty-img.png"
                     alt="Privacy Illustration"
                     fill
@@ -320,20 +329,18 @@ export default function PrivacyPage() {
                 </div>
               </div>
               {/* Second Image - Full width, smaller height */}
-              <div className="relative w-full h-[20rem]">
+              <div className="flex flex-col w-full h-[22rem] bg-black items-center p-20">
                 {/* Image */}
                 <Image
                   src="/logo2.png"
                   alt="Security Illustration"
-                  fill
-                  className="object-cover rounded-lg shadow-md"
+                  width={200}
+                  height={200}
+                  className="object-cover rounded-lg shadow-md w-full"
                 />
 
-                {/* Black Overlay */}
-                <div className="absolute inset-0 bg-black opacity-50 rounded-lg"></div>
-
                 {/* Button or content on top */}
-                <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2">
+                <div className="mt-10">
                   <Link href="/register">
                     <button className="w-[300px] lg:w-[360px] bg-yellow-400 text-gray-800 font-semibold px-6 py-3 rounded-full shadow-md hover:bg-yellow-300 transition">
                       Register Now

@@ -7,9 +7,10 @@ export function cn(...inputs: ClassValue[]) {
 
 
 
-let debounceTimer: NodeJS.Timeout;
-
-export function debounce(callback: () => void, timeout = 5000) {
-  clearTimeout(debounceTimer);
-  debounceTimer = setTimeout(callback, timeout);
+export function debounce(callback: () => void, timeout = 3000) {
+  let timer: NodeJS.Timeout;
+  return () => {
+    clearTimeout(timer);
+    timer = setTimeout(callback, timeout);
+  };
 }

@@ -4,7 +4,7 @@ import type React from "react";
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { Edit, Search, Trash } from "lucide-react";
+import { Edit, Plus, Search, Trash } from "lucide-react";
 
 import { Button } from "@/src/components/ui/button";
 import { Input } from "@/src/components/ui/input";
@@ -40,23 +40,24 @@ export function ProductsList() {
     string | undefined
   >(undefined);
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      setIsLoading(true);
-      try {
-        const searchParam = searchTerm ? `name:${searchTerm}` : "";
-        const response = await getProducts({ search: searchParam });
-        const fetchedProducts = response.result || [];
-        setProducts(fetchedProducts);
-      } catch (error) {
-        console.error("Error fetching products:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const fetchProducts = async () => {
+    setIsLoading(true);
+    try {
+      const searchParam = searchTerm ? `name:${searchTerm}` : "";
+      const response = await getProducts({ search: searchParam });
+      const fetchedProducts = response.result || [];
+      setProducts(fetchedProducts);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
+  useEffect(() => {
     if (searchTerm) {
-      debounce(fetchProducts, 5000);
+      const debouncedFetch = debounce(fetchProducts, 3000);
+      debouncedFetch();
     } else {
       fetchProducts();
     }
@@ -134,21 +135,33 @@ export function ProductsList() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
         <h2 className="text-xl font-semibold text-zinc-100">Products</h2>
-        <div className="relative w-full sm:w-64">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-zinc-500" />
-          <Input
-            type="search"
-            placeholder="Search products by name..."
-            className="pl-8 bg-zinc-800 border-zinc-700 text-zinc-200 placeholder:text-zinc-500 focus-visible:ring-yellow-400"
-            value={searchTerm}
-            onChange={handleSearch}
-          />
+        <div className="flex gap-4">
+          <div className="relative w-full sm:w-64">
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-zinc-500" />
+            <Input
+              type="search"
+              placeholder="Search products by name..."
+              className="pl-8 bg-zinc-800 border-zinc-700 text-zinc-200 placeholder:text-zinc-500 focus-visible:ring-yellow-400"
+              value={searchTerm}
+              onChange={handleSearch}
+            />
+          </div>
+          <Button
+            className="bg-yellow-500 hover:bg-yellow-600 text-black"
+            onClick={() => {
+              setSelectedProductId(undefined);
+              setIsFormOpen(true);
+            }}
+          >
+            <Plus className="mr-2 h-4 w-4" /> Add Product
+          </Button>
         </div>
         <div className="hidden">
           <ProductFormButton
             productId={selectedProductId}
             open={isFormOpen}
             setOpen={setIsFormOpen}
+            fetchProducts={fetchProducts}
           />
         </div>
       </div>

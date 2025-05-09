@@ -561,7 +561,9 @@ export default function SearchPage() {
                         </div>
                         <div className="p-4">
                           <h3 className="text-lg font-semibold text-gray-900">
-                            {product.name || "Unknown"}
+                            {product.name && product.name.length > 20
+                              ? `${product.name.slice(0, 20)}...`
+                              : product.name || "Unknown"}
                           </h3>
                           <p className="text-gray-600 mt-1">${product.price}</p>
                           <div className="mt-4 flex space-x-2">

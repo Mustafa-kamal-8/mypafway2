@@ -35,6 +35,7 @@ interface categories {
   id: number;
   name: string;
   image: string;
+  parent_name: string;
 }
 
 export function AddSubcategoryButton() {
@@ -54,7 +55,7 @@ export function AddSubcategoryButton() {
   const imageRef = useRef<HTMLImageElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [categories, setCategories] = useState<categories[]>([]);
-  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(
     null
   );
   const [name, setName] = useState<string>("");
@@ -65,17 +66,15 @@ export function AddSubcategoryButton() {
       const file = e.target.files[0];
       setImageFile(file);
 
-      // Create a preview URL for the selected image
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreviewUrl(reader.result as string);
-        setCroppedImageUrl(null); // Reset cropped image when new image is selected
+        setCroppedImageUrl(null);
 
-        // Set appropriate aspect ratio based on file type/name
         if (file.name.includes("banner")) {
-          setCrop((prev) => ({ ...prev, aspect: 16 / 9 })); // Rectangle aspect ratio for banners
+          setCrop((prev) => ({ ...prev, aspect: 16 / 9 }));
         } else {
-          setCrop((prev) => ({ ...prev, aspect: 1 })); // Square aspect ratio for other images
+          setCrop((prev) => ({ ...prev, aspect: 1 }));
         }
       };
       reader.readAsDataURL(file);
@@ -114,16 +113,13 @@ export function AddSubcategoryButton() {
       completedCrop.height
     );
 
-    // Convert canvas to blob
     canvas.toBlob(
       (blob) => {
         if (!blob) return;
 
-        // Create a new URL for the cropped image
         const croppedImageUrl = URL.createObjectURL(blob);
         setCroppedImageUrl(croppedImageUrl);
 
-        // Create a new File object from the blob for form submission
         const croppedFile = new File(
           [blob],
           imageFile?.name || "cropped-image.jpg",
@@ -141,7 +137,6 @@ export function AddSubcategoryButton() {
   };
 
   const saveWithoutCrop = () => {
-    // Use the original image file without cropping
     setCroppedImageUrl(imagePreviewUrl);
   };
 
@@ -171,7 +166,7 @@ export function AddSubcategoryButton() {
   console.log("categories are ", categories);
 
   const handleCategoryChange = (value: string) => {
-    setSelectedCategoryId(Number(value));
+    setSelectedCategoryId(value);
     console.log("Selected category ID:", value);
   };
 
@@ -186,7 +181,7 @@ export function AddSubcategoryButton() {
       const compressedImage = await compressImage(imageFile);
       const url = await uploadImage(compressedImage, "categories");
       const formData = {
-        parent_id: selectedCategoryId,
+        parent_name: selectedCategoryId,
         name,
         description,
         image: url,
@@ -232,14 +227,16 @@ export function AddSubcategoryButton() {
                   <SelectValue placeholder="Select a category" />
                 </SelectTrigger>
                 <SelectContent className="bg-zinc-800 border-zinc-700 text-zinc-200">
-                  {categories.map((category) => (
-                    <SelectItem
-                      key={category.id}
-                      value={category.id.toString()}
-                    >
-                      {category.name}
-                    </SelectItem>
-                  ))}
+                  {categories
+                    .filter((category) => category.parent_name === null)
+                    .map((category) => (
+                      <SelectItem
+                        key={category.id}
+                        value={category.name.toString()}
+                      >
+                        {category.name}
+                      </SelectItem>
+                    ))}
                 </SelectContent>
               </Select>
             </div>
