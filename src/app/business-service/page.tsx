@@ -11,7 +11,7 @@ export default function BusinessPage() {
       </div>
 
       {/* Hero Section */}
-      <section className="relative bg-gray-700 text-white mt-32">
+      <section className="relative bg-gray-700 text-white mt-52 lg:mt-32">
         <div className="container mx-auto px-4 py-16 md:py-24">
           <h1 className="text-4xl md:text-6xl font-bold mb-4">Services</h1>
         </div>
@@ -92,75 +92,75 @@ export default function BusinessPage() {
                       ></div>
                     </div>
 
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
-                      {/* Feature 1 */}
-                      <div className="flex flex-col items-center text-center">
-                        <div className="w-24 h-24 mb-4">
-                          <Image
-                            src="/placeholder.svg?height=96&width=96"
-                            alt="User Management"
-                            width={96}
-                            height={96}
-                          />
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                      <div className="text-center">
+                        <div className="flex justify-center mb-4">
+                          <svg
+                            className="w-24 h-24 text-gray-400"
+                            fill="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-5-9h10v2H7z" />
+                          </svg>
                         </div>
-                        <h3 className="text-lg font-bold text-gray-800 mb-2">
+                        <h3 className="text-xl font-bold mb-2">
                           User Management
                         </h3>
-                        <p className="text-gray-500 text-xs">
+                        <p className="text-gray-600">
                           Reach a target audience missed by other media
                         </p>
                       </div>
 
-                      {/* Feature 2 */}
-                      <div className="flex flex-col items-center text-center">
-                        <div className="w-24 h-24 mb-4">
-                          <Image
-                            src="/placeholder.svg?height=96&width=96"
-                            alt="Inventory Tracking"
-                            width={96}
-                            height={96}
-                          />
+                      <div className="text-center">
+                        <div className="flex justify-center mb-4">
+                          <svg
+                            className="w-24 h-24 text-gray-400"
+                            fill="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+                          </svg>
                         </div>
-                        <h3 className="text-lg font-bold text-gray-800 mb-2">
+                        <h3 className="text-xl font-bold mb-2">
                           Inventory Tracking
                         </h3>
-                        <p className="text-gray-500 text-xs">
+                        <p className="text-gray-600">
                           Generate leads, drive traffic and revenue online
                         </p>
                       </div>
 
-                      {/* Feature 3 */}
-                      <div className="flex flex-col items-center text-center">
-                        <div className="w-24 h-24 mb-4">
-                          <Image
-                            src="/placeholder.svg?height=96&width=96"
-                            alt="Data Transformation"
-                            width={96}
-                            height={96}
-                          />
+                      <div className="text-center">
+                        <div className="flex justify-center mb-4">
+                          <svg
+                            className="w-24 h-24 text-gray-400"
+                            fill="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zm-7-2h2V7h-4v2h2z" />
+                          </svg>
                         </div>
-                        <h3 className="text-lg font-bold text-gray-800 mb-2">
+                        <h3 className="text-xl font-bold mb-2">
                           Data Transformation
                         </h3>
-                        <p className="text-gray-500 text-xs">
+                        <p className="text-gray-600">
                           Leverage technology and lower operating costs
                         </p>
                       </div>
 
-                      {/* Feature 4 */}
-                      <div className="flex flex-col items-center text-center">
-                        <div className="w-24 h-24 mb-4">
-                          <Image
-                            src="/placeholder.svg?height=96&width=96"
-                            alt="Online Catalogue Search"
-                            width={96}
-                            height={96}
-                          />
+                      <div className="text-center">
+                        <div className="flex justify-center mb-4">
+                          <svg
+                            className="w-24 h-24 text-gray-400"
+                            fill="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
+                          </svg>
                         </div>
-                        <h3 className="text-lg font-bold text-gray-800 mb-2">
+                        <h3 className="text-xl font-bold mb-2">
                           Online Catalogue Search
                         </h3>
-                        <p className="text-gray-500 text-xs">
+                        <p className="text-gray-600">
                           Eliminate the traditional practice of selling through
                           an auto parts catalogue
                         </p>
@@ -210,103 +210,114 @@ export default function BusinessPage() {
                         style={{ width: "calc(100% - 180px)" }}
                       ></div>
                     </div>
-
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
-                      {/* Feature 1 */}
-                      <div className="flex flex-col items-center text-center">
-                        <div className="w-24 h-24 mb-4">
-                          <Image
-                            src="/placeholder.svg?height=96&width=96"
-                            alt="User Management"
-                            width={96}
-                            height={96}
-                          />
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                      <div className="text-center">
+                        <div className="flex justify-center mb-4">
+                          <svg
+                            className="w-24 h-24 text-gray-400"
+                            fill="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" />
+                          </svg>
                         </div>
-                        <h3 className="text-lg font-bold text-gray-800 mb-2">
+                        <h3 className="text-xl font-bold mb-2">
                           True Engagement
                         </h3>
-                        <p className="text-gray-500 text-xs">
+                        <p className="text-gray-600">
                           Cross sell and form strategic alliances with other
                           companies
                         </p>
                       </div>
 
-                      {/* Feature 2 */}
-                      <div className="flex flex-col items-center text-center">
-                        <div className="w-24 h-24 mb-4">
-                          <Image
-                            src="/placeholder.svg?height=96&width=96"
-                            alt="Inventory Tracking"
-                            width={96}
-                            height={96}
-                          />
+                      <div className="text-center">
+                        <div className="flex justify-center mb-4">
+                          <svg
+                            className="w-24 h-24 text-gray-400"
+                            fill="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+                          </svg>
                         </div>
-                        <h3 className="text-lg font-bold text-gray-800 mb-2">
+                        <h3 className="text-xl font-bold mb-2">
                           E-mail Client
                         </h3>
-                        <p className="text-gray-500 text-xs">
+                        <p className="text-gray-600">
                           Facilitate the purchase process by allowing clients to
                           communicate
                         </p>
                       </div>
 
-                      {/* Feature 3 */}
-                      <div className="flex flex-col items-center text-center">
-                        <div className="w-24 h-24 mb-4">
-                          <Image
-                            src="/placeholder.svg?height=96&width=96"
-                            alt="Data Transformation"
-                            width={96}
-                            height={96}
-                          />
+                      <div className="text-center">
+                        <div className="flex justify-center mb-4">
+                          <svg
+                            className="w-24 h-24 text-gray-400"
+                            fill="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                          </svg>
                         </div>
-                        <h3 className="text-lg font-bold text-gray-800 mb-2">
+                        <h3 className="text-xl font-bold mb-2">
                           User Management
                         </h3>
-                        <p className="text-gray-500 text-xs">
+                        <p className="text-gray-600">
                           Adjust pricing, quantity, and offer exclusive deals to
                           special clients through e-mail
                         </p>
                       </div>
-
-                      {/* Feature 4 */}
                     </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Right Column */}
-            <div className="flex flex-col space-y-4">
-              {/* First Image */}
-              <div className="relative w-full h-[40rem]">
-                <Image
-                  src="/hondacivicty-img.png"
-                  alt="Privacy Illustration"
-                  fill
-                  className="object-cover rounded-lg shadow-lg"
-                />
-                <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2">
-                  <Link href="/about">
-                    <button className="bg-[#30d5fc] text-gray-800 font-semibold px-16 py-3 rounded-full shadow-md hover:bg-yellow-300 transition">
-                      Learn More
-                    </button>
-                  </Link>
+            <div className="col-span-1 flex flex-col space-y-4">
+              {/* First Image - Full width, more height */}
+              <div className="w-full">
+                {/* Image section */}
+                <div className="relative w-full h-[40rem]">
+                  {/* Image */}
+                  <Image
+                    src="/brembo-logo.png" // Replace with actual path
+                    alt="Brembo Logo"
+                    width={350}
+                    height={100}
+                    className="absolute top-5 left-1/2 transform -translate-x-1/2 z-10"
+                  />
+                  <Image
+                    src="/hondacivicty-img.png"
+                    alt="Privacy Illustration"
+                    fill
+                    className="object-cover rounded-lg shadow-lg"
+                  />
+
+                  {/* Button inside image */}
+                  <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2">
+                    <Link href="/about">
+                      <button className="w-[300px] lg:w-[360px] bg-yellow-400 text-gray-800 font-semibold py-3 rounded-full shadow-md hover:bg-yellow-300 transition">
+                        Learn More
+                      </button>
+                    </Link>
+                  </div>
                 </div>
               </div>
-
-              {/* Second Image */}
-              <div className="relative w-full h-[20rem]">
+              {/* Second Image - Full width, smaller height */}
+              <div className="flex flex-col w-full h-[22rem] bg-black items-center p-20">
+                {/* Image */}
                 <Image
                   src="/logo2.png"
                   alt="Security Illustration"
-                  fill
-                  className="object-cover rounded-lg shadow-md"
+                  width={200}
+                  height={200}
+                  className="object-cover rounded-lg shadow-md w-full"
                 />
-                <div className="absolute inset-0 bg-black opacity-50 rounded-lg"></div>
-                <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2">
+
+                {/* Button or content on top */}
+                <div className="mt-10">
                   <Link href="/register">
-                    <button className="bg-[#30d5fc] text-gray-800 font-semibold px-6 py-3 rounded-full shadow-md hover:bg-yellow-300 transition">
+                    <button className="w-[300px] lg:w-[360px] bg-yellow-400 text-gray-800 font-semibold px-6 py-3 rounded-full shadow-md hover:bg-yellow-300 transition">
                       Register Now
                     </button>
                   </Link>

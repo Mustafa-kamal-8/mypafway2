@@ -28,19 +28,19 @@ interface categories {
   id: string;
   name: string;
   image: string;
-  parent_id: number;
+  parent_name: number;
 }
 
 interface makes {
   id: string;
   name: string;
-  parent_id: string;
+  parent_name: string;
 }
 
 interface models {
   id: string;
   name: string;
-  parent_id: string;
+  parent_name: string;
 }
 
 export default function AdvancedSearchModal({
@@ -69,8 +69,8 @@ export default function AdvancedSearchModal({
       onOpenChange(false);
     }
   };
-
   useEffect(() => {
+    console.log("Categories useEffect triggered");
     const fetchCategories = async () => {
       try {
         const response = await getCategories({ search: "" });
@@ -85,6 +85,7 @@ export default function AdvancedSearchModal({
   }, []);
 
   useEffect(() => {
+    console.log("Make useEffect triggered");
     const fetchMake = async () => {
       try {
         const response = await getMake({ search: "" });
@@ -99,18 +100,28 @@ export default function AdvancedSearchModal({
   }, []);
 
   useEffect(() => {
+    console.log("Model useEffect triggered");
     const fetchModel = async () => {
+      if (!make) return; // Only fetch if make is selected
+
       try {
-        const response = await getMake({ search: `parent_id:${make}` });
-        console.log("Fetched make:", response);
+        const response = await getMake({ search: `parent_name:${make}` });
+        console.log("Fetched models:", response);
         setModels(response.result || []);
       } catch (error) {
-        console.error("Error fetching make:", error);
+        console.error("Error fetching models:", error);
       }
     };
 
     fetchModel();
   }, [make]);
+
+  useEffect(() => {
+    if (open) {
+      console.log("Modal opened, refreshing data");
+      // You could call your fetch functions here if needed
+    }
+  }, [open]);
 
   console.log("makes are", make);
 
@@ -147,9 +158,9 @@ export default function AdvancedSearchModal({
             </SelectTrigger>
             <SelectContent>
               {makes
-                .filter((c) => c.parent_id === null)
+                .filter((c) => c.parent_name === null)
                 .map((m) => (
-                  <SelectItem key={m.id} value={m.id}>
+                  <SelectItem key={m.id} value={m.name}>
                     {m.name}
                   </SelectItem>
                 ))}
@@ -162,7 +173,7 @@ export default function AdvancedSearchModal({
             </SelectTrigger>
             <SelectContent>
               {(Array.isArray(models) ? models : []).map((m) => (
-                <SelectItem key={m.id} value={m.id}>
+                <SelectItem key={m.id} value={m.name}>
                   {m.name}
                 </SelectItem>
               ))}
@@ -175,9 +186,9 @@ export default function AdvancedSearchModal({
             </SelectTrigger>
             <SelectContent>
               {categories
-                .filter((c) => c.parent_id === null) // show only categories with parentId = null
+                .filter((c) => c.parent_name === null)
                 .map((c) => (
-                  <SelectItem key={c.id} value={c.id}>
+                  <SelectItem key={c.id} value={c.name}>
                     {c.name}
                   </SelectItem>
                 ))}

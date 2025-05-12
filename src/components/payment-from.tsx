@@ -13,6 +13,7 @@ import { AlertCircle, CheckCircle, CreditCard, Mail, User } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/src/components/ui/alert"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/ui/tabs"
 import { Separator } from "@/src/components/ui/separator"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/src/components/ui/select"
 
 interface PaymentFormProps {
   planPrice: number
@@ -30,6 +31,7 @@ export default function PaymentForm({ planPrice }: PaymentFormProps) {
   const [city, setCity] = useState("")
   const [state, setState] = useState("")
   const [zip, setZip] = useState("")
+  const [country, setCountry] = useState("")
   const [isProcessing, setIsProcessing] = useState(false)
   const [paymentStatus, setPaymentStatus] = useState<{
     success: boolean
@@ -50,6 +52,7 @@ export default function PaymentForm({ planPrice }: PaymentFormProps) {
     if (!city.trim()) errors.city = "City is required"
     if (!state.trim()) errors.state = "State is required"
     if (!zip.trim()) errors.zip = "ZIP code is required"
+    if (!country.trim()) errors.country = "Country is required"
     if (!agreeToTerms) errors.terms = "You must agree to the terms and conditions"
 
     setFormErrors(errors)
@@ -121,7 +124,7 @@ export default function PaymentForm({ planPrice }: PaymentFormProps) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="name">
-                Full Name <span className="text-red-500">*</span>
+                Full Na <span className="text-red-500">*</span>
               </Label>
               <Input
                 id="name"
@@ -175,6 +178,37 @@ export default function PaymentForm({ planPrice }: PaymentFormProps) {
               {formErrors.address && <p className="text-red-500 text-xs">{formErrors.address}</p>}
             </div>
 
+            <div className="space-y-2 md:col-span-2">
+              <Label htmlFor="country">
+                Country <span className="text-red-500">*</span>
+              </Label>
+              <Select value={country} onValueChange={setCountry}>
+                <SelectTrigger id="country" className={formErrors.country ? "border-red-500" : ""}>
+                  <SelectValue placeholder="Select country" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="us">United States</SelectItem>
+                  <SelectItem value="ca">Canada</SelectItem>
+                  <SelectItem value="uk">United Kingdom</SelectItem>
+                  <SelectItem value="au">Australia</SelectItem>
+                  <SelectItem value="de">Germany</SelectItem>
+                  <SelectItem value="fr">France</SelectItem>
+                  <SelectItem value="jp">Japan</SelectItem>
+                  <SelectItem value="cn">China</SelectItem>
+                  <SelectItem value="in">India</SelectItem>
+                  <SelectItem value="br">Brazil</SelectItem>
+                  <SelectItem value="mx">Mexico</SelectItem>
+                  <SelectItem value="es">Spain</SelectItem>
+                  <SelectItem value="it">Italy</SelectItem>
+                  <SelectItem value="nl">Netherlands</SelectItem>
+                  <SelectItem value="sg">Singapore</SelectItem>
+                  <SelectItem value="kr">South Korea</SelectItem>
+                  <SelectItem value="other">Other</SelectItem>
+                </SelectContent>
+              </Select>
+              {formErrors.country && <p className="text-red-500 text-xs">{formErrors.country}</p>}
+            </div>
+
             <div className="space-y-2">
               <Label htmlFor="city">
                 City <span className="text-red-500">*</span>
@@ -193,7 +227,7 @@ export default function PaymentForm({ planPrice }: PaymentFormProps) {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="state">
-                  State <span className="text-red-500">*</span>
+                  State/Province <span className="text-red-500">*</span>
                 </Label>
                 <Input
                   id="state"
@@ -208,7 +242,7 @@ export default function PaymentForm({ planPrice }: PaymentFormProps) {
 
               <div className="space-y-2">
                 <Label htmlFor="zip">
-                  ZIP Code <span className="text-red-500">*</span>
+                  Postal Code <span className="text-red-500">*</span>
                 </Label>
                 <Input
                   id="zip"

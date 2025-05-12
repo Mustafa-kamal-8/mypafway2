@@ -34,6 +34,7 @@ const DB_FIELDS = [
   "year",
   "price",
   "quantity",
+  "brand",
   "image_url",
   "website_url",
 ];

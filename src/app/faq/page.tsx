@@ -68,26 +68,7 @@ export default function FaqPage() {
       <div className="fixed top-0 left-0 w-full z-50 shadow-md bg-gray-500">
         <Navbar />
       </div>
-      <section className="relative bg-gray-700 text-white mt-52 lg:mt-32">
-        <div className="container mx-auto px-4 py-16 md:py-24">
-          <h1 className="text-4xl md:text-6xl font-bold mb-4">
-            Terms & Conditions
-          </h1>
-        </div>
-        <div className="absolute bottom-0 left-0 right-0">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 1440 120"
-            className="w-full"
-          >
-            <path
-              fill="#FFC107"
-              fillOpacity="1"
-              d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"
-            ></path>
-          </svg>
-        </div>
-      </section>
+
       {/* Hero Section with Wave */}
       <section className="relative bg-gray-700 text-white mt-52 lg:mt-32">
         <div className="container mx-auto px-4 py-16 md:py-24">

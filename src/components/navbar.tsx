@@ -48,7 +48,7 @@ export default function Navbar() {
                 Business
               </Button>
             </Link>
-            <Link href="/dashboard/products">
+            <Link href="/">
               <Button
                 variant="outline"
                 size="sm"

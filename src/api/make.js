@@ -8,3 +8,12 @@ export async function getMake({ search }) {
 console.log("response is",response)
     return response
 }
+
+export async function getModel({ search }) {
+    const response = await Api.get("/brand", {
+        search: search,
+    })
+
+console.log("response is",response)
+    return response
+}

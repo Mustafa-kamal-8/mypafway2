@@ -51,7 +51,7 @@ export default function Home() {
     const user = userData ? JSON.parse(userData) : null;
 
     if (!user || !user.id) {
-      console.error("User not found in localStorage");
+      console.log("User not found in localStorage");
       return;
     }
 

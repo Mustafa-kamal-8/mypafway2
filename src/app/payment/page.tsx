@@ -227,8 +227,8 @@ export default function PaymentPage() {
           <div className="mt-8 text-center text-sm text-muted-foreground">
             <p>
               Need help? Contact our support team at{" "}
-              <a href="mailto:support@mypafway.com" className="text-primary hover:underline">
-                support@mypafway.com
+              <a href="mailto:admin@mypafway.com" className="text-primary hover:underline">
+                admin@mypafway.com
               </a>
             </p>
           </div>

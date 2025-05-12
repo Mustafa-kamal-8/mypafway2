@@ -113,7 +113,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href="/business"
+                  href="/business-service"
                   className="text-gray-300 hover:text-white transition-colors"
                   prefetch={true}
                 >

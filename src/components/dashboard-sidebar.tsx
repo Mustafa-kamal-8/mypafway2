@@ -46,12 +46,11 @@ export function DashboardSidebar({ collapsed, setCollapsed }: SidebarProps) {
     }
   }, []);
 
-  // Filter links based on role
   const sidebarLinks = allSidebarLinks.filter((item) => {
     if (role === "user") {
-      return item.name === "Products"; // only show Products for "user"
+      return item.name === "Products";
     }
-    return true; // show all for other roles
+    return true;
   });
 
   return (
@@ -120,7 +119,10 @@ export function DashboardSidebar({ collapsed, setCollapsed }: SidebarProps) {
             "flex items-center text-zinc-400 hover:text-yellow-400 w-full",
             collapsed ? "justify-center" : "justify-start"
           )}
-          onClick={() => (window.location.href = "/")}
+          onClick={() => {
+            localStorage.removeItem("currentUser");
+            window.location.href = "/";
+          }}
           title={collapsed ? "Sign Out" : ""}
         >
           <LogOut className={cn("h-5 w-5", collapsed ? "" : "mr-3")} />

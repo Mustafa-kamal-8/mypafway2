@@ -40,6 +40,8 @@ export function ProductsList() {
     string | undefined
   >(undefined);
 
+  const img = process.env.NEXT_PUBLIC_IMAGE_URL;
+
   const fetchProducts = async () => {
     setIsLoading(true);
     try {
@@ -204,7 +206,13 @@ export function ProductsList() {
                     <div className="w-10 h-10 rounded-md overflow-hidden flex items-center justify-center bg-gray-100">
                       {product.image_url ? (
                         <Image
-                          src={product.image_url || "/placeholder.svg"}
+                          src={
+                            !product?.image_url
+                              ? "/placeholder.svg"
+                              : product?.image_url?.includes("https")
+                              ? product?.image_url
+                              : `${img}${product?.image_url}`
+                          }
                           alt={product.name}
                           width={50}
                           height={50}
