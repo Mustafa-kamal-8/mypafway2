@@ -1,4 +1,6 @@
-1. product fields which are required to be saved: 
-name, description, color, category, sub_category, details, make, model, year, price, quantity, image_url, website_url, seller_id, seller_name
+today's work :
 
-2. csv file upload 
+1. search engine better
+2. design and field add
+3. admin section
+4. add validation in category sub-category

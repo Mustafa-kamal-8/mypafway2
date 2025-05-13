@@ -18,6 +18,7 @@ import {
 } from "@/src/components/ui/select";
 import { getCategories } from "../api/categories";
 import { getMake } from "../api/make";
+import { useRouter } from "next/navigation";
 
 interface AdvancedSearchModalProps {
   open: boolean;
@@ -55,6 +56,8 @@ export default function AdvancedSearchModal({
   const [makes, setMakes] = useState<makes[]>([]);
   const [models, setModels] = useState<models[]>([]);
 
+  const router = useRouter();
+
   const handleSearch = () => {
     if (year || make || model || categoryId) {
       // if at least one field is filled
@@ -65,7 +68,7 @@ export default function AdvancedSearchModal({
       if (model) queryParams.append("model", model);
       if (categoryId) queryParams.append("categoryId", categoryId);
 
-      window.location.href = `/search?${queryParams.toString()}`;
+       router.push(`/search?${queryParams.toString()}`);
       onOpenChange(false);
     }
   };

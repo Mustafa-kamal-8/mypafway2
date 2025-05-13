@@ -17,7 +17,7 @@ async function getBlogPost(id: string) {
     if (!response.ok) throw new Error("Failed to fetch blog post");
     return await response.json();
   } catch (error) {
-    console.error("Error fetching blog post:", error);
+    console.log("Error fetching blog post:", error);
     return null;
   }
 }

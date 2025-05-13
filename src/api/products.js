@@ -11,9 +11,10 @@ export async function uploadProducts(body) {
     return response;
   }
 
- export async function getProducts({ search }) {
+ export async function getProducts({ search ,page }) {
      const response = await Api.get("/products", {
          search: search,
+           page: page
      })
  
  console.log("response is",response)

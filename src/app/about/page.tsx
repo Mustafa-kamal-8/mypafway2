@@ -48,19 +48,19 @@ export default function AboutPage() {
             <div className="md:col-span-2">
               <h2 className="text-3xl font-bold mb-6">About us</h2>
               <p className="text-gray-600 mb-4">
-                Mypafway's mission is to ensure the competitiveness of auto
+                Mypafway's mission is to ensure the competitiveness of the auto
                 parts industry, so that consumers have choice of auto parts,
-                recieve quality auto parts, at competitive prices. Utilizing our
+                receive quality auto parts, at competitive prices. Utilizing our
                 website will not only help the auto parts industry, but redraw
                 the auto parts industry structure in a way that spurs enormous
                 growth by allowing companies to promote auto part inventory that
                 has never before been commercially viable. Mypafway enables
-                companies to market their auto part content through P2P and our
-                search engine applications. We plan on positioning Mypafway as
-                the preferred brand for comparison shopping of auto parts and
+                companies to market their auto part content through our search
+                engine applications. We plan on positioning Mypafway as the
+                preferred brand for comparison shopping of auto parts and
                 accessories online; by focusing company efforts on building
                 brand value, satisfying customers with unparalleled service,
-                convenience and responsiveness; through state of the art
+                convenience and responsiveness; through state-of-the-art
                 applications.
               </p>
               <div className="mb-16">
@@ -73,14 +73,13 @@ export default function AboutPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                   <div className="text-center">
-                    <div className="flex justify-center mb-4">
-                      <svg
-                        className="w-24 h-24 text-gray-400"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                      >
-                        <path d="M21,6H3A1,1,0,0,0,2,7v3a1,1,0,0,0,1,1H4v8a1,1,0,0,0,1,1H19a1,1,0,0,0,1-1V11h1a1,1,0,0,0,1-1V7A1,1,0,0,0,21,6ZM14,15H10a1,1,0,0,1,0-2h4a1,1,0,0,1,0,2Z" />
-                      </svg>
+                    <div className="relative w-28 h-28 mx-auto mb-4">
+                      <Image
+                        src="/crosssellingimg.svg"
+                        alt="Privacy Illustration"
+                        fill
+                        className="object-contain"
+                      />
                     </div>
                     <h3 className="text-xl font-bold mb-2">Cross Selling</h3>
                     <p className="text-gray-600">
@@ -88,30 +87,27 @@ export default function AboutPage() {
                       companies
                     </p>
                   </div>
-
                   <div className="text-center">
-                    <div className="flex justify-center mb-4">
-                      <svg
-                        className="w-24 h-24 text-gray-400"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                      >
-                        <path d="M19,6H16V5a3,3,0,0,0-3-3H11A3,3,0,0,0,8,5V6H5A3,3,0,0,0,2,9v9a3,3,0,0,0,3,3H19a3,3,0,0,0,3-3V9A3,3,0,0,0,19,6ZM10,5a1,1,0,0,1,1-1h2a1,1,0,0,1,1,1V6H10Zm10,13a1,1,0,0,1-1,1H5a1,1,0,0,1-1-1V12H7v1a1,1,0,0,0,2,0V12h6v1a1,1,0,0,0,2,0V12h3Z" />
-                      </svg>
+                    <div className="relative w-28 h-28 mx-auto mb-4">
+                      <Image
+                        src="/shipping-img.svg"
+                        alt="Privacy Illustration"
+                        fill
+                        className="object-contain"
+                      />
                     </div>
                     <h3 className="text-xl font-bold mb-2">Shipping</h3>
                     <p className="text-gray-600">Ship Auto Parts</p>
                   </div>
 
                   <div className="text-center">
-                    <div className="flex justify-center mb-4">
-                      <svg
-                        className="w-24 h-24 text-gray-400"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                      >
-                        <path d="M20,2H10A3,3,0,0,0,7,5v7a3,3,0,0,0,3,3H20a3,3,0,0,0,3-3V5A3,3,0,0,0,20,2Zm1,10a1,1,0,0,1-1,1H10a1,1,0,0,1-1-1V5a1,1,0,0,1,1-1H20a1,1,0,0,1,1,1ZM17,20H4a1,1,0,0,1-1-1V9a1,1,0,0,0-2,0V19a3,3,0,0,0,3,3H17a1,1,0,0,0,0-2Z" />
-                      </svg>
+                    <div className="relative w-28 h-28 mx-auto mb-4">
+                      <Image
+                        src="/inventory-img.svg"
+                        alt="Privacy Illustration"
+                        fill
+                        className="object-contain"
+                      />
                     </div>
                     <h3 className="text-xl font-bold mb-2">
                       Streamlining Inventory
@@ -132,14 +128,13 @@ export default function AboutPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                   <div className="text-center">
-                    <div className="flex justify-center mb-4">
-                      <svg
-                        className="w-20 h-20 text-gray-400"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                      >
-                        <path d="M12,2A10,10,0,1,0,22,12,10,10,0,0,0,12,2Zm0,18a8,8,0,1,1,8-8A8,8,0,0,1,12,20Zm0-8.5a1.5,1.5,0,0,0-1.5,1.5v3a1.5,1.5,0,0,0,3,0V13A1.5,1.5,0,0,0,12,11.5Zm0-4a1.5,1.5,0,1,0,1.5,1.5A1.5,1.5,0,0,0,12,7.5Z" />
-                      </svg>
+                    <div className="relative w-28 h-28 mx-auto mb-4">
+                      <Image
+                        src="/cross-img.svg"
+                        alt="Privacy Illustration"
+                        fill
+                        className="object-contain"
+                      />
                     </div>
                     <h3 className="text-lg font-bold mb-2">Cross Selling</h3>
                     <p className="text-gray-600 text-sm">
@@ -148,14 +143,13 @@ export default function AboutPage() {
                   </div>
 
                   <div className="text-center">
-                    <div className="flex justify-center mb-4">
-                      <svg
-                        className="w-20 h-20 text-gray-400"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                      >
-                        <path d="M12,2A10,10,0,0,0,2,12a9.89,9.89,0,0,0,2.26,6.33l-2,2a1,1,0,0,0-.21,1.09A1,1,0,0,0,3,22h9A10,10,0,0,0,12,2Zm0,18H5.41l.93-.93a1,1,0,0,0,.3-.71,1,1,0,0,0-.3-.7A8,8,0,1,1,12,20Z" />
-                      </svg>
+                    <div className="relative w-28 h-28 mx-auto mb-4">
+                      <Image
+                        src="/lead-img.svg"
+                        alt="Privacy Illustration"
+                        fill
+                        className="object-contain"
+                      />
                     </div>
                     <h3 className="text-lg font-bold mb-2">Lead Generation</h3>
                     <p className="text-gray-600 text-sm">
@@ -164,14 +158,13 @@ export default function AboutPage() {
                   </div>
 
                   <div className="text-center">
-                    <div className="flex justify-center mb-4">
-                      <svg
-                        className="w-20 h-20 text-gray-400"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                      >
-                        <path d="M12,2A10,10,0,1,0,22,12,10,10,0,0,0,12,2Zm0,18a8,8,0,1,1,8-8A8,8,0,0,1,12,20ZM14.7,9.3a1,1,0,1,0-1.4,1.4L11.58,12l1.7,1.71a1,1,0,0,0,1.42,0,1,1,0,0,0,0-1.42L13.41,11l1.3-1.29A1,1,0,0,0,14.7,9.3Zm-7,0a1,1,0,0,0,0,1.42L9.83,12l-1.12,1.29a1,1,0,0,0,1.42,1.42l1.7-1.71L10.12,11l1.71-1.7a1,1,0,0,0-1.42-1.42L8.71,9.3A1,1,0,0,0,7.7,9.3Z" />
-                      </svg>
+                    <div className="relative w-28 h-28 mx-auto mb-4">
+                      <Image
+                        src="/leveraging-img.svg"
+                        alt="Privacy Illustration"
+                        fill
+                        className="object-contain"
+                      />
                     </div>
                     <h3 className="text-lg font-bold mb-2">
                       Leveraging of Technology
@@ -182,14 +175,13 @@ export default function AboutPage() {
                   </div>
 
                   <div className="text-center">
-                    <div className="flex justify-center mb-4">
-                      <svg
-                        className="w-20 h-20 text-gray-400"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                      >
-                        <path d="M19,2H5A3,3,0,0,0,2,5V19a3,3,0,0,0,3,3H19a3,3,0,0,0,3-3V5A3,3,0,0,0,19,2Zm1,17a1,1,0,0,1-1,1H5a1,1,0,0,1-1-1V5A1,1,0,0,1,5,4H19a1,1,0,0,1,1,1ZM17,9H7a1,1,0,0,0,0,2H17a1,1,0,0,0,0-2Zm-4,4H7a1,1,0,0,0,0,2h6a1,1,0,0,0,0-2Z" />
-                      </svg>
+                    <div className="relative w-28 h-28 mx-auto mb-4">
+                      <Image
+                        src="/stream-img.svg"
+                        alt="Privacy Illustration"
+                        fill
+                        className="object-contain"
+                      />
                     </div>
                     <h3 className="text-lg font-bold mb-2">
                       Streamlining Inventory
@@ -227,14 +219,13 @@ export default function AboutPage() {
                   </div>
 
                   <div className="text-center">
-                    <div className="flex justify-center mb-4">
-                      <svg
-                        className="w-24 h-24 text-gray-400"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                      >
-                        <path d="M21.71,20.29,18,16.61A9,9,0,1,0,16.61,18l3.68,3.68a1,1,0,0,0,1.42,0A1,1,0,0,0,21.71,20.29ZM11,18a7,7,0,1,1,7-7A7,7,0,0,1,11,18Z" />
-                      </svg>
+                    <div className="relative w-28 h-28 mx-auto mb-4">
+                      <Image
+                        src="/partinfo-img.svg"
+                        alt="Privacy Illustration"
+                        fill
+                        className="object-contain"
+                      />
                     </div>
                     <h3 className="text-xl font-bold mb-2">
                       Parts Information
@@ -245,14 +236,13 @@ export default function AboutPage() {
                   </div>
 
                   <div className="text-center">
-                    <div className="flex justify-center mb-4">
-                      <svg
-                        className="w-24 h-24 text-gray-400"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                      >
-                        <path d="M12,2A10,10,0,1,0,22,12,10,10,0,0,0,12,2Zm0,18a8,8,0,1,1,8-8A8,8,0,0,1,12,20ZM15,9H13V7a1,1,0,0,0-2,0V9H9a1,1,0,0,0,0,2h2v2a1,1,0,0,0,2,0V11h2a1,1,0,0,0,0-2Z" />
-                      </svg>
+                    <div className="relative w-28 h-28 mx-auto mb-4">
+                      <Image
+                        src="/efficient-img.svg"
+                        alt="Privacy Illustration"
+                        fill
+                        className="object-contain"
+                      />
                     </div>
                     <h3 className="text-xl font-bold mb-2">
                       Efficient Ecommerce

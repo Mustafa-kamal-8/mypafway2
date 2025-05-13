@@ -39,7 +39,7 @@ export default function Home() {
         const response = await getProducts({ search: "" });
         console.log("Fetched products:", response); // ✅ No `.data` here
       } catch (error) {
-        console.error("Error fetching products:", error);
+        console.log("Error fetching products:", error);
       }
     };
 
@@ -63,7 +63,7 @@ export default function Home() {
         console.log("Fetched subcategories:", response);
         // setCartData(response.result || []);
       } catch (error) {
-        console.error("Error fetching subcategories:", error);
+        console.log("Error fetching subcategories:", error);
       }
     };
 

@@ -35,20 +35,26 @@ export function ProductsList() {
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const productsPerPage = 10;
+  const [totalItems, setTotalItems] = useState(0);
   const [selectedProductId, setSelectedProductId] = useState<
     string | undefined
   >(undefined);
 
+  const itemsPerPage = 50;
   const img = process.env.NEXT_PUBLIC_IMAGE_URL;
 
-  const fetchProducts = async () => {
+  const fetchProducts = async (page = currentPage) => {
     setIsLoading(true);
     try {
-      const searchParam = searchTerm ? `name:${searchTerm}` : "";
-      const response = await getProducts({ search: searchParam });
+      const searchParam = searchTerm ? `name~*${searchTerm}*` : "";
+      const response = await getProducts({
+        search: searchParam,
+        page: `${page},${itemsPerPage}`,
+      });
+
       const fetchedProducts = response.result || [];
       setProducts(fetchedProducts);
+      setTotalItems(response.count || 0);
     } catch (error) {
       console.error("Error fetching products:", error);
     } finally {
@@ -58,22 +64,14 @@ export function ProductsList() {
 
   useEffect(() => {
     if (searchTerm) {
-      const debouncedFetch = debounce(fetchProducts, 3000);
+      const debouncedFetch = debounce(() => fetchProducts(1), 3000);
       debouncedFetch();
     } else {
-      fetchProducts();
+      fetchProducts(1);
     }
   }, [searchTerm]);
 
-  const filteredProducts = Array.isArray(products) ? products : [];
-
-  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
-  const indexOfLastProduct = currentPage * productsPerPage;
-  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = filteredProducts.slice(
-    indexOfFirstProduct,
-    indexOfLastProduct
-  );
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
 
   const generatePaginationItems = () => {
     const maxPagesToShow = 5;
@@ -124,6 +122,7 @@ export function ProductsList() {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
+    fetchProducts(page);
   };
 
   const handleEditClick = (productId: string) => {
@@ -137,6 +136,7 @@ export function ProductsList() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
         <h2 className="text-xl font-semibold text-zinc-100">Products</h2>
+        <div className="items-center text-white">Total Item:{totalItems}</div>
         <div className="flex gap-4">
           <div className="relative w-full sm:w-64">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-zinc-500" />
@@ -163,7 +163,7 @@ export function ProductsList() {
             productId={selectedProductId}
             open={isFormOpen}
             setOpen={setIsFormOpen}
-            fetchProducts={fetchProducts}
+            fetchProducts={() => fetchProducts(currentPage)}
           />
         </div>
       </div>
@@ -196,8 +196,8 @@ export function ProductsList() {
                   Loading products...
                 </TableCell>
               </TableRow>
-            ) : currentProducts.length > 0 ? (
-              currentProducts.map((product) => (
+            ) : products.length > 0 ? (
+              products.map((product) => (
                 <TableRow
                   key={product.id}
                   className="border-zinc-800 bg-zinc-900 hover:bg-zinc-800/50"

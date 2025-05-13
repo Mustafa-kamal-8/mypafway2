@@ -10,20 +10,22 @@ import AdvancedSearchModal from "./advance-search";
 import Image from "next/image";
 // import { useCartStore } from "@/src/store/cartStore";
 import Stores from "../store/stores";
+import { useRouter } from "next/navigation";
 
 export default function Navbar() {
   const [searchQuery, setSearchQuery] = useState("");
   const [advancedSearchOpen, setAdvancedSearchOpen] = useState(false);
   const { cartItems, setCartItems } = Stores();
 
+  const router = useRouter();
+
   // const { cart } = useCartStore();
   const cartCount = cartItems.length;
   // const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
 
-  // Function to handle search
   const handleSearch = () => {
     if (searchQuery.trim() !== "") {
-      window.location.href = `/search?query=${encodeURIComponent(searchQuery)}`;
+      router.push(`/search?query=${encodeURIComponent(searchQuery)}`);
     }
   };
 

@@ -66,13 +66,13 @@ interface Category {
 interface makes {
   id: string;
   name: string;
-  parent_id: string;
+  parent_name: string;
 }
 
 interface models {
   id: string;
   name: string;
-  parent_id: string;
+  parent_name: string;
 }
 
 export default function SearchPage() {
@@ -149,31 +149,31 @@ export default function SearchPage() {
     const searchConditions = [];
 
     if (subcategoryId) {
-      searchConditions.push(`sub_category:${subcategoryId}`);
+      searchConditions.push(`sub_category~*${subcategoryId}*`);
     }
     if (formYear) {
-      searchConditions.push(`year:${formYear}`);
+      searchConditions.push(`year~*${formYear}*`);
     }
     if (formMake) {
-      searchConditions.push(`make:${formMake}`);
+      searchConditions.push(`make~*${formMake}*`);
     }
     if (formModel) {
-      searchConditions.push(`model:${formModel}`);
+      searchConditions.push(`model~*${formModel}*`);
     }
     if (query) {
-      searchConditions.push(`name:${query}`);
+      searchConditions.push(`name~*${query}*`);
     }
     if (year) {
       searchConditions.push(`year:${year}`);
     }
     if (make) {
-      searchConditions.push(`make:${make}`);
+      searchConditions.push(`make~*${make}*`);
     }
     if (model) {
-      searchConditions.push(`model:${model}`);
+      searchConditions.push(`model~*${model}*`);
     }
     if (category) {
-      searchConditions.push(`category:${category}`);
+      searchConditions.push(`category~*${category}*`);
     }
 
     const searchString = searchConditions.join(",");
@@ -219,7 +219,7 @@ export default function SearchPage() {
   useEffect(() => {
     const fetchModel = async () => {
       try {
-        const response = await getMake({ search: `parent_id:${formMake}` });
+        const response = await getMake({ search: `parent_name:${formMake}` });
         console.log("Fetched make:", response);
         setModels(response.result || []);
       } catch (error) {
@@ -286,11 +286,11 @@ export default function SearchPage() {
     const searchConditions: string[] = [];
 
     categories.forEach((cat) => {
-      if (cat) searchConditions.push(`other_categories:${cat}`);
+      if (cat) searchConditions.push(`other_categories~*${cat}*`);
     });
 
     brands.forEach((brand) => {
-      if (brand) searchConditions.push(`brand:${brand}`);
+      if (brand) searchConditions.push(`brand~*${brand}*`);
     });
 
     const searchString = searchConditions.join(",");
@@ -344,9 +344,9 @@ export default function SearchPage() {
                     </SelectTrigger>
                     <SelectContent>
                       {makes
-                        .filter((c) => c.parent_id === null)
+                        .filter((c) => c.parent_name === null)
                         .map((m) => (
-                          <SelectItem key={m.id} value={m.id}>
+                          <SelectItem key={m.id} value={m.name}>
                             {m.name}
                           </SelectItem>
                         ))}
@@ -358,7 +358,7 @@ export default function SearchPage() {
                     </SelectTrigger>
                     <SelectContent>
                       {(Array.isArray(models) ? models : []).map((m) => (
-                        <SelectItem key={m.id} value={m.id}>
+                        <SelectItem key={m.id} value={m.name}>
                           {m.name}
                         </SelectItem>
                       ))}
