@@ -52,7 +52,12 @@ export function CategoriesList() {
     fetchCategories();
   }, []);
 
-  const totalPages = Math.ceil(categories.length / ITEMS_PER_PAGE);
+  const filteredCategories = categories.filter(
+    (cat) => cat.parent_name === null
+  );
+  const filteredCount = filteredCategories.length;
+
+  const totalPages = Math.ceil(filteredCount / ITEMS_PER_PAGE);
   const currentItems = categories.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE

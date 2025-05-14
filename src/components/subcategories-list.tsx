@@ -32,9 +32,12 @@ interface subCategory {
   categoryName: string;
 }
 
+const ITEMS_PER_PAGE = 50;
+
 export function SubcategoriesList() {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [subCategories, setsubCategories] = useState<subCategory[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const img = process.env.NEXT_PUBLIC_IMAGE_URL;
 
@@ -52,6 +55,23 @@ export function SubcategoriesList() {
   }, []);
 
   console.log("sub categories are", subCategories);
+
+  const filteredCategories = subCategories.filter(
+    (cat) => cat.parent_name !== null
+  );
+  const filteredCount = filteredCategories.length;
+
+  const totalPages = Math.ceil(filteredCount / ITEMS_PER_PAGE);
+  const currentItems = subCategories.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+
+  const handlePageChange = (page: number) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -79,7 +99,7 @@ export function SubcategoriesList() {
       </div>
 
       <div className="space-y-4">
-        {subCategories
+        {currentItems
           .filter((subcategory) => subcategory.parent_name !== null)
           .map((subcategory) => (
             <Card
@@ -160,34 +180,46 @@ export function SubcategoriesList() {
         )}
 
         <Pagination>
-          <PaginationContent>
+          <PaginationContent className="flex flex-wrap justify-center gap-2">
             <PaginationItem>
               <PaginationPrevious
                 href="#"
-                className="bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700 hover:text-zinc-100"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handlePageChange(currentPage - 1);
+                }}
+                className="min-w-[80px] h-10 px-4 bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700 hover:text-zinc-100 text-sm"
               />
             </PaginationItem>
-            <PaginationItem>
-              <PaginationLink
-                href="#"
-                isActive
-                className="bg-yellow-500 text-black hover:bg-yellow-600"
-              >
-                1
-              </PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink
-                href="#"
-                className="bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700 hover:text-zinc-100"
-              >
-                2
-              </PaginationLink>
-            </PaginationItem>
+
+            {Array.from({ length: totalPages }, (_, index) => (
+              <PaginationItem key={index}>
+                <PaginationLink
+                  href="#"
+                  isActive={currentPage === index + 1}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handlePageChange(index + 1);
+                  }}
+                  className={`w-10 h-10 text-sm flex items-center justify-center rounded-md border ${
+                    currentPage === index + 1
+                      ? "bg-yellow-500 text-black hover:bg-yellow-600"
+                      : "bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700 hover:text-zinc-100"
+                  }`}
+                >
+                  {index + 1}
+                </PaginationLink>
+              </PaginationItem>
+            ))}
+
             <PaginationItem>
               <PaginationNext
                 href="#"
-                className="bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700 hover:text-zinc-100"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handlePageChange(currentPage + 1);
+                }}
+                className="min-w-[80px] h-10 px-4 bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700 hover:text-zinc-100 text-sm"
               />
             </PaginationItem>
           </PaginationContent>

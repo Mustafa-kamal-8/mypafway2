@@ -104,10 +104,10 @@ export function ProductFormButton({
   const [model, setModel] = useState<model[]>([]);
   const [year, setYear] = useState<string>("");
   const [brand, setBrand] = useState<string>("");
-  const [quantity, setQuantity] = useState<string>("");
-  const [websiteUrl, setWebsiteUrl] = useState<string>("");
-  const [weight, setWeight] = useState<string>("");
-  const [height, setHeight] = useState<string>("");
+  const [quantity, setQuantity] = useState("");
+  const [websiteUrl, setWebsiteUrl] = useState("");
+  const [weight, setWeight] = useState("");
+  const [height, setHeight] = useState("");
 
   const img = process.env.NEXT_PUBLIC_IMAGE_URL;
 
@@ -220,22 +220,6 @@ export function ProductFormButton({
   console.log("categories are ", categories);
 
   useEffect(() => {
-    const fetchMake = async () => {
-      try {
-        const response = await getMake({ search: "" });
-        console.log("Fetched makes:", response);
-        setMake(response.result || []);
-      } catch (error) {
-        console.error("Error fetching products:", error);
-      }
-    };
-
-    fetchMake();
-  }, []);
-
-  console.log("categories are ", make);
-
-  useEffect(() => {
     if (!selectedCategory || typeof window === "undefined") return;
 
     const fetchSubCategories = async () => {
@@ -253,6 +237,23 @@ export function ProductFormButton({
 
     fetchSubCategories();
   }, [selectedCategory]);
+
+  useEffect(() => {
+    console.log("Make useEffect triggered");
+    const fetchMake = async () => {
+      try {
+        const response = await getMake({ search: "" });
+        console.log("Fetched make:", response);
+        setMake(response.result || []);
+      } catch (error) {
+        console.error("Error fetching make:", error);
+      }
+    };
+
+    fetchMake();
+  }, []);
+
+  console.log("makes are----------------------> ", make);
 
   useEffect(() => {
     if (!selectedMake || typeof window === "undefined") return;
@@ -288,16 +289,15 @@ export function ProductFormButton({
 
           if (response.result && response.result.length > 0) {
             const product = response.result[0];
-            setCategories(product.category || "");
-            setSubCategories(product.sub_category || "");
+
             setName(product.name || "");
             setPrice(product.price || "");
             setSelectedCategory(product.category || "");
             setSelectedSubCategoryId(product.sub_category || "");
             setDescription(product.description || "");
             setColor(product.color || "");
-            setMake(product.make || "");
-            setModel(product.model || "");
+            setSelectedMake(product.make || "");
+            setSelectedModel(product.model || "");
             setYear(product.year || "");
             setBrand(product.brand || "");
             setQuantity(product.quantity || "");
@@ -333,6 +333,10 @@ export function ProductFormButton({
       setColor("");
       // setMake("");
       // setModel("");
+      setSelectedMake("");
+      setSelectedModel("");
+      setSelectedSubCategoryId("");
+      setSelectedCategory("");
       setYear("");
       setBrand("");
       setQuantity("");
@@ -479,7 +483,10 @@ export function ProductFormButton({
                 <Label htmlFor="category" className="text-zinc-200">
                   Category
                 </Label>
-                <Select onValueChange={setSelectedCategory}>
+                <Select
+                  value={selectedCategory}
+                  onValueChange={setSelectedCategory}
+                >
                   <SelectTrigger
                     id="category"
                     className="bg-zinc-800 border-zinc-700 text-zinc-200 focus:ring-yellow-400"
@@ -489,7 +496,7 @@ export function ProductFormButton({
                   <SelectContent className="bg-zinc-800 border-zinc-700 text-zinc-200">
                     {Array.isArray(categories) && categories.length > 0 ? (
                       categories
-                        .filter((category) => category.parent_name !== null)
+                        .filter((category) => category.parent_name === null)
                         .map((category) => (
                           <SelectItem
                             key={category.image}
@@ -511,7 +518,10 @@ export function ProductFormButton({
                 <Label htmlFor="subCategory" className="text-zinc-200">
                   Sub Category
                 </Label>
-                <Select onValueChange={setSelectedSubCategoryId}>
+                <Select
+                  value={selectedSubCategoryId}
+                  onValueChange={setSelectedSubCategoryId}
+                >
                   <SelectTrigger
                     id="subCategory"
                     className="bg-zinc-800 border-zinc-700 text-zinc-200 focus:ring-yellow-400"
@@ -540,20 +550,20 @@ export function ProductFormButton({
                 </Select>
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="category" className="text-zinc-200">
+                <Label htmlFor="make" className="text-zinc-200">
                   Make
                 </Label>
-                <Select onValueChange={setSelectedMake}>
+                <Select value={selectedMake} onValueChange={setSelectedMake}>
                   <SelectTrigger
                     id="make"
                     className="bg-zinc-800 border-zinc-700 text-zinc-200 focus:ring-yellow-400"
                   >
-                    <SelectValue placeholder="Select a category" />
+                    <SelectValue placeholder="Select a Make" />
                   </SelectTrigger>
                   <SelectContent className="bg-zinc-800 border-zinc-700 text-zinc-200">
                     {Array.isArray(make) && make.length > 0 ? (
-                      model
-                        .filter((category) => category.parent_name !== null)
+                      make
+                        .filter((category) => category.parent_name === null)
                         .map((category) => (
                           <SelectItem
                             key={category.name}
@@ -564,17 +574,17 @@ export function ProductFormButton({
                         ))
                     ) : (
                       <div className="px-4 py-2 text-sm text-yellow-400">
-                        No model found
+                        No make found
                       </div>
                     )}
                   </SelectContent>
                 </Select>
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="subCategory" className="text-zinc-200">
+                <Label htmlFor="model" className="text-zinc-200">
                   Model
                 </Label>
-                <Select onValueChange={setSelectedModel}>
+                <Select value={selectedModel} onValueChange={setSelectedModel}>
                   <SelectTrigger
                     id="model"
                     className="bg-zinc-800 border-zinc-700 text-zinc-200 focus:ring-yellow-400"
