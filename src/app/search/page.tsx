@@ -160,9 +160,9 @@ export default function SearchPage() {
     if (formModel) {
       searchConditions.push(`model~*${formModel}*`);
     }
-    if (query) {
-      searchConditions.push(`name~*${query}*`);
-    }
+  if (query) {
+  searchConditions.push(`(name~*${query}* | description~*${query}*)`);
+}
     if (year) {
       searchConditions.push(`year:${year}`);
     }

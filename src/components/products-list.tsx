@@ -46,7 +46,9 @@ export function ProductsList() {
   const fetchProducts = async (page = currentPage) => {
     setIsLoading(true);
     try {
-      const searchParam = searchTerm ? `name~*${searchTerm}*` : "";
+     const searchParam = searchTerm 
+  ? `(name~*${searchTerm}* | description~*${searchTerm}*)`
+  : "";
       const response = await getProducts({
         search: searchParam,
         page: `${page},${itemsPerPage}`,

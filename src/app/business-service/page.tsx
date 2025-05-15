@@ -182,17 +182,10 @@ export default function BusinessPage() {
                 </div> */}
                 <div className="flex-1 space-y-4">
                   <h2 className="text-3xl md:text-4xl font-bold ">
-                    Peer-to-Peer Channel (P2P)
+                  E-Commerce
                   </h2>
                   <p className="text-gray-600">
-                    Mypafway's P2P is a feature that enables companies to market
-                    their auto parts through file-sharing. It provides access to
-                    auto part information and collaboration. It's designed to:
-                    (1) Ease tension between buyers and sellers, (2) Develop
-                    relationships between auto part manufacturers, auto part
-                    suppliers, and auto part retailers, and (3) Create outlets
-                    for auto part manufacturers, auto part suppliers, and auto
-                    part retailers.
+              Mypafway offers customized online business services to best suit your needs. At Mypafway we use highly effective tools  at our disposal. Partnering with Mypafway online program is a great way to boost any advertising campaign, target your demographic and increase brand awareness.
                   </p>
                   <button className="bg-[#30d5fc] text-gray-800 font-semibold px-6 py-3 rounded-full shadow-md hover:bg-yellow-300 transition">
                     Try it Now!

@@ -52,13 +52,13 @@ export default function ServicesPage() {
             {/* First column - Search Engine section */}
             <div className="lg:col-span-1">
               <img
-                src="https://via.placeholder.com/256x256?text=Image"
+                src="out_plan.jpg.jpg"
                 alt="Placeholder"
                 className="bg-gray-300 rounded-lg h-64 w-full object-cover mb-8"
               />
               <div className="lg:col-span-1 mt-20 sm:mt-40">
                 <img
-                  src="https://via.placeholder.com/256x256?text=Image"
+                  src="gear.jpg"
                   alt="Placeholder"
                   className="bg-gray-300 rounded-lg h-64 w-full object-cover mb-8"
                 />
@@ -72,15 +72,11 @@ export default function ServicesPage() {
                   Search Engine
                 </h3>
                 <p className="text-gray-600 mb-4">
-                  We're an online store locator via Google Earth, specializing
-                  in comparative shopping for auto parts and accessories.
-                  Comparative shopping will rise to prominence because it
-                  embraces two of the most fundamental attributes. The first is
-                  ease of access to auto part information. Mypafway's search
-                  engine enables consumers to compare prices and auto parts from
-                  an array of different products at one location. The second
-                  attribute is the commercial opportunity to match buyers with
-                  sellers.
+               Mypafway is an application, specializing in comparative shopping for auto parts and accessories. The Search Engine allows users the ability to search and buy automotive parts online.
+
+Freemium Model Replace the title Comparison Shopping Engine with Freemium Model
+
+Mypafway's Freemium business model lets anyone (yes this is open to the general public) promote and sell quality, name brand items on Mypafway for FREE. While Mypafway takes care of fulfilling the order. You stock the inventory, pack the orders, and Mypafway will ship it to your customers.
                 </p>
                 <Button className="bg-amber-400 hover:bg-amber-500 text-black font-semibold rounded-full px-8">
                   Try it now!
@@ -172,54 +168,72 @@ export default function ServicesPage() {
               </div>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-                <div className="text-center">
-                  <div className="mx-auto w-32 h-32 bg-gray-300 rounded-full mb-4 flex items-center justify-center">
-                    <div className="w-20 h-20 bg-gray-400 rounded-full"></div>
-                  </div>
-                  <h4 className="text-xl font-bold text-gray-700 mb-2">
-                    Cross Selling
-                  </h4>
-                  <p className="text-gray-500 text-sm">
-                    Reach a target audience missed by other media
-                  </p>
-                </div>
+              <div className="text-center">
+                            <div className="relative w-28 h-28 mx-auto mb-4">
+                              <Image
+                                src="/cross-seeling-img.svg"
+                                alt="Privacy Illustration"
+                                fill
+                                className="object-contain"
+                              />
+                            </div>
+                            <h3 className="text-xl font-bold mb-2">
+                           Cross Selling
+                            </h3>
+                            <p className="text-gray-600">
+                              Reach a target audience missed by other media
+                            </p>
+                          </div>
 
-                <div className="text-center">
-                  <div className="mx-auto w-32 h-32 bg-gray-300 rounded-full mb-4 flex items-center justify-center">
-                    <div className="w-20 h-20 bg-gray-400 rounded-full"></div>
-                  </div>
-                  <h4 className="text-xl font-bold text-gray-700 mb-2">
-                    Lead Generation
-                  </h4>
-                  <p className="text-gray-500 text-sm">
-                    Generate leads, drive traffic and revenue online
-                  </p>
-                </div>
+                  <div className="text-center">
+                            <div className="relative w-28 h-28 mx-auto mb-4">
+                              <Image
+                                src="/lead-img.svg"
+                                alt="Privacy Illustration"
+                                fill
+                                className="object-contain"
+                              />
+                            </div>
+                            <h3 className="text-xl font-bold mb-2">
+                          Lead Generation
+                            </h3>
+                            <p className="text-gray-600">
+                            Generate leads, drive traffic and revenue online
+                            </p>
+                          </div>
+              <div className="text-center">
+                            <div className="relative w-28 h-28 mx-auto mb-4">
+                              <Image
+                                src="/leveraging-img.svg"
+                                alt="Privacy Illustration"
+                                fill
+                                className="object-contain"
+                              />
+                            </div>
+                            <h3 className="text-xl font-bold mb-2">
+                        Leveraging of Technology
+                            </h3>
+                            <p className="text-gray-600">
+                           Leverage technology and lower operating costs
+                            </p>
+                          </div>
+  <div className="text-center">
+                            <div className="relative w-28 h-28 mx-auto mb-4">
+                              <Image
+                                src="/stremlining-img.svg"
+                                alt="Privacy Illustration"
+                                fill
+                                className="object-contain"
+                              />
+                            </div>
+                            <h3 className="text-xl font-bold mb-2">
+                       Streamlining Inventory
+                            </h3>
+                            <p className="text-gray-600">
+                        Eliminate the traditional practice of selling through an auto parts catalogue
+                            </p>
+                          </div>
 
-                <div className="text-center">
-                  <div className="mx-auto w-32 h-32 bg-gray-300 rounded-full mb-4 flex items-center justify-center">
-                    <div className="w-20 h-20 bg-gray-400 rounded-full"></div>
-                  </div>
-                  <h4 className="text-xl font-bold text-gray-700 mb-2">
-                    Leveraging of Technology
-                  </h4>
-                  <p className="text-gray-500 text-sm">
-                    Leverage technology and lower operating costs
-                  </p>
-                </div>
-
-                <div className="text-center">
-                  <div className="mx-auto w-32 h-32 bg-gray-300 rounded-full mb-4 flex items-center justify-center">
-                    <div className="w-20 h-20 bg-gray-400 rounded-full"></div>
-                  </div>
-                  <h4 className="text-xl font-bold text-gray-700 mb-2">
-                    Streamlining Inventory
-                  </h4>
-                  <p className="text-gray-500 text-sm">
-                    Eliminate the traditional practice of selling through an
-                    auto parts catalogue
-                  </p>
-                </div>
               </div>
             </div>
           </div>

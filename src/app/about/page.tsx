@@ -157,6 +157,7 @@ export default function AboutPage() {
                     </p>
                   </div>
 
+               
                   <div className="text-center">
                     <div className="relative w-28 h-28 mx-auto mb-4">
                       <Image

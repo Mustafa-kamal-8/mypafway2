@@ -54,10 +54,19 @@ export default function ContactPage() {
               <h2 className="text-5xl font-bold text-amber-400 mb-4">
                 Contact Us
               </h2>
-              <p className="text-gray-500 mb-8">
-                If you have any questions or require assistance please e-mail
-                admin@mypafway.com. Thank you.
-              </p>
+             <p className="text-gray-500 mb-8">
+  If you have any questions or require assistance, please e-mail
+  <a
+    className="ml-2 text-blue-500 underline"
+    href="https://mail.google.com/mail/?view=cm&fs=1&to=admin@mypafway.com"
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    admin@mypafway.com
+  </a>
+  . Thank you.
+</p>
+
 
               {/* Google Maps */}
               <div className="border mb-6">
