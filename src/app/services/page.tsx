@@ -72,11 +72,10 @@ export default function ServicesPage() {
                   Search Engine
                 </h3>
                 <p className="text-gray-600 mb-4">
-               Mypafway is an application, specializing in comparative shopping for auto parts and accessories. The Search Engine allows users the ability to search and buy automotive parts online.
-
-Freemium Model Replace the title Comparison Shopping Engine with Freemium Model
-
-Mypafway's Freemium business model lets anyone (yes this is open to the general public) promote and sell quality, name brand items on Mypafway for FREE. While Mypafway takes care of fulfilling the order. You stock the inventory, pack the orders, and Mypafway will ship it to your customers.
+                  Mypafway is an application, specializing in comparative
+                  shopping for auto parts and accessories. The Search Engine
+                  allows users the ability to search and buy automotive parts
+                  online.
                 </p>
                 <Button className="bg-amber-400 hover:bg-amber-500 text-black font-semibold rounded-full px-8">
                   Try it now!
@@ -84,18 +83,15 @@ Mypafway's Freemium business model lets anyone (yes this is open to the general 
               </div>
 
               <div>
-                <h3 className="text-4xl font-bold text-amber-400 mb-4">
-                  Comparison Shopping Engine
+                <h3 className="text-4xl font-bold lg:mt-52 text-amber-400 mb-4">
+                  Mypafway Freemium
                 </h3>
                 <p className="text-gray-600 mb-4">
-                  Mypafway's Comparison Shopping Engine is an application
-                  enabling consumers and businesses to search for automotive
-                  parts. The Comparison Shopping Engine is easy to navigate and
-                  fun to use. Its design theme looks fantastic. Consumers can
-                  select from a wide variety of car manufacturers and select
-                  which automotive parts they want to buy. Mypafway's Comparison
-                  Shopping Engine allows consumers to search for many different
-                  automotive parts from many different clients.
+                  Mypafway's Freemium business model lets anyone (yes this is
+                  open to the general public) promote and sell quality, name
+                  brand items on Mypafway for FREE. While Mypafway takes care of
+                  fulfilling the order. You stock the inventory, pack the
+                  orders, and Mypafway will ship it to your customers.
                 </p>
                 <Button className="bg-amber-400 hover:bg-amber-500 text-black font-semibold rounded-full px-8">
                   Try it now!
@@ -168,72 +164,68 @@ Mypafway's Freemium business model lets anyone (yes this is open to the general 
               </div>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-              <div className="text-center">
-                            <div className="relative w-28 h-28 mx-auto mb-4">
-                              <Image
-                                src="/cross-seeling-img.svg"
-                                alt="Privacy Illustration"
-                                fill
-                                className="object-contain"
-                              />
-                            </div>
-                            <h3 className="text-xl font-bold mb-2">
-                           Cross Selling
-                            </h3>
-                            <p className="text-gray-600">
-                              Reach a target audience missed by other media
-                            </p>
-                          </div>
+                <div className="text-center">
+                  <div className="relative w-28 h-28 mx-auto mb-4">
+                    <Image
+                      src="/cross-seeling-img.svg"
+                      alt="Privacy Illustration"
+                      fill
+                      className="object-contain"
+                    />
+                  </div>
+                  <h3 className="text-xl font-bold mb-2">Cross Selling</h3>
+                  <p className="text-gray-600">
+                    Reach a target audience missed by other media
+                  </p>
+                </div>
 
-                  <div className="text-center">
-                            <div className="relative w-28 h-28 mx-auto mb-4">
-                              <Image
-                                src="/lead-img.svg"
-                                alt="Privacy Illustration"
-                                fill
-                                className="object-contain"
-                              />
-                            </div>
-                            <h3 className="text-xl font-bold mb-2">
-                          Lead Generation
-                            </h3>
-                            <p className="text-gray-600">
-                            Generate leads, drive traffic and revenue online
-                            </p>
-                          </div>
-              <div className="text-center">
-                            <div className="relative w-28 h-28 mx-auto mb-4">
-                              <Image
-                                src="/leveraging-img.svg"
-                                alt="Privacy Illustration"
-                                fill
-                                className="object-contain"
-                              />
-                            </div>
-                            <h3 className="text-xl font-bold mb-2">
-                        Leveraging of Technology
-                            </h3>
-                            <p className="text-gray-600">
-                           Leverage technology and lower operating costs
-                            </p>
-                          </div>
-  <div className="text-center">
-                            <div className="relative w-28 h-28 mx-auto mb-4">
-                              <Image
-                                src="/stremlining-img.svg"
-                                alt="Privacy Illustration"
-                                fill
-                                className="object-contain"
-                              />
-                            </div>
-                            <h3 className="text-xl font-bold mb-2">
-                       Streamlining Inventory
-                            </h3>
-                            <p className="text-gray-600">
-                        Eliminate the traditional practice of selling through an auto parts catalogue
-                            </p>
-                          </div>
-
+                <div className="text-center">
+                  <div className="relative w-28 h-28 mx-auto mb-4">
+                    <Image
+                      src="/lead-img.svg"
+                      alt="Privacy Illustration"
+                      fill
+                      className="object-contain"
+                    />
+                  </div>
+                  <h3 className="text-xl font-bold mb-2">Lead Generation</h3>
+                  <p className="text-gray-600">
+                    Generate leads, drive traffic and revenue online
+                  </p>
+                </div>
+                <div className="text-center">
+                  <div className="relative w-28 h-28 mx-auto mb-4">
+                    <Image
+                      src="/leveraging-img.svg"
+                      alt="Privacy Illustration"
+                      fill
+                      className="object-contain"
+                    />
+                  </div>
+                  <h3 className="text-xl font-bold mb-2">
+                    Leveraging of Technology
+                  </h3>
+                  <p className="text-gray-600">
+                    Leverage technology and lower operating costs
+                  </p>
+                </div>
+                <div className="text-center">
+                  <div className="relative w-28 h-28 mx-auto mb-4">
+                    <Image
+                      src="/stremlining-img.svg"
+                      alt="Privacy Illustration"
+                      fill
+                      className="object-contain"
+                    />
+                  </div>
+                  <h3 className="text-xl font-bold mb-2">
+                    Streamlining Inventory
+                  </h3>
+                  <p className="text-gray-600">
+                    Eliminate the traditional practice of selling through an
+                    auto parts catalogue
+                  </p>
+                </div>
               </div>
             </div>
           </div>

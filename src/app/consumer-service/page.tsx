@@ -96,17 +96,14 @@ export default function ConsumerPage() {
                 </div>
                 <div className="flex-1 space-y-4">
                   <h2 className="text-3xl md:text-4xl font-bold text-amber-400">
-                    Comparison Shopping
+                    Mypafway Freemium
                   </h2>
                   <p className="text-gray-600">
-                    Mypafway's Comparison Shopping Engine is an application
-                    enabling consumers and businesses to search for automotive
-                    parts. The Comparison Shopping Engine is easy to navigate
-                    and fun to use. Its design theme looks fantastic. Consumers
-                    can select from a wide variety of car manufacturers and
-                    select which automotive parts they want to buy. Mypafway's
-                    Comparison Shopping Engine allows consumers to search for
-                    many different automotive parts from many different clients.
+                    Mypafway's Freemium business model lets anyone (yes this is
+                    open to the general public) promote and sell quality, name
+                    brand items on Mypafway for FREE. While Mypafway takes care
+                    of fulfilling the order. You stock the inventory, pack the
+                    orders, and Mypafway will ship it to your customers.
                   </p>
                   <button className="bg-yellow-400 text-gray-800 font-semibold px-6 py-3 rounded-full shadow-md hover:bg-yellow-300 transition">
                     Try it Now!
