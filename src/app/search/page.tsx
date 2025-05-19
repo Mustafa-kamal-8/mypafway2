@@ -35,6 +35,14 @@ import {
   SelectValue,
 } from "@/src/components/ui/select";
 import { getMake } from "@/src/api/make";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/src/components/ui/pagination";
 
 interface Product {
   id: number;
@@ -104,6 +112,10 @@ export default function SearchPage() {
   const make = searchParams.get("make");
   const model = searchParams.get("model");
   const category = searchParams.get("categoryId");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
+
+  const itemsPerPage = 50;
 
   const getColor = (color?: string) => {
     if (!color) return "transparent";
@@ -143,37 +155,80 @@ export default function SearchPage() {
         : [...prev, brand]
     );
   };
-
-  const fetchProducts = async () => {
+  const fetchProducts = async ({
+    page = currentPage,
+    brands = [],
+    categories = [],
+  }: {
+    page?: number;
+    brands?: string[];
+    categories?: string[];
+  }) => {
     setIsLoading(true);
-    const searchConditions = [];
+    const searchConditions: string[] = [];
+
+    if (Array.isArray(categories)) {
+      categories.forEach((cat) => {
+        if (cat) searchConditions.push(`other_categories~*${cat}*`);
+      });
+    }
+
+    if (Array.isArray(brands)) {
+      brands.forEach((brand) => {
+        if (brand) searchConditions.push(`brand~*${brand}*`);
+      });
+    }
 
     if (subcategoryId) {
-      searchConditions.push(`sub_category~*${subcategoryId}*`);
+      searchConditions.push(
+        `sub_category~*${subcategoryId}*|name~*${subcategoryId}*|description~*${subcategoryId}*`
+      );
     }
+
     if (formYear) {
-      searchConditions.push(`year~*${formYear}*`);
+      searchConditions.push(
+        `year~*${formYear}*|name~*${formYear}*|description~*${formYear}*`
+      );
     }
+
     if (formMake) {
-      searchConditions.push(`make~*${formMake}*`);
+      searchConditions.push(
+        `make~*${formMake}*|name~*${formMake}*|description~*${formMake}*`
+      );
     }
+
     if (formModel) {
-      searchConditions.push(`model~*${formModel}*`);
+      searchConditions.push(
+        `model~*${formModel}*|name~*${formModel}*|description~*${formModel}*`
+      );
     }
-  if (query) {
-  searchConditions.push(`(name~*${query}* | description~*${query}*)`);
-}
+
+    if (query) {
+      searchConditions.push(`(name~*${query}*|description~*${query}*)`);
+    }
+
     if (year) {
-      searchConditions.push(`year:${year}`);
+      searchConditions.push(
+        `(year~*${year}*|name~*${year}*|description~*${year}*)`
+      );
     }
+
     if (make) {
-      searchConditions.push(`make~*${make}*`);
+      searchConditions.push(
+        `make~*${make}*|name~*${make}*|description~*${make}*`
+      );
     }
+
     if (model) {
-      searchConditions.push(`model~*${model}*`);
+      searchConditions.push(
+        `model~*${model}*|name~*${model}*|description~*${model}*`
+      );
     }
+
     if (category) {
-      searchConditions.push(`category~*${category}*`);
+      searchConditions.push(
+        `category~*${category}*|name~*${category}*|description~*${category}*`
+      );
     }
 
     const searchString = searchConditions.join(",");
@@ -181,14 +236,14 @@ export default function SearchPage() {
     try {
       const response = await getProducts({
         search: searchString,
+        page: `${page},${itemsPerPage}`,
       });
-
-      console.log("Fetched products:", response);
 
       if (!response.err) {
         setProducts(response.result || []);
+        setTotalItems(response.count || 0);
       } else {
-        console.error("API Error:", response.result);
+        console.log("API Error:", response.result);
         setProducts([]);
       }
     } catch (error) {
@@ -198,9 +253,10 @@ export default function SearchPage() {
     }
   };
 
+  // Fetch only on initial load or when other fields change (not brands/categories)
   useEffect(() => {
-    fetchProducts();
-  }, [subcategoryId, query, year, make, model, category]);
+    fetchProducts({ page: currentPage });
+  }, [currentPage, subcategoryId, query, year, make, model, category]);
 
   useEffect(() => {
     const fetchMake = async () => {
@@ -229,6 +285,11 @@ export default function SearchPage() {
 
     fetchModel();
   }, [formMake]);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    fetchProducts(page);
+  };
 
   const handleAddToCart = async (product: Product) => {
     if (product.website_url) {
@@ -276,39 +337,91 @@ export default function SearchPage() {
 
     router.push(`?${params.toString()}`);
     fetchProducts(); // 👈 Call fetch here too
+    setCurrentPage(1);
   };
 
-  const fetchProductsWithFilters = async (
-    brands: string[],
-    categories: string[]
-  ) => {
-    setIsLoading(true);
-    const searchConditions: string[] = [];
+  // const fetchProductsWithFilters = async (
+  //   page = currentPage,
+  //   brands: string[],
+  //   categories: string[]
+  // ) => {
+  //   setIsLoading(true);
+  //   const searchConditions: string[] = [];
 
-    categories.forEach((cat) => {
-      if (cat) searchConditions.push(`other_categories~*${cat}*`);
-    });
+  //   if (Array.isArray(categories)) {
+  //     categories.forEach((cat) => {
+  //       if (cat) searchConditions.push(`other_categories~*${cat}*`);
+  //     });
+  //   }
+  //   if (Array.isArray(brands)) {
+  //     brands.forEach((brand) => {
+  //       if (brand) searchConditions.push(`brand~*${brand}*`);
+  //     });
+  //   }
 
-    brands.forEach((brand) => {
-      if (brand) searchConditions.push(`brand~*${brand}*`);
-    });
+  //   const searchString = searchConditions.join(",");
 
-    const searchString = searchConditions.join(",");
+  //   try {
+  //     const response = await getProducts({
+  //       search: searchString,
+  //       page: `${page},${itemsPerPage}`,
+  //     });
 
-    try {
-      const response = await getProducts({ search: searchString });
+  //     if (!response.err) {
+  //       setProducts(response.result || []);
+  //       setTotalItems(response.count || 0);
+  //     } else {
+  //       console.error("API Error:", response.result);
+  //       setProducts([]);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching products:", error);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
 
-      if (!response.err) {
-        setProducts(response.result || []);
-      } else {
-        console.error("API Error:", response.result);
-        setProducts([]);
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const generatePaginationItems = () => {
+    const maxPagesToShow = 5;
+    const pages = [];
+
+    if (totalPages <= maxPagesToShow) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
       }
-    } catch (error) {
-      console.error("Error fetching products:", error);
-    } finally {
-      setIsLoading(false);
+    } else {
+      pages.push(1);
+
+      let startPage = Math.max(2, currentPage - 1);
+      let endPage = Math.min(totalPages - 1, currentPage + 1);
+
+      if (currentPage <= 3) {
+        endPage = Math.min(maxPagesToShow - 1, totalPages - 1);
+      }
+
+      if (currentPage >= totalPages - 2) {
+        startPage = Math.max(2, totalPages - maxPagesToShow + 2);
+      }
+
+      if (startPage > 2) {
+        pages.push("ellipsis-start");
+      }
+
+      for (let i = startPage; i <= endPage; i++) {
+        pages.push(i);
+      }
+
+      if (endPage < totalPages - 1) {
+        pages.push("ellipsis-end");
+      }
+
+      if (totalPages > 1) {
+        pages.push(totalPages);
+      }
     }
+
+    return pages;
   };
 
   return (
@@ -401,7 +514,7 @@ export default function SearchPage() {
             ) : (
               <div className="mb-8">
                 <h3 className="text-2xl font-bold mb-2">
-                  {products.length} Results
+                  {totalItems} Results
                 </h3>
               </div>
             )}
@@ -492,12 +605,14 @@ export default function SearchPage() {
                   {/* Filter Button */}
                   <Button
                     className="w-full bg-yellow-400 hover:bg-yellow-500 text-black"
-                    onClick={() =>
-                      fetchProductsWithFilters(
-                        selectedBrands,
-                        selectedCategories
-                      )
-                    }
+                    onClick={() => {
+                      setCurrentPage(1);
+                      fetchProducts({
+                        page: 1,
+                        brands: selectedBrands,
+                        categories: selectedCategories,
+                      });
+                    }}
                   >
                     Filter
                   </Button>
@@ -856,6 +971,62 @@ export default function SearchPage() {
                 </div>
               </div>
             </div>
+            {totalPages > 0 && (
+              <div className="flex justify-center mt-14">
+                <Pagination>
+                  <PaginationContent className="overflow-x-auto flex-nowrap max-w-full">
+                    <PaginationItem>
+                      <PaginationPrevious
+                        onClick={() =>
+                          currentPage > 1 && handlePageChange(currentPage - 1)
+                        }
+                        className={`bg-green-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700 hover:text-zinc-100 ${
+                          currentPage === 1
+                            ? "pointer-events-none opacity-50"
+                            : "cursor-pointer"
+                        }`}
+                      />
+                    </PaginationItem>
+
+                    {generatePaginationItems().map((page, index) =>
+                      page === "ellipsis-start" || page === "ellipsis-end" ? (
+                        <PaginationItem key={`ellipsis-${index}`}>
+                          <span className="px-4 py-2 text-zinc-400">...</span>
+                        </PaginationItem>
+                      ) : (
+                        <PaginationItem key={index}>
+                          <PaginationLink
+                            onClick={() => handlePageChange(page as number)}
+                            isActive={currentPage === page}
+                            className={
+                              currentPage === page
+                                ? "bg-yellow-500 text-black hover:bg-yellow-600 cursor-pointer"
+                                : "bg-yellow-200 border-zinc-700 text-black hover:bg-zinc-700 hover:text-zinc-100 cursor-pointer"
+                            }
+                          >
+                            {page}
+                          </PaginationLink>
+                        </PaginationItem>
+                      )
+                    )}
+
+                    <PaginationItem>
+                      <PaginationNext
+                        onClick={() =>
+                          currentPage < totalPages &&
+                          handlePageChange(currentPage + 1)
+                        }
+                        className={`bg-green-800 border-zinc-700 text-black hover:bg-zinc-700 hover:text-zinc-100 ${
+                          currentPage === totalPages
+                            ? "pointer-events-none opacity-50"
+                            : "cursor-pointer"
+                        }`}
+                      />
+                    </PaginationItem>
+                  </PaginationContent>
+                </Pagination>
+              </div>
+            )}
           </div>
         </section>
       </main>

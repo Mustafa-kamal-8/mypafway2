@@ -351,11 +351,24 @@ export default function ProductsPage() {
                               }`}
                             >
                               <option value="">-- Not mapped --</option>
-                              {DB_FIELDS.map((field) => (
-                                <option key={field} value={field}>
-                                  {field}
-                                </option>
-                              ))}
+                              {DB_FIELDS.map((field) => {
+                                const isAlreadyMapped = Object.entries(
+                                  columnMapping
+                                ).some(
+                                  ([key, value]) =>
+                                    key !== header && value === field // only disable if mapped by other header
+                                );
+
+                                return (
+                                  <option
+                                    key={field}
+                                    value={field}
+                                    disabled={isAlreadyMapped}
+                                  >
+                                    {field}
+                                  </option>
+                                );
+                              })}
                             </select>
                           </div>
                         </td>

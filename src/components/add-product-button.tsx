@@ -109,6 +109,8 @@ export function ProductFormButton({
   const [weight, setWeight] = useState("");
   const [height, setHeight] = useState("");
 
+  const [categoryError, setCategoryError] = useState(false);
+
   const img = process.env.NEXT_PUBLIC_IMAGE_URL;
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -352,6 +354,12 @@ export function ProductFormButton({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!selectedCategory) {
+      setCategoryError(true);
+    } else {
+      setCategoryError(false);
+    }
+
     try {
       const currentUser = JSON.parse(
         localStorage.getItem("currentUser") || "{}"
@@ -485,7 +493,10 @@ export function ProductFormButton({
                 </Label>
                 <Select
                   value={selectedCategory}
-                  onValueChange={setSelectedCategory}
+                  onValueChange={(val) => {
+                    setSelectedCategory(val);
+                    setCategoryError(false);
+                  }}
                 >
                   <SelectTrigger
                     id="category"
@@ -512,6 +523,11 @@ export function ProductFormButton({
                     )}
                   </SelectContent>
                 </Select>
+                {categoryError && (
+                  <p className="text-red-500 text-sm">
+                    Please select a category.
+                  </p>
+                )}
               </div>
 
               <div className="grid gap-2">
@@ -684,6 +700,7 @@ export function ProductFormButton({
               </Label>
               <Input
                 id="quantity"
+                type="number"
                 placeholder="Product quantity"
                 value={quantity}
                 onChange={(e) => setQuantity(e.target.value)}
@@ -699,6 +716,7 @@ export function ProductFormButton({
               </Label>
               <Input
                 id="websiteurl"
+                type="number"
                 placeholder="Product Website URL"
                 value={websiteUrl}
                 onChange={(e) => setWebsiteUrl(e.target.value)}

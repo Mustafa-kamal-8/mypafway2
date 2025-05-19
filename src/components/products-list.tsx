@@ -47,7 +47,7 @@ export function ProductsList() {
     setIsLoading(true);
     try {
      const searchParam = searchTerm 
-  ? `(name~*${searchTerm}* | description~*${searchTerm}*)`
+  ? `(name~*${searchTerm}*|description~*${searchTerm}*)`
   : "";
       const response = await getProducts({
         search: searchParam,
