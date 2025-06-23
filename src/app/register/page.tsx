@@ -18,6 +18,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { registerUser } from "@/src/api/auth";
 import toast from "react-hot-toast";
+import Head from "next/head";
 
 const formSchema = z
   .object({
@@ -81,105 +82,133 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="container mx-auto flex items-center justify-center min-h-screen py-12 px-4">
-      <Card className="w-full max-w-md">
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-bold">
-              Create an account
-            </CardTitle>
-            <CardDescription>
-              Enter your information to create an account
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="name">Full Name</Label>
-              <Input id="name" {...register("name")} placeholder="John Doe" />
-              {errors.name?.message && (
-                <p className="text-red-500 text-sm">{errors.name.message}</p>
-              )}
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                {...register("email")}
-                placeholder="john.doe@example.com"
-              />
-              {errors.email?.message && (
-                <p className="text-red-500 text-sm">{errors.email.message}</p>
-              )}
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="phone">Phone Number</Label>
-              <Input
-                id="phone"
-                {...register("phone")}
-                placeholder="+1 (555) 123-4567"
-              />
-              {errors.phone?.message && (
-                <p className="text-red-500 text-sm">{errors.phone.message}</p>
-              )}
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input id="password" type="password" {...register("password")} />
-              {errors.password?.message && (
-                <p className="text-red-500 text-sm">
-                  {errors.password.message}
-                </p>
-              )}
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="confirm">Confirm Password</Label>
-              <Input id="confirm" type="password" {...register("confirm")} />
-              {errors.confirm?.message && (
-                <p className="text-red-500 text-sm">{errors.confirm.message}</p>
-              )}
-            </div>
+    <>
+      {/* ✅ SEO Metadata */}
+      <Head>
+        <title>
+          The Registration allows clients the ability to sign up for Mypafway's
+          services.
+        </title>
+        <meta
+          name="title"
+          content="The Registration allows clients the ability sign up for Mypafway's services."
+        />
+        <meta
+          name="description"
+          content="Mypafway is an automotive parts Search Engine portal consisting of many applications. The Registration process is an important process that allows our clients to use our services."
+        />
+        <meta
+          name="keywords"
+          content="auto parts, register, auto part companies, auto part manufacturer, auto part supplier"
+        />
+      </Head>
 
-            {/* ✅ Properly controlled Checkbox */}
-            <div className="flex items-center space-x-2">
-              <Controller
-                name="terms"
-                control={control}
-                render={({ field }) => (
-                  <Checkbox
-                    id="terms"
-                    checked={field.value}
-                    onCheckedChange={(checked) => field.onChange(!!checked)}
-                  />
+      <div className="container mx-auto flex items-center justify-center min-h-screen py-12 px-4">
+        <Card className="w-full max-w-md">
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <CardHeader className="space-y-1">
+              <CardTitle className="text-2xl font-bold">
+                Create an account
+              </CardTitle>
+              <CardDescription>
+                Enter your information to create an account
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="name">Full Name</Label>
+                <Input id="name" {...register("name")} placeholder="John Doe" />
+                {errors.name?.message && (
+                  <p className="text-red-500 text-sm">{errors.name.message}</p>
                 )}
-              />
-              <label
-                htmlFor="terms"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-              >
-                I agree to the{" "}
-                <Link href="/terms" className="text-primary underline">
-                  terms and conditions
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  {...register("email")}
+                  placeholder="john.doe@example.com"
+                />
+                {errors.email?.message && (
+                  <p className="text-red-500 text-sm">{errors.email.message}</p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="phone">Phone Number</Label>
+                <Input
+                  id="phone"
+                  {...register("phone")}
+                  placeholder="+1 (555) 123-4567"
+                />
+                {errors.phone?.message && (
+                  <p className="text-red-500 text-sm">{errors.phone.message}</p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  {...register("password")}
+                />
+                {errors.password?.message && (
+                  <p className="text-red-500 text-sm">
+                    {errors.password.message}
+                  </p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="confirm">Confirm Password</Label>
+                <Input id="confirm" type="password" {...register("confirm")} />
+                {errors.confirm?.message && (
+                  <p className="text-red-500 text-sm">
+                    {errors.confirm.message}
+                  </p>
+                )}
+              </div>
+
+              {/* ✅ Properly controlled Checkbox */}
+              <div className="flex items-center space-x-2">
+                <Controller
+                  name="terms"
+                  control={control}
+                  render={({ field }) => (
+                    <Checkbox
+                      id="terms"
+                      checked={field.value}
+                      onCheckedChange={(checked) => field.onChange(!!checked)}
+                    />
+                  )}
+                />
+                <label
+                  htmlFor="terms"
+                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
+                  I agree to the{" "}
+                  <Link href="/terms" className="text-primary underline">
+                    terms and conditions
+                  </Link>
+                </label>
+              </div>
+              {errors.terms?.message && (
+                <p className="text-red-500 text-sm">{errors.terms.message}</p>
+              )}
+            </CardContent>
+            <CardFooter className="flex flex-col space-y-4">
+              <Button className="w-full" type="submit">
+                Create Account
+              </Button>
+              <div className="text-center text-sm">
+                Already have an account?{" "}
+                <Link href="/signin" className="text-primary underline">
+                  Sign in
                 </Link>
-              </label>
-            </div>
-            {errors.terms?.message && (
-              <p className="text-red-500 text-sm">{errors.terms.message}</p>
-            )}
-          </CardContent>
-          <CardFooter className="flex flex-col space-y-4">
-            <Button className="w-full" type="submit">
-              Create Account
-            </Button>
-            <div className="text-center text-sm">
-              Already have an account?{" "}
-              <Link href="/signin" className="text-primary underline">
-                Sign in
-              </Link>
-            </div>
-          </CardFooter>
-        </form>
-      </Card>
-    </div>
+              </div>
+            </CardFooter>
+          </form>
+        </Card>
+      </div>
+    </>
   );
 }

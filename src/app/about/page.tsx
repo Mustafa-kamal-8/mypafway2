@@ -2,9 +2,26 @@ import Navbar from "@/src/components/navbar";
 import Footer from "@/src/components/footer";
 import Image from "next/image";
 import Link from "next/link";
+import Head from "next/head";
 
 export default function AboutPage() {
   return (
+     <>
+     <Head>
+        <title>Mypafway promotes auto part inventory online.</title>
+        <meta
+          name="title"
+          content="Mypafway is an Automotive Search Engine Portal"
+        />
+        <meta
+          name="keywords"
+          content="automotive parts, automotive accessories, data feeds, marketplace for online distribution of automotive parts, automotive search engine portal"
+        />
+        <meta
+          name="description"
+          content="Mypafway has distinctive services. Our services have distanced itself from our competitors in terms of our technology solutions. These solutions have given Mypafway a greater understanding of what it takes to be the leading tech firm in the automotive parts industry."
+        />
+      </Head>
     <div className="flex min-h-screen flex-col">
       {/* Fixed Navbar */}
       <div className="fixed top-0 left-0 w-full z-50 shadow-md bg-gray-700">
@@ -322,5 +339,6 @@ export default function AboutPage() {
       {/* Footer */}
       <Footer />
     </div>
+    </>
   );
 }

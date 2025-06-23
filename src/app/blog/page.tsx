@@ -3,6 +3,7 @@ import Link from "next/link";
 import Navbar from "@/src/components/navbar";
 import Footer from "@/src/components/footer";
 import { Card, CardContent } from "@/src/components/ui/card";
+import Head from "next/head";
 
 async function getBlogPosts() {
   try {
@@ -43,6 +44,24 @@ export default async function BlogPage() {
   const posts = await getBlogPosts();
 
   return (
+    <>
+      <Head>
+        <title>
+          Mypafway&apos;s Blog is a promotional tool for the automotive part industry.
+        </title>
+        <meta
+          name="title"
+          content="Mypafway's Blog is a promotional tool for automotive part industry."
+        />
+        <meta
+          name="keywords"
+          content="Mypafway, blog, auto part resellers, auto part manufacturers, auto part suppliers"
+        />
+        <meta
+          name="description"
+          content="Mypafway's blog is a marketing strategy used to promote the auto part industry."
+        />
+      </Head>
     <div className="flex min-h-screen flex-col">
       <div className="fixed top-0 left-0 w-full z-50 shadow-md bg-gray-500">
         <Navbar />
@@ -102,5 +121,6 @@ export default async function BlogPage() {
       </main>
       <Footer />
     </div>
+    </>
   );
 }

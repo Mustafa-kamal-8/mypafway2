@@ -20,6 +20,8 @@ const allSidebarLinks = [
   { name: "Dashboard", href: "/dashboard", icon: Home },
   { name: "Categories", href: "/dashboard/categories", icon: Grid },
   { name: "Sub Categories", href: "/dashboard/subcategories", icon: Layers },
+  { name: "Makes", href: "/dashboard/make", icon: Layers },
+  { name: "Models", href: "/dashboard/model", icon: Layers },
   { name: "Products", href: "/dashboard/products", icon: Package },
 ];
 

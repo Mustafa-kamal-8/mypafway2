@@ -676,7 +676,7 @@ export function ProductFormButton({
               </Label>
               <Input
                 id="year"
-                placeholder="Product Model"
+                placeholder="Product Year"
                 value={year}
                 onChange={(e) => setYear(e.target.value)}
                 className="bg-zinc-800 border-zinc-700 text-zinc-200 placeholder:text-zinc-500 focus-visible:ring-yellow-400"
@@ -716,7 +716,6 @@ export function ProductFormButton({
               </Label>
               <Input
                 id="websiteurl"
-                type="number"
                 placeholder="Product Website URL"
                 value={websiteUrl}
                 onChange={(e) => setWebsiteUrl(e.target.value)}

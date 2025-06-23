@@ -4,6 +4,7 @@ import { Button } from "@/src/components/ui/button";
 import { FaqAccordion } from "@/src/components/faq-accordion";
 import Navbar from "@/src/components/navbar";
 import Footer from "@/src/components/footer";
+import Head from "next/head";
 
 export default function FaqPage() {
   // FAQ data
@@ -64,6 +65,25 @@ export default function FaqPage() {
   ];
 
   return (
+     <>
+      {/* ✅ SEO Metadata */}
+      <Head>
+        <title>
+          The FAQ page provides definitions for various keywords and provides an in-depth analysis of how the search engine's work.
+        </title>
+        <meta
+          name="title"
+          content="The FAQ page provides definitions for various keywords and provides in an depth analysis of how the search engine's work."
+        />
+        <meta
+          name="description"
+          content="The Frequently Ask Questions section allows consumers and automotive part businesses better understand how the Search Portals work"
+        />
+        <meta
+          name="keywords"
+          content="faq, search engine, mypafway, peer to peer, comparison shopping engine"
+        />
+      </Head>
     <main className="min-h-screen">
       <div className="fixed top-0 left-0 w-full z-50 shadow-md bg-gray-500">
         <Navbar />
@@ -179,5 +199,6 @@ export default function FaqPage() {
       </section>
       <Footer />
     </main>
+       </>
   );
 }
