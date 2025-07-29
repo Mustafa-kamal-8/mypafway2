@@ -22,6 +22,8 @@ import { Label } from "@/src/components/ui/label";
 import { Checkbox } from "@/src/components/ui/checkbox";
 import { getUser, loginUser } from "@/src/api/auth";
 import toast from "react-hot-toast";
+import { Eye, EyeOff } from "lucide-react";
+import bcrypt from "bcryptjs";
 
 const signInSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -49,6 +51,7 @@ export default function SignInPage() {
   const router = useRouter();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const onSubmit = async (data: SignInFormData) => {
     setIsLoading(true);
@@ -68,7 +71,7 @@ export default function SignInPage() {
 
       const user = res.result[0];
       console.log("usr is", user);
-      const isPasswordCorrect = password === user.password;
+      const isPasswordCorrect = await bcrypt.compare(password, user.password);
       if (!isPasswordCorrect) {
         toast.error("Password or User ID is incorrect!");
         console.log("Password or User ID is incorrect!");
@@ -160,12 +163,22 @@ export default function SignInPage() {
                     Forgot password?
                   </Link>
                 </div>
-                <Input
-                  id="password"
-                  type="password"
-                  {...register("password")}
-                  className="h-11"
-                />
+
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    {...register("password")}
+                    className="h-11 pr-10" // padding to avoid overlap with icon
+                  />
+                  <div
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-500"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </div>
+                </div>
+
                 {errors.password?.message && (
                   <p className="text-red-500 text-sm">
                     {errors.password.message}

@@ -1,3 +1,9 @@
+"use client";
+
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+
 import Navbar from "@/src/components/navbar";
 import Footer from "@/src/components/footer";
 import { Button } from "@/src/components/ui/button";
@@ -6,32 +12,48 @@ import { Textarea } from "@/src/components/ui/textarea";
 import Link from "next/link";
 import Image from "next/image";
 import Head from "next/head";
+import { contactSubmit } from "@/src/api/contacts";
+import toast from "react-hot-toast";
+
+const contactSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  company: z.string().min(1, "Company name is required"),
+  email: z.string().min(1, "Email is required").email("Invalid email address"),
+  message: z.string().min(1, "Message is required"),
+  recaptcha: z.literal(true, {
+    errorMap: () => ({ message: "Please confirm you are not a robot" }),
+  }),
+});
+
+type ContactFormValues = z.infer<typeof contactSchema>;
 
 export default function ContactPage() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<ContactFormValues>({
+    resolver: zodResolver(contactSchema),
+  });
+
+  const onSubmit = async (data: ContactFormValues) => {
+    try {
+      console.log("Submitted Data:", data);
+      const response = await contactSubmit(data);
+      console.log("Response from API:", response);
+      toast.success("Information Submitted successfully!");
+    } catch (error) {
+      console.error("Submission failed:", error);
+      toast.error("Information Submission error!");
+    }
+  };
+
   const address = "800 Steeles Avenue West, #B10182, North York, ON, L4J 7L2";
   const googleMapsUrl =
     "https://maps.google.com/?q=800+Steeles+Ave+W,+Thornhill,+ON+L4J+7L2";
 
   return (
     <>
-      {/* ✅ SEO Metadata */}
-      <Head>
-        <title>
-          Contact Mypafway's support team if you have any questions.
-        </title>
-        <meta
-          name="title"
-          content="Contact Mypafway's support team if you have any questions."
-        />
-        <meta
-          name="description"
-          content="If you have any further questions regarding Mypafway's services please contact our support team at admin@mypafway.com."
-        />
-        <meta
-          name="keywords"
-          content="contact us, questions, support, mypafway"
-        />
-      </Head>
       <div className="flex min-h-screen flex-col">
         <div className="fixed top-0 left-0 w-full z-50 shadow-md bg-gray-500">
           <Navbar />
@@ -58,19 +80,15 @@ export default function ContactPage() {
 
         <main className="flex-1 bg-white">
           <div className="container mx-auto px-4 py-8">
-            {/* Breadcrumb */}
             <div className="mb-8 text-gray-600">
               <Link href="/" className="hover:text-amber-500">
                 Home
-              </Link>{" "}
+              </Link>
               {" > "} Contact Us
             </div>
 
-            {/* Main content */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {/* Left side (2 columns) */}
               <div className="md:col-span-2">
-                {/* Contact Us heading */}
                 <h2 className="text-5xl font-bold text-amber-400 mb-4">
                   Contact Us
                 </h2>
@@ -78,7 +96,7 @@ export default function ContactPage() {
                   If you have any questions or require assistance, please e-mail
                   <a
                     className="ml-2 text-blue-500 underline"
-                    href="https://mail.google.com/mail/?view=cm&fs=1&to=admin@mypafway.com"
+                    href="mailto:admin@mypafway.com"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -87,7 +105,6 @@ export default function ContactPage() {
                   . Thank you.
                 </p>
 
-                {/* Google Maps */}
                 <div className="border mb-6">
                   <iframe
                     src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2879.385350808649!2d-79.47799758446556!3d43.80080007911456!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x882b2e28d4d5803f%3A0x1e9f8e0e6c42667c!2s800%20Steeles%20Ave%20W%2C%20Thornhill%2C%20ON%20L4J%207L2%2C%20Canada!5e0!3m2!1sen!2sus!4v1683900000000!5m2!1sen!2sus"
@@ -96,18 +113,14 @@ export default function ContactPage() {
                     style={{ border: 0 }}
                     allowFullScreen={false}
                     loading="lazy"
-                    aria-label="Google Maps showing 800 Steeles Ave W location"
                   ></iframe>
                 </div>
 
-                {/* Address */}
                 <div className="mb-8">
                   <h3 className="text-3xl font-bold text-amber-400 mb-4">
                     Mypafway Ltd.
                   </h3>
-                  <p className="text-gray-500 mb-4">
-                    800 Steeles Avenue West, #B10182, North York, ON, L4J 7L2
-                  </p>
+                  <p className="text-gray-500 mb-4">{address}</p>
                   <a
                     href={googleMapsUrl}
                     target="_blank"
@@ -118,7 +131,6 @@ export default function ContactPage() {
                   </a>
                 </div>
 
-                {/* Site Administrator */}
                 <div className="mb-8">
                   <h3 className="text-2xl font-bold text-amber-400 mb-2">
                     Site Administrator
@@ -134,7 +146,6 @@ export default function ContactPage() {
                   </div>
                 </div>
 
-                {/* FAQ Section */}
                 <div className="mb-12">
                   <h3 className="text-3xl font-bold text-amber-400 mb-4">
                     Have you checked out our FAQ Page?
@@ -152,7 +163,6 @@ export default function ContactPage() {
                   </Link>
                 </div>
 
-                {/* Contact Form */}
                 <div className="mb-6">
                   <div className="relative">
                     <div className="bg-amber-400 text-gray-800 font-bold py-6 px-6 rounded-l-full inline-block">
@@ -160,59 +170,93 @@ export default function ContactPage() {
                     </div>
                     <div className="absolute top-1/2 left-[280px] right-0 h-1 bg-amber-400 transform -translate-y-1/2"></div>
                   </div>
+
                   <div className="pt-12 pb-8">
                     <p className="text-gray-500 mb-6">
                       Have a question and can't find what you're looking for?
                       Fill out the form below and a customer service
                       representative will get back to you.
                     </p>
-                    <form className="space-y-4">
+                    <form
+                      className="space-y-4"
+                      onSubmit={handleSubmit(onSubmit)}
+                    >
                       <div>
                         <Input
                           type="text"
                           placeholder="Name"
+                          {...register("name")}
                           className="border-gray-300 focus:border-amber-400 focus:ring-amber-400"
                         />
+                        {errors.name && (
+                          <p className="text-sm text-red-500">
+                            {errors.name.message}
+                          </p>
+                        )}
                       </div>
                       <div>
                         <Input
                           type="text"
                           placeholder="Company Name"
+                          {...register("company")}
                           className="border-gray-300 focus:border-amber-400 focus:ring-amber-400"
                         />
+                        {errors.company && (
+                          <p className="text-sm text-red-500">
+                            {errors.company.message}
+                          </p>
+                        )}
                       </div>
                       <div>
                         <Input
                           type="email"
                           placeholder="E-mail"
+                          {...register("email")}
                           className="border-gray-300 focus:border-amber-400 focus:ring-amber-400"
                         />
+                        {errors.email && (
+                          <p className="text-sm text-red-500">
+                            {errors.email.message}
+                          </p>
+                        )}
                       </div>
                       <div>
                         <Textarea
                           placeholder="Comments / Inquiry"
                           rows={8}
+                          {...register("message")}
                           className="border-gray-300 focus:border-amber-400 focus:ring-amber-400"
                         />
+                        {errors.message && (
+                          <p className="text-sm text-red-500">
+                            {errors.message.message}
+                          </p>
+                        )}
                       </div>
                       <div>
-                        <div className="g-recaptcha mb-4">
-                          {/* This is a placeholder for reCAPTCHA */}
-                          <div className="border border-gray-300 p-4 rounded flex items-center">
-                            <input type="checkbox" className="mr-2" />
-                            <span className="text-sm text-gray-600">
-                              I'm not a robot
-                            </span>
-                            <div className="ml-auto">
-                              <div className="text-xs text-gray-400">
-                                reCAPTCHA
-                              </div>
-                              <div className="text-xs text-gray-400">
-                                Privacy - Terms
-                              </div>
+                        <div className="border border-gray-300 p-4 rounded flex items-center">
+                          <input
+                            type="checkbox"
+                            {...register("recaptcha")}
+                            className="mr-2"
+                          />
+                          <span className="text-sm text-gray-600">
+                            I'm not a robot
+                          </span>
+                          <div className="ml-auto">
+                            <div className="text-xs text-gray-400">
+                              reCAPTCHA
+                            </div>
+                            <div className="text-xs text-gray-400">
+                              Privacy - Terms
                             </div>
                           </div>
                         </div>
+                        {errors.recaptcha && (
+                          <p className="text-sm text-red-500 mt-1">
+                            {errors.recaptcha.message}
+                          </p>
+                        )}
                       </div>
                       <div>
                         <Button
@@ -228,13 +272,10 @@ export default function ContactPage() {
               </div>
 
               <div className="col-span-1 flex flex-col space-y-4">
-                {/* First Image - Full width, more height */}
                 <div className="w-full">
-                  {/* Image section */}
                   <div className="relative w-full h-[40rem]">
-                    {/* Image */}
                     <Image
-                      src="/brembo-logo.png" // Replace with actual path
+                      src="/brembo-logo.png"
                       alt="Brembo Logo"
                       width={350}
                       height={100}
@@ -246,8 +287,6 @@ export default function ContactPage() {
                       fill
                       className="object-cover rounded-lg shadow-lg"
                     />
-
-                    {/* Button inside image */}
                     <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2">
                       <Link href="/about">
                         <button className="w-[300px] lg:w-[360px] bg-yellow-400 text-gray-800 font-semibold py-3 rounded-full shadow-md hover:bg-yellow-300 transition">
@@ -257,9 +296,7 @@ export default function ContactPage() {
                     </div>
                   </div>
                 </div>
-                {/* Second Image - Full width, smaller height */}
                 <div className="flex flex-col w-full h-[22rem] bg-black items-center p-20">
-                  {/* Image */}
                   <Image
                     src="/logo2.png"
                     alt="Security Illustration"
@@ -267,8 +304,6 @@ export default function ContactPage() {
                     height={200}
                     className="object-cover rounded-lg shadow-md w-full"
                   />
-
-                  {/* Button or content on top */}
                   <div className="mt-10">
                     <Link href="/register">
                       <button className="w-[300px] lg:w-[360px] bg-yellow-400 text-gray-800 font-semibold px-6 py-3 rounded-full shadow-md hover:bg-yellow-300 transition">

@@ -24,14 +24,19 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/src/components/ui/pagination";
+import toast from "react-hot-toast";
 
-import { getProducts } from "../api/products";
+import {
+  deleteProducts,
+  deleteProductsUpdates,
+  getProducts,
+} from "../api/products";
 import { debounce } from "@/src/lib/utils";
 import { ProductFormButton } from "../components/add-product-button";
 
 export function ProductsList() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [products, setProducts] = useState<any[]>([]);
+  const [products, setProducts] = useState<any[]>([]); 
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -39,6 +44,7 @@ export function ProductsList() {
   const [selectedProductId, setSelectedProductId] = useState<
     string | undefined
   >(undefined);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
   const itemsPerPage = 50;
   const img = process.env.NEXT_PUBLIC_IMAGE_URL;
@@ -46,15 +52,17 @@ export function ProductsList() {
   const fetchProducts = async (page = currentPage) => {
     setIsLoading(true);
     try {
-     const searchParam = searchTerm 
-  ? `(name~*${searchTerm}*|description~*${searchTerm}*)`
-  : "";
+      const searchParam = searchTerm
+        ? `(name~*${searchTerm}*|description~*${searchTerm}*)`
+        : "";
       const response = await getProducts({
         search: searchParam,
         page: `${page},${itemsPerPage}`,
       });
+    
 
       const fetchedProducts = response.result || [];
+      
       setProducts(fetchedProducts);
       setTotalItems(response.count || 0);
     } catch (error) {
@@ -134,6 +142,42 @@ export function ProductsList() {
     document.getElementById("edit-product-trigger")?.click();
   };
 
+  const openDeleteModal = (productId: string) => {
+    setSelectedProductId(productId);
+    setDeleteModalOpen(true);
+  };
+
+  const closeDeleteModal = () => {
+    setSelectedProductId(undefined);
+    setDeleteModalOpen(false);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!selectedProductId) return;
+
+    try {
+      setIsLoading(true);
+
+      const formData = {
+        is_deleted: 1,
+        id: selectedProductId,
+      };
+
+      const response = await deleteProductsUpdates(formData);
+      console.log("Deleted product response:", response);
+
+      if (response?.err === false) {
+        toast.success("Product Deleted successfully!");
+        await fetchProducts();
+      }
+    } catch (error) {
+      console.error("Error deleting product:", error);
+    } finally {
+      setIsLoading(false);
+      closeDeleteModal();
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
@@ -169,6 +213,36 @@ export function ProductsList() {
           />
         </div>
       </div>
+
+      {deleteModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white dark:bg-zinc-900 rounded-lg shadow-lg w-full max-w-md p-6">
+            <h2 className="text-lg font-semibold text-zinc-900 dark:text-white">
+              Confirm Deletion
+            </h2>
+            <p className="text-sm text-zinc-600 dark:text-zinc-300 mt-2">
+              Are you sure you want to delete this product? This action cannot
+              be undone.
+            </p>
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                className="px-4 py-2 text-sm font-medium bg-zinc-200 dark:bg-zinc-700 rounded hover:bg-zinc-300 dark:hover:bg-zinc-600"
+                onClick={closeDeleteModal}
+                disabled={isLoading}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirmDelete}
+                className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded hover:bg-red-700"
+                disabled={isLoading}
+              >
+                {isLoading ? "Deleting..." : "Delete"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="rounded-md border border-zinc-800 overflow-hidden">
         <Table>
@@ -255,6 +329,7 @@ export function ProductsList() {
                         variant="outline"
                         size="icon"
                         className="h-8 w-8 bg-zinc-800 border-zinc-700 text-red-400 hover:bg-zinc-700 hover:text-red-300"
+                        onClick={() => openDeleteModal(product.id)}
                       >
                         <Trash className="h-4 w-4" />
                         <span className="sr-only">Delete</span>

@@ -356,6 +356,7 @@ export function ProductFormButton({
 
     if (!selectedCategory) {
       setCategoryError(true);
+      return;
     } else {
       setCategoryError(false);
     }
@@ -398,6 +399,7 @@ export function ProductFormButton({
         website_url: websiteUrl,
         seller_id,
         seller_name,
+        is_deleted: 0,
         details: {
           weight: weight,
           heigth: height,

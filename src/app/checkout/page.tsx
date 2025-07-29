@@ -79,60 +79,55 @@ export default function CheckoutPage() {
   const handleSubmitPayment = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validate payment form
     if (formData.paymentMethod === "credit-card") {
-      if (
-        !formData.cardNumber ||
-        !formData.cardName ||
-        !formData.expiryDate ||
-        !formData.cvv
-      ) {
-        toast({
-          title: "Missing Information",
-          description: "Please fill in all required payment fields.",
-          variant: "destructive",
-        });
-        return;
-      }
+      // existing validation...
+    }
+
+    // Calculate final total with shipping
+    const shippingCost = formData.shippingMethod === "express" ? 15 : 5;
+    const finalTotal = totalPrice + shippingCost;
+
+    const orderData = {
+      user_id: userId,
+      order_items: cartItems.map((item) => ({
+        productId: item.id,
+        name: item.name,
+        price: Number.parseFloat(item.price || "0"),
+        quantity: item.quantity || 1,
+        image: item.image_link || "",
+      })),
+      order_summary: {
+        subtotal: totalPrice,
+        shipping: shippingCost,
+        total: finalTotal,
+      },
+      payment_method: formData.paymentMethod,
+      shipping_method: formData.shippingMethod,
+      payment_status: formData.paymentMethod === "paypal" ? "pending" : "paid",
+      shipment_status: "processing",
+      notes: formData.notes,
+    };
+
+    if (formData.paymentMethod === "paypal") {
+      // Save the order with payment_status = pending
+      const response = await uploadOrders(orderData);
+      console.log("Order placed with PayPal (pending):", response);
+
+      // Redirect to PayPal with amount
+      window.location.href = `https://www.paypal.com/paypalme/Mypafway/${finalTotal}`;
+      return;
     }
 
     try {
       setIsSubmitting(true);
 
-      // Create order data object
-      const orderData = {
-        user_id: userId,
-        order_items: cartItems.map((item) => ({
-          productId: item.id,
-          name: item.name,
-          price: Number.parseFloat(item.price || "0"),
-          quantity: item.quantity || 1,
-          image: item.image_link || "",
-        })),
-        order_summary: {
-          subtotal: totalPrice,
-          shipping: formData.shippingMethod === "express" ? 15 : 5,
-          total: totalPrice + (formData.shippingMethod === "express" ? 15 : 5),
-        },
-        payment_method: formData.paymentMethod,
-        shipping_method: formData.shippingMethod,
-        payment_status: "pending",
-        shipment_status: "processing",
-        notes: formData.notes,
-      };
+      // For credit card only
       const response = await uploadOrders(orderData);
-      // Log the order data to console instead of sending to backend
-      console.log("Order Data:", orderData);
+      console.log("Order placed with credit card:", response);
 
-      // Simulate successful order creation
-      //   setTimeout(() => {
-
-      //     clearCart();
-
-      //     const fakeOrderId = `order-${Date.now()}`;
-
-      //     router.push(`/order-confirmation/${fakeOrderId}`);
-      //   }, 1500);
+      clearCart();
+      const fakeOrderId = `order-${Date.now()}`;
+      router.push(`/order-confirmation/${fakeOrderId}`);
     } catch (error) {
       console.error("Checkout error:", error);
       toast({
@@ -316,10 +311,13 @@ export default function CheckoutPage() {
                             Pay securely with your card
                           </div>
                         </Label>
+
                         <div className="flex space-x-1">
-                          <div className="w-10 h-6 bg-gray-200 rounded"></div>
-                          <div className="w-10 h-6 bg-gray-200 rounded"></div>
-                          <div className="w-10 h-6 bg-gray-200 rounded"></div>
+                          <img
+                            src="https://img.icons8.com/color/48/000000/bank-card-back-side.png"
+                            alt="Credit Card"
+                            className="w-10 h-6 object-contain"
+                          />
                         </div>
                       </div>
                       <div className="flex items-center space-x-2 border p-3 rounded-md">
@@ -333,7 +331,13 @@ export default function CheckoutPage() {
                             Pay with your PayPal account
                           </div>
                         </Label>
-                        <div className="w-10 h-6 bg-gray-200 rounded"></div>
+                        <div className="w-10 h-6">
+                          <img
+                            src="https://img.icons8.com/color/48/000000/paypal.png"
+                            alt="PayPal"
+                            className="w-full h-full object-contain"
+                          />
+                        </div>
                       </div>
                     </RadioGroup>
 

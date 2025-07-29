@@ -34,19 +34,24 @@ export default function CategorySection() {
 
   const img = process.env.NEXT_PUBLIC_IMAGE_URL;
 
+  // ✅ Hardcoded category-level descriptions
+  const categoryDescriptions: Record<string, string> = {
+    "Brake Pads": "Shop premium brake pads for top-selling sedans and SUVs",
+    "Engine Oils": "High-performance oils for better engine longevity",
+    "Car Accessories": "Stylish and functional accessories for your ride",
+    Tyres: "Durable tyres for city, highway, and off-road driving",
+    // Add more mappings as needed
+  };
+
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const response = await getCategories({ search: "" });
-        console.log("Fetched categories:", response);
-
-        // Process categories to handle blob URLs
         const cats = response.result || [];
         const newBlobImages = { ...blobImages };
 
         cats.forEach((cat: Category) => {
           if (cat.image && cat.image.startsWith("blob:")) {
-            // Store blob URLs in state
             newBlobImages[`cat-${cat.id}`] = cat.image;
           }
         });
@@ -61,7 +66,6 @@ export default function CategorySection() {
     fetchCategories();
   }, []);
 
-  // Handle back button click
   const handleBackClick = () => {
     setCategoryId(null);
     setSelectedCategoryName("");
@@ -80,15 +84,12 @@ export default function CategorySection() {
         const response = await getSubCategories({
           search: `parent_name:${categoryId}`,
         });
-        console.log("Fetched subcategories:", response);
 
-        // Process subcategories to handle blob URLs
         const subcats = response.result || [];
         const newBlobImages = { ...blobImages };
 
         subcats.forEach((subcat: SubCategory) => {
           if (subcat.image && subcat.image.startsWith("blob:")) {
-            // Store blob URLs in state
             newBlobImages[`subcat-${subcat.id}`] = subcat.image;
           }
         });
@@ -103,13 +104,10 @@ export default function CategorySection() {
     fetchSubCategories();
   }, [categoryId]);
 
-  // Handle image error
   const handleImageError = (id: string) => {
-    console.log(`Image failed to load for ID: ${id}`);
     setImageErrors((prev) => ({ ...prev, [id]: true }));
   };
 
-  // Render placeholder for missing or error images
   const renderPlaceholder = (name: string) => (
     <div className="flex items-center justify-center w-full h-full bg-gray-100 rounded-lg">
       <span className="text-2xl font-semibold text-gray-500">
@@ -118,19 +116,13 @@ export default function CategorySection() {
     </div>
   );
 
-  // Get appropriate image component based on URL type
   const renderImage = (image: string | null, name: string, id: string) => {
-    // If image has already errored or is null/empty, show placeholder
     if (imageErrors[id] || !image) {
       return renderPlaceholder(name);
     }
 
-    // Check if we have a blob URL stored for this ID
     const blobUrl = blobImages[id];
-
-    // If we have a stored blob URL, use it
     if (blobUrl) {
-      console.log(`Rendering blob image for ${id}:`, blobUrl);
       return (
         <img
           src={blobUrl || "/placeholder.svg"}
@@ -141,7 +133,6 @@ export default function CategorySection() {
       );
     }
 
-    // For regular image URLs
     if (image.startsWith("http") || image.startsWith("/")) {
       return (
         <div className="relative w-full h-full">
@@ -156,7 +147,6 @@ export default function CategorySection() {
       );
     }
 
-    // For empty or invalid URLs
     return renderPlaceholder(name);
   };
 
@@ -168,7 +158,6 @@ export default function CategorySection() {
         </h2>
 
         {categoryId === null ? (
-          // Main categories view
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {categories
               .filter((category) => category.parent_name === null)
@@ -192,6 +181,13 @@ export default function CategorySection() {
                     <h3 className="text-xl font-medium text-center">
                       {category.name}
                     </h3>
+
+                    {/* ✅ Hardcoded description below category name */}
+                    {categoryDescriptions[category.name] && (
+                      <p className="text-sm text-gray-500 text-center mt-1 px-2">
+                        {categoryDescriptions[category.name]}
+                      </p>
+                    )}
                   </div>
                 </div>
               ))}

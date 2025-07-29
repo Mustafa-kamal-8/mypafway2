@@ -3,6 +3,7 @@
 import React, { useRef, useState } from "react";
 import Papa from "papaparse";
 import { Dialog } from "@headlessui/react";
+import { Island_Moments, Istok_Web } from "next/font/google";
 
 export interface CsvProduct {
   PROGRAM_NAME: string;
@@ -167,6 +168,7 @@ export const CsvUploadModal: React.FC<CsvUploadModalProps> = ({
           year: item.YEAR,
           category: item.CATEGORY,
           sub_category: item.SUB_CATEGORY,
+          is_deleted: 0,
         }));
 
         console.log("Uploading cleaned data:", finalData);

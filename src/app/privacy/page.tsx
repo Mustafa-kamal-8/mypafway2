@@ -292,7 +292,16 @@ export default function PrivacyPage() {
                 <h2 className="text-3xl md:text-4xl font-bold text-black mb-4">
                   Mypafway
                 </h2>
-                <p className="text-gray-600">www.mypafway.com</p>
+                <p className="text-gray-600">
+                  <a
+                    href="https://www.mypafway.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:underline text-blue-600"
+                  >
+                    www.mypafway.com
+                  </a>
+                </p>
               </div>
             </div>
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Menu, Search, ShoppingCart } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
@@ -8,20 +8,28 @@ import { Input } from "@/src/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/src/components/ui/sheet";
 import AdvancedSearchModal from "./advance-search";
 import Image from "next/image";
-// import { useCartStore } from "@/src/store/cartStore";
 import Stores from "../store/stores";
 import { useRouter } from "next/navigation";
 
 export default function Navbar() {
   const [searchQuery, setSearchQuery] = useState("");
   const [advancedSearchOpen, setAdvancedSearchOpen] = useState(false);
-  const { cartItems, setCartItems } = Stores();
+  const [currentUser, setCurrentUser] = useState(null);
+  const { cartItems } = Stores();
 
   const router = useRouter();
-
-  // const { cart } = useCartStore();
   const cartCount = cartItems.length;
-  // const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
+
+  useEffect(() => {
+    const user = localStorage.getItem("currentUser");
+    if (user) {
+      try {
+        setCurrentUser(JSON.parse(user));
+      } catch (error) {
+        console.error("Invalid user format in localStorage.");
+      }
+    }
+  }, []);
 
   const handleSearch = () => {
     if (searchQuery.trim() !== "") {
@@ -29,18 +37,40 @@ export default function Navbar() {
     }
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("currentUser");
+    setCurrentUser(null);
+    router.push("/signin");
+  };
+
   return (
     <header className="w-full sticky top-0 z-50">
-      {/* Top navbar (Sign In / Register) - Stays with background */}
+      {/* Top navbar */}
       <div className="bg-gray-800 text-white">
         <div className="container mx-auto px-4 flex justify-end py-2">
           <div className="flex items-center space-x-4">
-            <Link href="/register" className="text-sm hover:underline">
-              Register
-            </Link>
-            <Link href="/signin" className="text-sm hover:underline">
-              Sign In
-            </Link>
+            {!currentUser ? (
+              <>
+                <Link href="/register" className="text-sm hover:underline">
+                  Register
+                </Link>
+                <Link href="/signin" className="text-sm hover:underline">
+                  Sign In
+                </Link>
+              </>
+            ) : (
+              <>
+                <span className="text-sm">Welcome, {currentUser.name}</span>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="bg-white text-black hover:bg-gray-100"
+                  onClick={handleLogout}
+                >
+                  Log Out
+                </Button>
+              </>
+            )}
             <Link href="/business">
               <Button
                 variant="outline"
@@ -56,17 +86,17 @@ export default function Navbar() {
                 size="sm"
                 className="bg-white text-black hover:bg-gray-100"
               >
-                Freemium
+                Sell With Us
               </Button>
             </Link>
           </div>
         </div>
       </div>
 
-      {/* Main Navbar - Fully Transparent */}
-      <div className="bg-white/5  shadow-lg ">
+      {/* Main navbar */}
+      <div className="bg-white/5 shadow-lg">
         <div className="container mx-auto px-4 flex items-center justify-between py-6">
-          {/* Mobile menu button */}
+          {/* Mobile Menu */}
           <div className="lg:hidden">
             <Sheet>
               <SheetTrigger asChild>
@@ -81,32 +111,16 @@ export default function Navbar() {
                     <Image src="/logo.png" alt="Logo" width={150} height={40} />
                   </Link>
                   <div className="grid gap-3">
-                    <Link
-                      href="/about"
-                      className="text-lg font-medium"
-                      prefetch={true}
-                    >
+                    <Link href="/about" className="text-lg font-medium">
                       ABOUT US
                     </Link>
-                    <Link
-                      href="/services"
-                      className="text-lg font-medium"
-                      prefetch={true}
-                    >
+                    <Link href="/services" className="text-lg font-medium">
                       SERVICES
                     </Link>
-                    <Link
-                      href="/blog"
-                      className="text-lg font-medium"
-                      prefetch={true}
-                    >
+                    <Link href="/blog" className="text-lg font-medium">
                       BLOG
                     </Link>
-                    <Link
-                      href="/contact"
-                      className="text-lg font-medium"
-                      prefetch={true}
-                    >
+                    <Link href="/contact" className="text-lg font-medium">
                       CONTACT US
                     </Link>
                   </div>
@@ -125,7 +139,8 @@ export default function Navbar() {
               priority
             />
           </Link>
-          {/* Search bar */}
+
+          {/* Desktop Search */}
           <div className="hidden md:flex flex-col flex-1 max-w-xl mx-4">
             <div className="relative w-full">
               <Input
@@ -157,7 +172,7 @@ export default function Navbar() {
             </div>
           </div>
 
-          {/* Desktop Navigation */}
+          {/* Navigation Links */}
           <nav className="hidden lg:flex items-center space-x-8">
             <Link
               href="/about"
@@ -205,7 +220,7 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Search Bar */}
+      {/* Mobile Search */}
       <div className="md:hidden bg-transparent pb-4 px-4">
         <div className="relative">
           <Input

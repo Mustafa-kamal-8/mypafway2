@@ -8,23 +8,7 @@ export default function SitemapPage() {
   return (
     <>
       {/* ✅ SEO Metadata */}
-      <Head>
-        <title>
-          Mypafway's Site Map scales out the entire company website.
-        </title>
-        <meta
-          name="title"
-          content="Mypafway Site Map - Mypafway's Site Map scales out the entire company website."
-        />
-        <meta
-          name="description"
-          content="Mypafway's Site Map allows consumers and automotive part businesses to route out specific sections of the website. Thus, creating opportunities for automotive part companies and consumers alike to better understand how to navigate the website."
-        />
-        <meta
-          name="keywords"
-          content="site map, mypafway, auto part manufacturers, auto part suppliers"
-        />
-      </Head>
+
       <main className="min-h-screen">
         <div className="fixed top-0 left-0 w-full z-50 shadow-md bg-gray-500">
           <Navbar />

@@ -70,24 +70,7 @@ export default function BusinessPage() {
   return (
        <>
       {/* ✅ SEO Metadata */}
-      <Head>
-        <title>
-          Automotive part clients can promote and sell their auto parts in the
-          Search Engines.
-        </title>
-        <meta
-          name="title"
-          content="Automotive part clients can promote and sell their auto parts in the Search Engines"
-        />
-        <meta
-          name="keywords"
-          content="auto part manufacturers, auto part suppliers, comparison shopping engine, search engine auto part resellers"
-        />
-        <meta
-          name="description"
-          content="Consumers can search and buy automotive parts using Mypafway's Search Engines."
-        />
-      </Head>
+      
     <div className="flex flex-col min-h-screen">
       <div className="fixed top-0 left-0 w-full z-50 shadow-md bg-gray-500">
         <Navbar />

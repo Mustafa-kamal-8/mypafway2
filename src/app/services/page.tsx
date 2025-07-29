@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { Search } from "lucide-react";
@@ -7,26 +9,15 @@ import { Card, CardContent } from "@/src/components/ui/card";
 import { Button } from "@/src/components/ui/button";
 import { Input } from "@/src/components/ui/input";
 import Head from "next/head";
+import { useRouter } from "next/navigation";
 
 export default function ServicesPage() {
+  const router = useRouter();
+
   return (
     <>
       {/* ✅ SEO Metadata */}
-      <Head>
-        <title>Buy automotive parts using Mypafway's Search Engines.</title>
-        <meta
-          name="title"
-          content="Buy automotive parts using Mypafway's Search Engines"
-        />
-        <meta
-          name="keywords"
-          content="automotive parts, automotive accessories, comparison shopping engine, search engine"
-        />
-        <meta
-          name="description"
-          content="Consumers can search and buy automotive parts using Mypafway's Search Engines."
-        />
-      </Head>
+
       <div className="flex min-h-screen flex-col">
         <div className="fixed top-0 left-0 w-full z-50 shadow-md bg-gray-500">
           <Navbar />
@@ -97,7 +88,10 @@ export default function ServicesPage() {
                     allows users the ability to search and buy automotive parts
                     online.
                   </p>
-                  <Button className="bg-amber-400 hover:bg-amber-500 text-black font-semibold rounded-full px-8">
+                  <Button
+                    className="bg-amber-400 hover:bg-amber-500 text-black font-semibold rounded-full px-8"
+                    onClick={() => router.push("/")}
+                  >
                     Try it now!
                   </Button>
                 </div>
@@ -113,7 +107,10 @@ export default function ServicesPage() {
                     of fulfilling the order. You stock the inventory, pack the
                     orders, and Mypafway will ship it to your customers.
                   </p>
-                  <Button className="bg-amber-400 hover:bg-amber-500 text-black font-semibold rounded-full px-8">
+                  <Button
+                    className="bg-amber-400 hover:bg-amber-500 text-black font-semibold rounded-full px-8"
+                    onClick={() => router.push("/")}
+                  >
                     Try it now!
                   </Button>
                 </div>

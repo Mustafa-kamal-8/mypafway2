@@ -293,7 +293,7 @@ export default function SearchPage() {
 
   const handleAddToCart = async (product: Product) => {
     if (product.website_url) {
-      window.open(product.website_url, "_blank"); // open in new tab
+      window.open(product.website_url, "_blank");
       return;
     }
     const storedCart = localStorage.getItem("cartItems");
@@ -637,7 +637,6 @@ export default function SearchPage() {
                       >
                         <div className="relative">
                           <img
-                            // src={product.image_url || "/placeholder.svg"}
                             src={
                               !product.image_url
                                 ? "/placeholder.svg"
@@ -680,7 +679,27 @@ export default function SearchPage() {
                               ? `${product.name.slice(0, 20)}...`
                               : product.name || "Unknown"}
                           </h3>
+
                           <p className="text-gray-600 mt-1">${product.price}</p>
+
+                          {product.quantity != null && (
+                            <>
+                              {product.quantity <= 1 && (
+                                <p className="text-sm text-red-600 mt-1">
+                                  Only {product.quantity} left in stock – order
+                                  soon!
+                                </p>
+                              )}
+
+                              {product.quantity > 1 &&
+                                product.quantity < 10 && (
+                                  <p className="text-sm text-orange-500 mt-1">
+                                    Only few left in stock!
+                                  </p>
+                                )}
+                            </>
+                          )}
+
                           <div className="mt-4 flex space-x-2">
                             <button
                               onClick={() => handleAddToCart(product)}
@@ -699,7 +718,7 @@ export default function SearchPage() {
                                   Details
                                 </button>
                               </DialogTrigger>
-                              <DialogContent className="w-full max-w-[100vw] md:max-w-[70vw]  h-[80vh] overflow-auto">
+                              <DialogContent className="w-full max-w-[100vw] md:max-w-[70vw] h-[80vh] overflow-auto">
                                 <DialogHeader>
                                   <DialogTitle>
                                     {selectedProduct?.name}
@@ -943,7 +962,7 @@ export default function SearchPage() {
                                 );
                                 return product ? (
                                   <TableCell key={itemId}>
-                                    {product.category.name}
+                                    {product.category}
                                   </TableCell>
                                 ) : null;
                               })}

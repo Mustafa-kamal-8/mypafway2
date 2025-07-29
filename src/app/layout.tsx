@@ -12,8 +12,11 @@ import TawkCleanUpListener from "@/src/components/tawk-cleanup-listener";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "MYPAFWAY - Auto Parts",
-  description: "Find the best auto parts for your vehicle",
+  title: "Quality Auto Parts at Competitive Prices at Mypafway",
+  description:
+    "Mypafway is an automotive search engine that consists of OEM and aftermarket automotive parts. Mypafway's search engine enables consumers the ability to find automotive parts from many different car manufacturers from around the globe.",
+  keywords:
+    "automotive parts, automotive accessories, automotive parts search engine, comparison shopping engine, marketplace for online distribution of automotive parts, Peer-Peer",
   generator: "my_app",
 };
 

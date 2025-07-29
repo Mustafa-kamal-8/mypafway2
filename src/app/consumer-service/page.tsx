@@ -57,7 +57,7 @@ export default function ConsumerPage() {
               <div className="flex flex-col md:flex-row gap-6">
                 <div className="relative w-full md:w-1/3 h-[15rem]">
                   <Image
-                    src="/privacy-img.png"
+                    src="out_plan.jpg.jpg"
                     alt="Related Visual"
                     fill
                     className="object-cover rounded-lg shadow-lg"
@@ -88,7 +88,7 @@ export default function ConsumerPage() {
               <div className="flex flex-col md:flex-row gap-6">
                 <div className="relative w-full md:w-1/3 h-[15rem]">
                   <Image
-                    src="/privacy-img.png"
+                    src="gear.jpg"
                     alt="Related Visual"
                     fill
                     className="object-cover rounded-lg shadow-lg"
@@ -123,72 +123,67 @@ export default function ConsumerPage() {
 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
                   {/* Feature 1 */}
-                  <div className="flex flex-col items-center text-center">
-                    <div className="w-24 h-24 mb-4">
+                  <div className="text-center">
+                    <div className="relative w-28 h-28 mx-auto mb-4">
                       <Image
-                        src="/placeholder.svg?height=96&width=96"
-                        alt="User Management"
-                        width={96}
-                        height={96}
+                        src="/cross-seeling-img.svg"
+                        alt="Privacy Illustration"
+                        fill
+                        className="object-contain"
                       />
                     </div>
-                    <h3 className="text-lg font-bold text-gray-800 mb-2">
-                      Cross Selling
-                    </h3>
-                    <p className="text-gray-500 text-xs">
+                    <h3 className="text-xl font-bold mb-2">Cross Selling</h3>
+                    <p className="text-gray-600">
                       Reach a target audience missed by other media
                     </p>
                   </div>
 
                   {/* Feature 2 */}
-                  <div className="flex flex-col items-center text-center">
-                    <div className="w-24 h-24 mb-4">
+                  <div className="text-center">
+                    <div className="relative w-28 h-28 mx-auto mb-4">
                       <Image
-                        src="/placeholder.svg?height=96&width=96"
-                        alt="Inventory Tracking"
-                        width={96}
-                        height={96}
+                        src="/lead-img.svg"
+                        alt="Privacy Illustration"
+                        fill
+                        className="object-contain"
                       />
                     </div>
-                    <h3 className="text-lg font-bold text-gray-800 mb-2">
-                      Lead Generation
-                    </h3>
-                    <p className="text-gray-500 text-xs">
+                    <h3 className="text-xl font-bold mb-2">Lead Generation</h3>
+                    <p className="text-gray-600">
                       Generate leads, drive traffic and revenue online
                     </p>
                   </div>
-
                   {/* Feature 3 */}
-                  <div className="flex flex-col items-center text-center">
-                    <div className="w-24 h-24 mb-4">
+                  <div className="text-center">
+                    <div className="relative w-28 h-28 mx-auto mb-4">
                       <Image
-                        src="/placeholder.svg?height=96&width=96"
-                        alt="Data Transformation"
-                        width={96}
-                        height={96}
+                        src="/leveraging-img.svg"
+                        alt="Privacy Illustration"
+                        fill
+                        className="object-contain"
                       />
                     </div>
-                    <h3 className="text-lg font-bold text-gray-800 mb-2">
+                    <h3 className="text-xl font-bold mb-2">
                       Leveraging of Technology
                     </h3>
-                    <p className="text-gray-500 text-xs">
+                    <p className="text-gray-600">
                       Leverage technology and lower operating costs
                     </p>
                   </div>
 
-                  <div className="flex flex-col items-center text-center">
-                    <div className="w-24 h-24 mb-4">
+                  <div className="text-center">
+                    <div className="relative w-28 h-28 mx-auto mb-4">
                       <Image
-                        src="/placeholder.svg?height=96&width=96"
-                        alt="Data Transformation"
-                        width={96}
-                        height={96}
+                        src="/stremlining-img.svg"
+                        alt="Privacy Illustration"
+                        fill
+                        className="object-contain"
                       />
                     </div>
-                    <h3 className="text-lg font-bold text-gray-800 mb-2">
+                    <h3 className="text-xl font-bold mb-2">
                       Streamlining Inventory
                     </h3>
-                    <p className="text-gray-500 text-xs">
+                    <p className="text-gray-600">
                       Eliminate the traditional practice of selling through an
                       auto parts catalogue Mypafway Mypafway Learn More Mypafway
                       logo
@@ -220,17 +215,20 @@ export default function ConsumerPage() {
               </div>
 
               {/* Second Image */}
-              <div className="relative w-full h-[20rem]">
+              <div className="flex flex-col w-full h-[22rem] bg-black items-center p-20">
+                {/* Image */}
                 <Image
                   src="/logo2.png"
                   alt="Security Illustration"
-                  fill
-                  className="object-cover rounded-lg shadow-md"
+                  width={200}
+                  height={200}
+                  className="object-cover rounded-lg shadow-md w-full"
                 />
-                <div className="absolute inset-0 bg-black opacity-50 rounded-lg"></div>
-                <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2">
+
+                {/* Button or content on top */}
+                <div className="mt-10">
                   <Link href="/register">
-                    <button className="bg-yellow-400 text-gray-800 font-semibold px-6 py-3 rounded-full shadow-md hover:bg-yellow-300 transition">
+                    <button className="w-[300px] lg:w-[360px] bg-yellow-400 text-gray-800 font-semibold px-6 py-3 rounded-full shadow-md hover:bg-yellow-300 transition">
                       Register Now
                     </button>
                   </Link>

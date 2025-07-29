@@ -261,11 +261,22 @@ export default function Footer() {
             </div>
           </div>
         </div>
+        <div className="flex justify-center mt-12">
+          <Link href="/" prefetch={true}>
+            <Button className="bg-white text-gray-800 hover:bg-gray-100 font-semibold px-6 py-3 rounded-lg shadow">
+              Become a Vendor – List Your Products Today
+            </Button>
+          </Link>
+        </div>
 
         <div className="border-t border-gray-600 mt-8 pt-6">
           <p className="text-gray-400 text-sm">
-            MYPAFWAY © {new Date().getFullYear()}. All Rights Reserved.
+            <Link href="/" className="hover:underline text-white font-semibold">
+              MYPAFWAY
+            </Link>{" "}
+            © {new Date().getFullYear()}. All Rights Reserved.
           </p>
+          
         </div>
       </div>
     </footer>

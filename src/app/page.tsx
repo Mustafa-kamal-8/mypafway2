@@ -73,7 +73,7 @@ export default function Home() {
 
   return (
     <>
-      <Head>
+      {/* <Head>
         <title>Find Quality Auto Parts at Competitive Prices at Mypafway</title>
         <meta
           name="title"
@@ -91,7 +91,7 @@ export default function Home() {
           name="description"
           content="Mypafway's Search Portal has integrated automotive technology solutions that will enable auto part companies to take grasp at our syndicated data feed, order management and inventory management solutions. In addition, Mypafway's Services has distanced itself from our competitors in terms of our technology solutions. These solutions have given Mypafway a greater understanding of what it takes to be the leading tech firm in the automotive parts industry."
         />
-      </Head>
+      </Head> */}
       <main className="flex min-h-screen flex-col">
         {/* Dynamic Navbar */}
         <div
@@ -111,28 +111,27 @@ export default function Home() {
               className="object-cover"
             />
           </div>
-          <div className="absolute inset-0 bg-black/40 z-5"></div>
-          <div className="relative z-5 container px-6 md:px-12 h-full flex flex-col justify-center">
-            <div className="max-w-sm">
-              <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-4 max-w-md mt-6">
-                <span className="block mb-3">Compare auto part</span>
-                <span className="block mb-3">prices right at your</span>
-                <span className="block">fingertips.</span>
+          <div className="absolute inset-0 bg-black/50 z-5" />
+          <div className="relative z-10 container px-6 md:px-12 h-full flex flex-col justify-center">
+            <div className="max-w-2xl">
+              <h1 className="text-white text-3xl md:text-5xl font-bold leading-tight mb-4">
+                Your One-Stop Shop for Quality Auto Parts
               </h1>
+              <p className="text-white text-lg md:text-xl mb-6">
+                Fast Delivery & Trusted Brands – Find the right parts at the
+                right price.
+              </p>
 
-              <div className="mt-6">
-                <Button
-                  onClick={handleClick}
-                  size="lg"
-                  className="bg-white text-black hover:bg-gray-100 mb-36"
-                >
-                  Learn more
-                </Button>
-              </div>
+              <Button
+                onClick={handleClick}
+                size="lg"
+                className="bg-white text-black hover:bg-gray-100"
+              >
+                Learn more
+              </Button>
             </div>
           </div>
         </section>
-
         {/* Shop by Category */}
         <CategorySection />
 
