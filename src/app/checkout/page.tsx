@@ -11,10 +11,11 @@ import { RadioGroup, RadioGroupItem } from "@/src/components/ui/radio-group";
 import { Label } from "@/src/components/ui/label";
 import { Textarea } from "@/src/components/ui/textarea";
 import { toast } from "@/src/components/ui/use-toast";
-import { ArrowLeft, CreditCard, Truck } from "lucide-react";
+import { ArrowLeft, Banknote, CreditCard, Truck } from "lucide-react";
 import Navbar from "@/src/components/navbar";
 import Stores from "@/src/store/stores";
 import { uploadOrders } from "@/src/api/order";
+import { uploadOrderItems } from "@/src/api/order-item";
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -30,11 +31,18 @@ export default function CheckoutPage() {
   }, 0);
 
   // Get userId from localStorage on component mount
-  useEffect(() => {
-    // Get userId from localStorage
-    const storedUserId = localStorage.getItem("userId");
-    setUserId(storedUserId);
-  }, []);
+useEffect(() => {
+  const storedUser = localStorage.getItem("currentUser");
+  if (storedUser) {
+    try {
+      const parsedUser = JSON.parse(storedUser);
+      setUserId(parsedUser.id);
+    } catch (error) {
+      console.error("Failed to parse currentUser from localStorage", error);
+    }
+  }
+}, []);
+
 
   // Form state
   const [formData, setFormData] = useState({
@@ -103,7 +111,8 @@ export default function CheckoutPage() {
       },
       payment_method: formData.paymentMethod,
       shipping_method: formData.shippingMethod,
-      payment_status: formData.paymentMethod === "paypal" ? "pending" : "paid",
+     payment_status: formData.paymentMethod === "paypal" || formData.paymentMethod === "cod" ? "pending" : "paid",
+
       shipment_status: "processing",
       notes: formData.notes,
     };
@@ -123,11 +132,29 @@ export default function CheckoutPage() {
 
       // For credit card only
       const response = await uploadOrders(orderData);
+    
+      const orderId = response?.result?.lastInsertID;
+
+      if (!orderId) throw new Error("Order ID not returned");
+
+      // 2. Loop through cartItems and upload each to orderItems table
+      for (const item of cartItems) {
+        const itemData = {
+          orderId,
+          productId: item.id,
+          userId:userId,
+          name: item.name,
+          price: Number.parseFloat(item.price || "0"),
+          quantity: item.quantity || 1,
+          image: item.image_link || "",
+        };
+        await uploadOrderItems(itemData);
+      }
       console.log("Order placed with credit card:", response);
 
       clearCart();
-      const fakeOrderId = `order-${Date.now()}`;
-      router.push(`/order-confirmation/${fakeOrderId}`);
+      // const fakeOrderId = `order-${Date.now()}`;
+      router.push(`/order-confirmation`);
     } catch (error) {
       console.error("Checkout error:", error);
       toast({
@@ -337,6 +364,20 @@ export default function CheckoutPage() {
                             alt="PayPal"
                             className="w-full h-full object-contain"
                           />
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-2 border p-3 rounded-md">
+                        <RadioGroupItem value="cod" id="cod" />
+                        <Label htmlFor="cod" className="flex-1 cursor-pointer">
+                          <div className="font-medium">
+                            Cash on Delivery (COD)
+                          </div>
+                          <div className="text-sm text-gray-500">
+                            Pay when your order is delivered
+                          </div>
+                        </Label>
+                        <div className="w-10 h-6 flex items-center justify-center">
+                          <Banknote className="w-6 h-6 text-green-600" />
                         </div>
                       </div>
                     </RadioGroup>

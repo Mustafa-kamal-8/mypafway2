@@ -36,7 +36,7 @@ import { ProductFormButton } from "../components/add-product-button";
 
 export function ProductsList() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [products, setProducts] = useState<any[]>([]); 
+  const [products, setProducts] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -52,17 +52,32 @@ export function ProductsList() {
   const fetchProducts = async (page = currentPage) => {
     setIsLoading(true);
     try {
-      const searchParam = searchTerm
+      // Get current user from localStorage
+      const storedUser = localStorage.getItem("currentUser");
+      const currentUser = storedUser ? JSON.parse(storedUser) : null;
+
+      // Build base search param
+      let searchParam = searchTerm
         ? `(name~*${searchTerm}*|description~*${searchTerm}*)`
         : "";
+
+      // If role is vendor, filter by seller_id
+      if (currentUser?.role === "vendor") {
+        const sellerFilter = `seller_id==${currentUser.id}`;
+        searchParam = searchParam
+          ? `${searchParam};${sellerFilter}` // Combine filters with ;
+          : sellerFilter;
+      }
+
+      // Make API call
       const response = await getProducts({
         search: searchParam,
         page: `${page},${itemsPerPage}`,
       });
-    
 
-      const fetchedProducts = response.result || [];
-      
+      const fetchedProducts = Array.isArray(response.result)
+        ? response.result
+        : [];
       setProducts(fetchedProducts);
       setTotalItems(response.count || 0);
     } catch (error) {

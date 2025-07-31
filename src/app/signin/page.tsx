@@ -96,6 +96,8 @@ export default function SignInPage() {
 
       if (currentUser.role === "admin") {
         router.replace("/dashboard");
+      } else if (currentUser.role === "vendor") {
+        router.replace("/vendor");
       } else {
         router.replace("/");
       }

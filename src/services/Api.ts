@@ -1,10 +1,10 @@
 import axios, { AxiosRequestConfig } from "axios";
 import { Buffer } from "buffer";
+import tokens from "./tokens.json";
 
 export const _DATABASE = process.env.NEXT_PUBLIC_DATABASE;
 export const _BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 const local_host = `http://localhost:${process.env.NEXT_PUBLIC_FQ_LOCAL_SERVER_PORT}`;
-import tokens from "./tokens.json";
 
 interface Tokens {
   [key: string]: string;
@@ -49,7 +49,7 @@ function isSQLQuery(method: HttpMethod | "SQL", body: any) {
     if (!body) return false;
 
     if (Array.isArray(body)) {
-      return body.map(b => b.sql).every(b => typeof b === "string");
+      return body.map((b) => b.sql).every((b) => typeof b === "string");
     }
 
     return typeof body.sql === "string";
@@ -63,14 +63,18 @@ function getSQLQuery(body: any) {
     if (body.length === 1) {
       return JSON.stringify(body[0].sql);
     }
-    return JSON.stringify(body.map(b => b.sql));
+    return JSON.stringify(body.map((b) => b.sql));
   }
 
   return JSON.stringify(body.sql);
 }
 
-function getKey(method: HttpMethod, url: string, options: RequestOptions): string {
-  console.log(_DATABASE)
+function getKey(
+  method: HttpMethod,
+  url: string,
+  options: RequestOptions
+): string {
+  console.log(_DATABASE);
   if (!local_host) throw new Error("local_host is not defined");
 
   const _url = local_host + url;
@@ -85,8 +89,12 @@ function getKey(method: HttpMethod, url: string, options: RequestOptions): strin
     collections: options.joins,
     permission: options.permission,
     validation: options.validation,
-    body_is_array: !isSQLQuery(method, options.body) ? Array.isArray(options.body || {}) : "",
-    sql_query: isSQLQuery(method, options.body) ? getSQLQuery(options.body) : "",
+    body_is_array: !isSQLQuery(method, options.body)
+      ? Array.isArray(options.body || {})
+      : "",
+    sql_query: isSQLQuery(method, options.body)
+      ? getSQLQuery(options.body)
+      : "",
   };
 
   let tokenStr = pathname;
@@ -100,7 +108,11 @@ function getKey(method: HttpMethod, url: string, options: RequestOptions): strin
   return method + ":" + pathname + ">" + uniqueKey(tokenStr);
 }
 
-const makeRequest = async (method: HttpMethod, endpoint: string, options: RequestOptions = {}): Promise<any> => {
+const makeRequest = async (
+  method: HttpMethod,
+  endpoint: string,
+  options: RequestOptions = {}
+): Promise<any> => {
   const {
     body,
     page,
@@ -174,10 +186,14 @@ const makeRequest = async (method: HttpMethod, endpoint: string, options: Reques
 };
 
 const Api = {
-  get: async (endpoint: string, options?: RequestOptions): Promise<any> => makeRequest("get", endpoint, options),
-  put: async (endpoint: string, options?: RequestOptions): Promise<any> => makeRequest("put", endpoint, options),
-  post: async (endpoint: string, options?: RequestOptions): Promise<any> => makeRequest("post", endpoint, options),
-  delete: async (endpoint: string, options?: RequestOptions): Promise<any> => makeRequest("delete", endpoint, options),
+  get: async (endpoint: string, options?: RequestOptions): Promise<any> =>
+    makeRequest("get", endpoint, options),
+  put: async (endpoint: string, options?: RequestOptions): Promise<any> =>
+    makeRequest("put", endpoint, options),
+  post: async (endpoint: string, options?: RequestOptions): Promise<any> =>
+    makeRequest("post", endpoint, options),
+  delete: async (endpoint: string, options?: RequestOptions): Promise<any> =>
+    makeRequest("delete", endpoint, options),
   sql: async (endpoint: string, options?: RequestOptions): Promise<any> =>
     makeRequest("post", `/sql-${endpoint.replace("/", "")}`, options),
 };

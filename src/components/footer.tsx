@@ -262,7 +262,7 @@ export default function Footer() {
           </div>
         </div>
         <div className="flex justify-center mt-12">
-          <Link href="/" prefetch={true}>
+          <Link href="/vendor-register" prefetch={true}>
             <Button className="bg-white text-gray-800 hover:bg-gray-100 font-semibold px-6 py-3 rounded-lg shadow">
               Become a Vendor – List Your Products Today
             </Button>
@@ -276,7 +276,6 @@ export default function Footer() {
             </Link>{" "}
             © {new Date().getFullYear()}. All Rights Reserved.
           </p>
-          
         </div>
       </div>
     </footer>

@@ -7,6 +7,8 @@ import { Button } from "@/src/components/ui/button";
 import { Heart, Minus, Plus, ShoppingCart, Trash2, X } from "lucide-react";
 import Stores from "@/src/store/stores";
 import { Input } from "@/src/components/ui/input";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 const CartPage = () => {
   const { cartItems, removeFromCart, updateQuantity, clearCart, saveForLater } =
@@ -17,6 +19,20 @@ const CartPage = () => {
   const totalPrice = cartItems.reduce((total: number, item) => {
     return total + Number.parseFloat(item.price || "0") * (item.quantity || 1);
   }, 0);
+
+  const router = useRouter();
+
+  const handleCheckout = () => {
+    const currentUser = localStorage.getItem("currentUser");
+
+    if (currentUser) {
+      // user is logged in
+      router.push("/checkout");
+    } else {
+      // user is not logged in
+      toast.error("Please login to proceed to checkout");
+    }
+  };
 
   return (
     <>
@@ -263,11 +279,12 @@ const CartPage = () => {
                   </div>
                 </div>
 
-                <Link href="/checkout" className="block mt-6">
-                  <Button className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-3">
-                    Continue to Checkout
-                  </Button>
-                </Link>
+                <Button
+                  onClick={handleCheckout}
+                  className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-3"
+                >
+                  Continue to Checkout
+                </Button>
               </div>
             </div>
           )}
